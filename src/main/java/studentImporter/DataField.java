@@ -1,5 +1,16 @@
 package studentImporter;
 
+/**
+ * Describes all data fields that can be stored for an Applicant. Not all data
+ * fields are required, some can be left empty. All required fields must not be
+ * empty for a valid Applicant.
+ * <p>
+ * Every Enum element stores the type of the associated value in the Applicant
+ * class. Some utility methods are provided to get the type for a specific data
+ * field and to cast its values.
+ * 
+ * @author Christian Wichmann
+ */
 public enum DataField {
 
 	/**
@@ -22,6 +33,8 @@ public enum DataField {
 	 */
 	SPECIALIZATION(String.class, false),
 
+	ADDRESS(String.class, true),
+
 	/**
 	 * Umschüler.
 	 */
@@ -34,7 +47,7 @@ public enum DataField {
 	START_OF_TRAINING(String.class, true),
 
 	/**
-	 * Ausbildungsdauer.
+	 * Duration of vocational training (Ausbildungsdauer) in months.
 	 */
 	DURATION_OF_TRAINING(Double.class, true),
 
@@ -83,6 +96,10 @@ public enum DataField {
 
 	CITY(String.class, true),
 
+	PHONE(String.class, true),
+
+	FAX(String.class, true),
+
 	EMAIL(String.class, true),
 
 	NAME_OF_LEGAL_GUARDIAN(String.class, true),
@@ -91,6 +108,9 @@ public enum DataField {
 
 	PHONE_OF_LEGAL_GUARDIAN(String.class, true),
 
+	/**
+	 * Gender of the applicant. Currently either "m" for men or "w" for women.
+	 */
 	GENDER(Character.class, true),
 
 	SCHOOL_ATTENDANCE_BEGIN(String.class, false),
@@ -119,7 +139,11 @@ public enum DataField {
 
 	COMPANY_CONTACT_MAIL(String.class, true),
 
-	NOTES(String.class, false);
+	NOTES(String.class, false),
+
+	SCHOOL(School.class, true),
+
+	DEGREE(Degree.class, true);
 
 	private final Class<?> dataFieldType;
 	private boolean isRequired;
@@ -129,11 +153,42 @@ public enum DataField {
 		this.isRequired = isRequired;
 	}
 
+	/**
+	 * Gets the type for a specific data field. The associated type is stored
+	 * inside the Enum to allow correct casts of the return value of Applicant's
+	 * getValue() method.
+	 * <p>
+	 * <b>Example:</b> 
+	 * <p>
+	 * <code>DataField.BIRTHDAY.getTypeOfDataField().cast(object);</code>.
+	 * 
+	 * @return type of 
+	 */
 	public Class<?> getTypeOfDataField() {
 		return dataFieldType;
 	}
 
+	/**
+	 * Returns whether this data field is required for all valid applicants. All
+	 * required fields MUST not be empty!
+	 * 
+	 * @return true, if data field is required
+	 */
 	public boolean isRequired() {
 		return isRequired;
+	}
+
+	/**
+	 * Gets the value from given Applicant for this Enum element. The returned
+	 * element is cast to the type that the compiler decides by type inference
+	 * from the left-hand value at the calling code.
+	 * 
+	 * @param applicant
+	 *            from which correctly cast value should be returned
+	 * @return value from given applicant, correctly cast
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getFrom(Applicant applicant) {
+		return (T) applicant.getValue(this);
 	}
 }

@@ -1,118 +1,40 @@
 package studentImporter;
 
-import java.util.Date;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Contains all data field information for a given applicant that has been
+ * imported. This class is immutable and new objects can only be created by use
+ * of the contained ApplicantBuilder.
+ * 
+ * @author Christian Wichmann
+ */
 public class Applicant {
 
-	private final String firstName;
-	private final String surname;
-	private final String vocation; // Ausbildungsberuf
-	private final String specialization; // Fachrichtung
-	private final boolean retraining; // Umschüler
-	private final String startOfTraining; // Ausbildungsbeginn
-	private final double DurationOfTraining; // Ausbildungsdauer
-	private final Date birthday;
-	private final String birthplace;
-	private final String religion; // Konfession
-	private final String city; // PLZ und Stadt
-	private final String email;
-	private final String nameOfLegalGuardian;
-	private final String addressOfLegalGuardian;
-	private final String phoneOfLegalGuardian;
+	private final static Logger logger = LoggerFactory.getLogger(Applicant.class);
 
-	public static class StudentBuilder {
-		private String firstName = "";
-		private String surname = "";
-		private String vocation = ""; // Ausbildungsberuf
-		private String specialization = ""; // Fachrichtung
-		private boolean retraining = false; // Umschüler
-		private String startOfTraining; // Ausbildungsbeginn
-		private double DurationOfTraining = 0.0; // Ausbildungsdauer
-		private Date birthday;
-		private String birthplace = "";
-		private String religion = ""; // Konfession
-		private String city = ""; // PLZ und Stadt
-		private String email = "";
-		private String nameOfLegalGuardian = "";
-		private String addressOfLegalGuardian = "";
-		private String phoneOfLegalGuardian = "";
+	private final Map<DataField, Object> applicantData = new HashMap<>();
 
-		public StudentBuilder() {
+	/**
+	 * Collects all data field information and builds Applicant object with this
+	 * data.
+	 * 
+	 * @author Christian Wichmann
+	 */
+	public static class ApplicantBuilder {
+
+		private final Map<DataField, Object> applicantData = new HashMap<>();
+
+		public ApplicantBuilder() {
 		}
 
-		public StudentBuilder firstName(String val) {
-			firstName = val;
-			return this;
-		}
-
-		public StudentBuilder surname(String val) {
-			surname = val;
-			return this;
-		}
-
-		public StudentBuilder vocation(String val) {
-			vocation = val;
-			return this;
-		}
-
-		public StudentBuilder specialization(String val) {
-			specialization = val;
-			return this;
-		}
-
-		public StudentBuilder retraining(boolean val) {
-			retraining = val;
-			return this;
-		}
-
-		public StudentBuilder startOfTraining(String val) {
-			startOfTraining = val;
-			return this;
-		}
-
-		public StudentBuilder DurationOfTraining(double val) {
-			DurationOfTraining = val;
-			return this;
-		}
-
-		public StudentBuilder birthday(Date val) {
-			birthday = val;
-			return this;
-		}
-
-		public StudentBuilder birthplace(String val) {
-			birthplace = val;
-			return this;
-		}
-
-		public StudentBuilder religion(String val) {
-			religion = val;
-			return this;
-		}
-
-		public StudentBuilder city(String val) {
-			city = val;
-			return this;
-		}
-
-		public StudentBuilder email(String val) {
-			email = val;
-			return this;
-		}
-
-		public StudentBuilder nameOfLegalGuardian(String val) {
-			nameOfLegalGuardian = val;
-			return this;
-		}
-
-		public StudentBuilder addressOfLegalGuardian(String val) {
-			addressOfLegalGuardian = val;
-			return this;
-		}
-
-		public StudentBuilder phoneOfLegalGuardian(String val) {
-			phoneOfLegalGuardian = val;
+		public ApplicantBuilder setValue(DataField dataField, Object data) {
+			applicantData.put(dataField, data);
 			return this;
 		}
 
@@ -121,87 +43,17 @@ public class Applicant {
 		}
 	}
 
-	private Applicant(Applicant.StudentBuilder builder) {
-		firstName = builder.firstName;
-		surname = builder.surname;
-		vocation = builder.vocation;
-		specialization = builder.specialization;
-		retraining = builder.retraining;
-		startOfTraining = builder.startOfTraining;
-		DurationOfTraining = builder.DurationOfTraining;
-		birthday = builder.birthday;
-		birthplace = builder.birthplace;
-		religion = builder.religion;
-		city = builder.city;
-		email = builder.email;
-		nameOfLegalGuardian = builder.nameOfLegalGuardian;
-		addressOfLegalGuardian = builder.addressOfLegalGuardian;
-		phoneOfLegalGuardian = builder.phoneOfLegalGuardian;
+	private Applicant(ApplicantBuilder builder) {
+		this.applicantData.putAll(builder.applicantData);
 	}
 
 	@Override
 	public String toString() {
-		return "<" + firstName + " " + surname + ">";
+		return "<" + applicantData.get(DataField.FIRST_NAME) + " " + applicantData.get(DataField.LAST_NAME) + ">";
 	}
 
-	public final String getFirstName() {
-		return firstName;
-	}
-
-	public final String getSurname() {
-		return surname;
-	}
-
-	public final String getVocation() {
-		return vocation;
-	}
-
-	public final String getSpecialization() {
-		return specialization;
-	}
-
-	public final boolean isRetraining() {
-		return retraining;
-	}
-
-	public final String getStartOfTraining() {
-		return startOfTraining;
-	}
-
-	public final double getDurationOfTraining() {
-		return DurationOfTraining;
-	}
-
-	public final Date getBirthday() {
-		return birthday;
-	}
-
-	public final String getBirthplace() {
-		return birthplace;
-	}
-
-	public final String getReligion() {
-		return religion;
-	}
-
-	public final String getCity() {
-		return city;
-	}
-
-	public final String getEmail() {
-		return email;
-	}
-
-	public final String getNameOfLegalGuardian() {
-		return nameOfLegalGuardian;
-	}
-
-	public final String getAddressOfLegalGuardian() {
-		return addressOfLegalGuardian;
-	}
-
-	public final String getPhoneOfLegalGuardian() {
-		return phoneOfLegalGuardian;
+	public final Object getValue(DataField dataField) {
+		return applicantData.get(dataField);
 	}
 
 	/**
@@ -211,37 +63,23 @@ public class Applicant {
 	 * @return true, only if all data is OK
 	 */
 	public boolean checkPlausibility() {
-		Random r = new Random();
-		return r.nextBoolean();
-	}
 
-	public String getStreet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		for (Object o : applicantData.values()) {
+			if (o == null) {
+				logger.warn("Null value in applicant " + toString());
+				return false;
+			}
+		}
 
-	public String getZipCode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		for (Entry<DataField, Object> entry : applicantData.entrySet()) {
+			DataField dataField = entry.getKey();
+			Object value = entry.getValue();
+			if (dataField.isRequired() && (value == null || "".equals(value))) {
+				logger.warn("Required value in applicant " + toString() + " is missing!");
+				return false;
+			}
+		}
 
-	public String getSex() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getReligionText() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getDegree() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getLastSchool() {
-		// TODO Auto-generated method stub
-		return null;
+		return true;
 	}
 }

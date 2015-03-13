@@ -12,7 +12,9 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
@@ -21,7 +23,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import studentImporter.Applicant.StudentBuilder;
+import studentImporter.Applicant.ApplicantBuilder;
 
 /**
  * Imports and evaluates data from PDF forms and creates the Applicant objects
@@ -37,6 +39,11 @@ public final class PdfFormImporter {
 
 	private final List<Applicant> listOfStudents = new ArrayList<Applicant>();
 
+	/**
+	 * Contains for every data field in the PDF file the associated name of that field. 
+	 */
+	private final Map<String, DataField> dataFieldNames = new HashMap<>();
+	
 	/*
 	 * Current field names (2015-03-13):
 	 * 
@@ -79,19 +86,74 @@ public final class PdfFormImporter {
 	 * Btn - Schulabschluss - Schulabschluss - EI
 	 * Tx - SchulabschlussSonstigerErlaeuterung - SchulabschlussSonstigerErlaeuterung - null
 	 */
-	
+
+	private void fillDataFieldNamesDictionary() {
+		dataFieldNames.put("Vorname", DataField.FIRST_NAME);
+		dataFieldNames.put("Name", DataField.LAST_NAME);
+		dataFieldNames.put("Ausbildungsberuf", DataField.VOCATION);
+		dataFieldNames.put("Fachrichtung", DataField.SPECIALIZATION);
+		dataFieldNames.put("Ausbildungsbeginn", DataField.START_OF_TRAINING);
+		dataFieldNames.put("Konfession", DataField.RELIGION);
+		dataFieldNames.put("StraßeNr", DataField.ADDRESS);
+		dataFieldNames.put("Tel", DataField.PHONE);
+		dataFieldNames.put("PLZ", DataField.ZIP_CODE);
+		dataFieldNames.put("Ort", DataField.CITY);
+		dataFieldNames.put("EMail", DataField.EMAIL);
+		dataFieldNames.put("Geburtsdatum", DataField.BIRTHDAY);
+		dataFieldNames.put("Geburtsort", DataField.BIRTHPLACE);
+		dataFieldNames.put("Namen der Erziehungsberechtigten", DataField.NAME_OF_LEGAL_GUARDIAN);
+		dataFieldNames.put("TelEltern", DataField.PHONE_OF_LEGAL_GUARDIAN);
+		dataFieldNames.put("AnschriftEltern", DataField.ADDRESS_OF_LEGAL_GUARDIAN);
+		dataFieldNames.put("BeginnSchulbesuch", DataField.SCHOOL_ATTENDANCE_BEGIN);
+		dataFieldNames.put("EndeSchulbesuch", DataField.SCHOOL_ATTENDANCE_END);
+		dataFieldNames.put("JahreSchulbesuch", DataField.SCHOOL_ATTENDANCE_YEARS);
+		dataFieldNames.put("StraßeNrBetrieb", DataField.COMPANY_ADDRESS);
+		dataFieldNames.put("OrtBetrieb", DataField.COMPANY_CITY);
+		dataFieldNames.put("EMailBetrieb", DataField.COMPANY_CONTACT_MAIL);
+		dataFieldNames.put("TelefonBetrieb", DataField.COMPANY_TELEPHONE);
+		dataFieldNames.put("FaxBetrieb", DataField.COMPANY_FAX);
+		dataFieldNames.put("NameAnsprechpartnerBetrieb", DataField.COMPANY_CONTACT_PERSON);
+		dataFieldNames.put("PLZBetrieb", DataField.COMPANY_ZIP_CODE);
+		dataFieldNames.put("NameBetrieb", DataField.COMPANY_NAME);
+		dataFieldNames.put("Bemerkungen", DataField.NOTES);
+
+		/*
+		 * The following fields do not contain text strings or have to be
+		 * evaluated otherwise:
+		 * 
+		 * DauerAusbildung: Has to be parsed as decimal number and multiplicated
+		 * by 12 to get month.
+		 * 
+		 * ErlaeuterungBFS - SonstigesSchulabschluss: Stored as additional info
+		 * in School Enum.
+		 * 
+		 * SchulabschlussSonstigerErlaeuterung: Stored as additional info in
+		 * Degree Enum.
+		 * 
+		 * Formular drucken - Senden: Ignored because control buttons.
+		 * 
+		 * Umschueler (UmschuelerNein, UmschuelerJa), Geschlecht (m, w): Binary
+		 * choices that have to be evaluated.
+		 * 
+		 * SchulbesuchBisher (RS), Schulabschluss(EI)
+		 */
+	}
+
 	public PdfFormImporter(Path directory) {
 
+		fillDataFieldNamesDictionary();
+
 		// find all PDF files and parse them
-		PathMatcher matcher = FileSystems.getDefault().getPathMatcher(
-				"glob:*.pdf");
-		try (DirectoryStream<Path> directoryStream = Files
-				.newDirectoryStream(directory)) {
+		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.pdf");
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
 			for (Path path : directoryStream) {
 				if (matcher.matches(path.getFileName())) {
 					logger.info("Found PDF file: " + path);
 					// parse every PDF file in given directory
-					listOfStudents.add(parsePDFFile(path));
+					Applicant a = parsePDFFile(path);
+					if (a != null) {
+						listOfStudents.add(a);
+					}
 				}
 			}
 		} catch (IOException ex) {
@@ -99,6 +161,15 @@ public final class PdfFormImporter {
 		}
 	}
 
+	/**
+	 * Parses a single PDF file defined by a given Path. If the PDF file
+	 * contains no form fields and has no useable data, null is returned to the
+	 * caller!
+	 * 
+	 * @param path
+	 *            path describing the PDF file to be parsed
+	 * @return applicants data or null, if file did not contain any form fields
+	 */
 	private Applicant parsePDFFile(Path path) {
 
 		PDDocument pdfDocument = null;
@@ -109,56 +180,146 @@ public final class PdfFormImporter {
 
 			PDDocumentCatalog docCatalog = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = docCatalog.getAcroForm();
-			@SuppressWarnings("unchecked")
-			List<PDField> formFields = Collections.checkedList(
-					acroForm.getFields(), PDField.class);
+			if (acroForm != null) {
+				@SuppressWarnings("unchecked")
+				List<PDField> formFields = Collections.checkedList(acroForm.getFields(), PDField.class);
 
-			StudentBuilder builder = new StudentBuilder();
-			for (PDField pdField : formFields) {
-				if (pdField.getValue() == null) {
-					continue;
-				}
-				switch (pdField.getFullyQualifiedName()) {
-				case "Formular drucken":
-				case "Senden":
-					// skip fields that are control buttons inside the PDF
-					// document
-					break;
-				case "Name":
-					builder.surname(pdField.getValue());
-					break;
-				case "Vorname":
-					builder.firstName(pdField.getValue());
-					break;
-				case "Ausbildungsberuf":
-					builder.vocation(pdField.getValue());
-					break;
-				case "Fachrichtung":
-					builder.specialization(pdField.getValue());
-					break;
-				case "ja": // case "nein" is not explicitly tested
-					if ("On".equals(pdField.getValue())) {
-						builder.retraining(true);
+				ApplicantBuilder builder = new ApplicantBuilder();
+				for (PDField pdField : formFields) {
+					// ignore useless fields in PDF file
+					if ("Formular drucken".equals(pdField.getValue()) || "Senden".equals(pdField.getValue())) {
+						continue;
 					}
-					break;
-				case "Ausbildungsbeginn":
-					builder.startOfTraining(pdField.getValue());
-					break;
-				case "Ausbildungsdauer":
-					builder.DurationOfTraining(Double.parseDouble(pdField
-							.getValue().replace(",", ".")));
-					break;
+					// get all plain string elements and store them in builder
+					if (dataFieldNames.containsKey(pdField.getFullyQualifiedName())) {
+						DataField df = dataFieldNames.get(pdField.getFullyQualifiedName());
+						if (pdField.getValue() != null) {
+							// TODO When " þÿ" please do not use! (BOM)
+							if ("þÿ".equals(pdField.getValue())) {
+								builder.setValue(df, "");
+							} else {
+								builder.setValue(df, pdField.getValue());
+							}
+						} else {
+							builder.setValue(df, "");
+						}
+					}
+					// get duration of training
+					if ("DauerAusbildung".equals(pdField.getFullyQualifiedName())) {
+						if (pdField.getValue() != null) {
+							Integer i = Double.valueOf(pdField.getValue().replace(",", ".")).intValue();
+							builder.setValue(DataField.DURATION_OF_TRAINING, i);
+						} else {
+							builder.setValue(DataField.DURATION_OF_TRAINING, 0);
+						}
+					}
+					// get gender and whether applicant is in a retraining
+					if ("Umschueler".equals(pdField.getFullyQualifiedName())) {
+						boolean retraining = false;
+						if ("UmschuelerNein".equals(pdField.getValue())) {
+							retraining = false;
+						} else if ("UmschuelerJa".equals(pdField.getValue())) {
+							retraining = true;
+						}
+						builder.setValue(DataField.RETRAINING, retraining);
+					}
+					if ("Geschlecht".equals(pdField.getFullyQualifiedName())) {
+						if ("m".equals(pdField.getValue())) {
+							builder.setValue(DataField.GENDER, pdField.getValue());
+						} else if ("w".equals(pdField.getValue())) {
+							builder.setValue(DataField.GENDER, pdField.getValue());
+						} else {
+							logger.warn("Invalid gender!");
+							assert false : "Invalid gender chosen!";
+						}
+					}
+					// get attended school
+					if ("SchulbesuchBisher".equals(pdField.getFullyQualifiedName())) {
+						// TODO Read field ErlaeuterungBFS -
+						// SonstigesSchulabschluss
+						School schoolType = School.SONSTIGES;
+						if (pdField.getValue() != null) {
+							switch (pdField.getValue()) {
+							case "RS":
+								schoolType = School.REALSCHULE;
+								break;
+							case "HS":
+								schoolType = School.HAUPTSCHULE;
+								break;
+							case "GYM???":
+								schoolType = School.GYMNASIUM;
+								break;
+							case "B1":
+								schoolType = School.BERUFSFACHSCHULE;
+								break;
+							case "BS":
+								schoolType = School.BERUFSSCHULE;
+								break;
+							case "GS???":
+								schoolType = School.GESAMTSCHULE;
+								break;
+							case "OS???":
+								schoolType = School.OBERSCHULE;
+								break;
+							case "FO":
+								schoolType = School.FACHOBERSCHULE;
+								break;
+							case "Förder":
+								schoolType = School.FOERDERSCHULE;
+								break;
+							case "Sonstiges???":
+								schoolType = School.SONSTIGES;
+								break;
+							default:
+								logger.warn("Invalid school type: " + pdField.getValue());
+								assert false : "No attended school chosen!";
+							}
+						}
+						builder.setValue(DataField.SCHOOL, schoolType);
+					}
+					// get last degree
+					if ("Schulabschluss".equals(pdField.getFullyQualifiedName())) {
+						// TODO Read field SchulabschlussSonstigerErlaeuterung
+						Degree degree = Degree.SONSTIGES;
+						if (pdField.getValue() != null) {
+							switch (pdField.getValue()) {
+							case "HA":
+								degree = Degree.SEKUNDAR_I_HAUPTSCHULE;
+								break;
+							case "SI":
+								degree = Degree.SEKUNDAR_I_REALSCHULE;
+								break;
+							case "EI":
+								degree = Degree.ERWEITERTER_SEKUNDAR_I;
+								break;
+							case "FH":
+								degree = Degree.FACHHOCHSCHULREIFE;
+								break;
+							case "HS":
+								degree = Degree.ALLGEMEINE_HOCHSCHULEREIFE;
+								break;
+							case "??":
+								degree = Degree.OHNE_ABSCHLUSS;
+								break;
+							case "XS":
+								degree = Degree.SONSTIGES;
+								break;
+							default:
+								logger.warn("Invalid degree type: " + pdField.getValue());
+								assert false : "No attended school chosen!";
+							}
+						}
+						builder.setValue(DataField.DEGREE, degree);
+					}
+
+					logger.info(pdField.getFieldType() + " - " + pdField.getFullyQualifiedName() + " - " + pdField.getPartialName() + " - "
+							+ pdField.getValue());
 				}
+				student = builder.build();
+				logger.info("Added student registration: " + student);
 
-				logger.debug(pdField.getFieldType() + " - "
-						+ pdField.getFullyQualifiedName() + " - "
-						+ pdField.getPartialName() + " - " + pdField.getValue());
+				pdfDocument.close();
 			}
-			student = builder.build();
-			logger.info("Added student registration: " + student);
-
-			pdfDocument.close();
-
 		} catch (IOException e) {
 			logger.warn("Could not open PDF file.");
 		}

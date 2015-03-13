@@ -8,28 +8,28 @@ public class ApplicantInformationTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = -2207776647966374826L;
 
-	private List<Applicant> listOfStudents;
+	private List<Applicant> listOfApplicants;
 
-	public ApplicantInformationTableModel(List<Applicant> listOfStudents) {
+	public ApplicantInformationTableModel(List<Applicant> listOfApplicants) {
 
-		this.listOfStudents = listOfStudents;// Applicant is
+		this.listOfApplicants = listOfApplicants;
 	}
 
 	/**
-	 * Returns the Student object for a given row of the table containing all
-	 * data of that student.
+	 * Returns the Applicant object for a given row of the table containing all
+	 * data of that applicant.
 	 * 
 	 * @param rowIndex
-	 *            index of row to get Student data for
-	 * @return Student object with students data
+	 *            index of row to get Applicant data for
+	 * @return Applicant object with applicant data
 	 */
-	public Applicant getStudentForRow(int rowIndex) {
-		return listOfStudents.get(rowIndex);
+	public Applicant getApplicantForRow(int rowIndex) {
+		return listOfApplicants.get(rowIndex);
 	}
 
 	@Override
 	public int getRowCount() {
-		return listOfStudents.size();
+		return listOfApplicants.size();
 	}
 
 	@Override
@@ -39,27 +39,24 @@ public class ApplicantInformationTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Applicant chosenStudent = listOfStudents.get(rowIndex);
+		Applicant chosenApplicant = listOfApplicants.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			return chosenStudent.getSurname();
+			return chosenApplicant.getValue(DataField.LAST_NAME);
 		case 1:
-			return chosenStudent.getFirstName();
+			return chosenApplicant.getValue(DataField.FIRST_NAME);
 		case 2:
-			return chosenStudent.getVocation();
+			return chosenApplicant.getValue(DataField.VOCATION);
 		case 3:
-			return chosenStudent.getSpecialization();
+			return chosenApplicant.getValue(DataField.SPECIALIZATION);
 		case 4:
-			return chosenStudent.getBirthday();
+			return chosenApplicant.getValue(DataField.BIRTHDAY);
 		case 5:
-			return chosenStudent.getBirthplace();
+			return chosenApplicant.getValue(DataField.BIRTHPLACE);
 		case 6:
-			return chosenStudent.getEmail();
+			return chosenApplicant.getValue(DataField.EMAIL);
 		case 7:
-			// JCheckBox retrainingCheckBox = new JCheckBox("",
-			// chosenStudent.isRetraining());
-			// return retrainingCheckBox;
-			return chosenStudent.isRetraining();
+			return chosenApplicant.getValue(DataField.RETRAINING);
 		default:
 			return "";
 		}

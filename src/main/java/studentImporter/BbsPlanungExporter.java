@@ -13,40 +13,27 @@ import org.slf4j.LoggerFactory;
 
 public class BbsPlanungExporter {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(BbsPlanungExporter.class);
+	private final static Logger logger = LoggerFactory.getLogger(BbsPlanungExporter.class);
 
 	// set delimiter for end-of-line and between fields
 	private static final String NEW_LINE_SEPARATOR = "\r\n";
 	private static final char FIELD_DELIMITER = ';';
-	
+
 	// set all header for fields in CSV file
-	private static final Object[] FILE_HEADER = { "SNR", "KL_NAME", "LFD",
-			"STATUS", "NR_SCHÜLER", "NNAME", "VNAME", "GEBDAT", "GEBORT",
-			"STR", "PLZ", "ORT", "TEL", "FAX", "LDK", "LDK_Z", "LANDKREIS",
-			"EMAIL", "GESCHLECHT", "KONF", "KONF_TEXT", "STAAT", "FAMSTAND",
-			"SFO", "TAKURZ", "KLST", "ORG", "DAUER", "TAKLSTORG", "SFOTEXT",
-			"TALANG", "ORG_N", "A", "BG", "BG_SFO", "BG_BFELD", "BG_FREI",
-			"BG_KLST", "BG_ORG", "BG_DAUER", "P_FAKTOR", "KO", "EINTR_DAT",
-			"AUSB_BEGDAT", "A_DAUER", "A_ENDEDAT", "ANRECH_BGJ", "WIEDERHOL",
-			"ABSCHLUSS", "HERKUNFT", "HER_ZUSATZ", "FH_Z", "SCHULPFLICHT",
-			"N_DE", "HER_B", "BL_SOLL", "LM_M", "LM_Z", "LM_DAT", "UM",
-			"A_AMT", "A_BEZIRK", "BETRAG", "BETRAG_G", "BAFOEG", "E_ANREDE",
-			"E_NNAME", "E_VNAME", "E_STR", "E_PLZ", "E_ORT", "E_TEL", "E_FAX",
-			"E_LDK", "E_EMAIL", "E_ANREDE2", "E_NNAME2", "E_VNAME2", "E_STR2",
-			"E_PLZ2", "E_ORT2", "E_TEL2", "E_FAX2", "E_LDK2", "E_EMAIL2",
-			"BETRIEB_NR", "BETRIEB_NR2", "BETRIEB_NR3", "BETRIEB_NR4",
-			"BEMERK", "KENNUNG1", "KENNUNG2", "KENNUNG3", "KENNUNG4",
-			"KENNUNG5", "KENNUNG6", "DATUM1", "DATUM2", "LML1", "BEW_W",
-			"BEW_E", "PRIO1", "PRIO1_SNR", "PRIO1_KOR", "PRIO1_RANG",
-			"PRIO1_ZU", "PRIO2", "PRIO2_SNR", "PRIO2_KOR", "PRIO2_RANG",
-			"PRIO2_ZU", "PRIO3", "PRIO3_SNR", "PRIO3_KOR", "PRIO3_RANG",
-			"PRIO3_ZU", "PRIO4", "PRIO4_SNR", "PRIO4_KOR", "PRIO4_RANG",
-			"PRIO4_ZU", "PRIO5", "PRIO5_SNR", "PRIO5_KOR", "PRIO5_RANG",
-			"PRIO5_ZU", "VN1", "VN2", "VN3", "VN4", "VN5", "VN6", "VN7", "VN8",
-			"VN9", "VN10", "VN11", "VN12", "VN_S", "VN_S1", "VN_S2", "VN_S3",
-			"VN_S4", "VN_S5", "ZUSAGE", "ZUSAGE_BG", "ZUSAGE_SNR", "AS",
-			"SNR1", "SNR2", "ZU", "MARKE", "FEHLER", "IDENT", "TEL_HANDY" };
+	private static final Object[] FILE_HEADER = { "SNR", "KL_NAME", "LFD", "STATUS", "NR_SCHÜLER", "NNAME", "VNAME", "GEBDAT", "GEBORT",
+			"STR", "PLZ", "ORT", "TEL", "FAX", "LDK", "LDK_Z", "LANDKREIS", "EMAIL", "GESCHLECHT", "KONF", "KONF_TEXT", "STAAT",
+			"FAMSTAND", "SFO", "TAKURZ", "KLST", "ORG", "DAUER", "TAKLSTORG", "SFOTEXT", "TALANG", "ORG_N", "A", "BG", "BG_SFO",
+			"BG_BFELD", "BG_FREI", "BG_KLST", "BG_ORG", "BG_DAUER", "P_FAKTOR", "KO", "EINTR_DAT", "AUSB_BEGDAT", "A_DAUER", "A_ENDEDAT",
+			"ANRECH_BGJ", "WIEDERHOL", "ABSCHLUSS", "HERKUNFT", "HER_ZUSATZ", "FH_Z", "SCHULPFLICHT", "N_DE", "HER_B", "BL_SOLL", "LM_M",
+			"LM_Z", "LM_DAT", "UM", "A_AMT", "A_BEZIRK", "BETRAG", "BETRAG_G", "BAFOEG", "E_ANREDE", "E_NNAME", "E_VNAME", "E_STR",
+			"E_PLZ", "E_ORT", "E_TEL", "E_FAX", "E_LDK", "E_EMAIL", "E_ANREDE2", "E_NNAME2", "E_VNAME2", "E_STR2", "E_PLZ2", "E_ORT2",
+			"E_TEL2", "E_FAX2", "E_LDK2", "E_EMAIL2", "BETRIEB_NR", "BETRIEB_NR2", "BETRIEB_NR3", "BETRIEB_NR4", "BEMERK", "KENNUNG1",
+			"KENNUNG2", "KENNUNG3", "KENNUNG4", "KENNUNG5", "KENNUNG6", "DATUM1", "DATUM2", "LML1", "BEW_W", "BEW_E", "PRIO1", "PRIO1_SNR",
+			"PRIO1_KOR", "PRIO1_RANG", "PRIO1_ZU", "PRIO2", "PRIO2_SNR", "PRIO2_KOR", "PRIO2_RANG", "PRIO2_ZU", "PRIO3", "PRIO3_SNR",
+			"PRIO3_KOR", "PRIO3_RANG", "PRIO3_ZU", "PRIO4", "PRIO4_SNR", "PRIO4_KOR", "PRIO4_RANG", "PRIO4_ZU", "PRIO5", "PRIO5_SNR",
+			"PRIO5_KOR", "PRIO5_RANG", "PRIO5_ZU", "VN1", "VN2", "VN3", "VN4", "VN5", "VN6", "VN7", "VN8", "VN9", "VN10", "VN11", "VN12",
+			"VN_S", "VN_S1", "VN_S2", "VN_S3", "VN_S4", "VN_S5", "ZUSAGE", "ZUSAGE_BG", "ZUSAGE_SNR", "AS", "SNR1", "SNR2", "ZU", "MARKE",
+			"FEHLER", "IDENT", "TEL_HANDY" };
 
 	public BbsPlanungExporter(Path file, List<Applicant> listOfStudents) {
 
@@ -55,8 +42,7 @@ public class BbsPlanungExporter {
 		CSVPrinter csvFilePrinter = null;
 
 		// Create the CSVFormat object with "\n" as a record delimiter
-		CSVFormat csvFileFormat = CSVFormat.DEFAULT
-				.withRecordSeparator(NEW_LINE_SEPARATOR).withDelimiter(FIELD_DELIMITER);
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR).withDelimiter(FIELD_DELIMITER);
 
 		try {
 			// initialize FileWriter object
@@ -67,7 +53,7 @@ public class BbsPlanungExporter {
 
 			// create CSV file header
 			csvFilePrinter.printRecord(FILE_HEADER);
-
+			
 			// write a new student object list to the CSV file
 			int index = 1;
 			for (Applicant student : listOfStudents) {
@@ -78,23 +64,24 @@ public class BbsPlanungExporter {
 				studentDataRecord.add(""); // Status
 				studentDataRecord.add(String.valueOf(index)); // Schülernummer
 				index++;
-				studentDataRecord.add(student.getSurname()); // Nachname
-				studentDataRecord.add(student.getFirstName()); // Vorname
-				studentDataRecord.add(String.valueOf(student.getBirthday())); // Geburtstag
-				studentDataRecord.add(student.getStreet()); // Strasse,
-															// Hausnummer
-				studentDataRecord.add(student.getZipCode()); // PLZ
-				studentDataRecord.add(student.getCity()); // Ort
-				studentDataRecord.add(student.getBirthplace()); // Telefon
-				studentDataRecord.add(student.getBirthplace()); // Fax
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.LAST_NAME))); // Nachname
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.FIRST_NAME))); // Vorname
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.BIRTHDAY))); // Geburtstag
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.BIRTHPLACE))); // Geburtsort
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.ADDRESS))); // Strasse, Hausnummer
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.ZIP_CODE))); // PLZ
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.CITY))); // Ort
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.PHONE))); // Telefon
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.FAX))); // Fax
 				studentDataRecord.add("404"); // LDK
 				studentDataRecord.add(""); // LDK_Z
 				studentDataRecord.add("404"); // Landkreis
 				// TODO get Landkreisnummer from zip code?
-				studentDataRecord.add(student.getEmail()); // E-Mail-Adresse
-				studentDataRecord.add(student.getSex()); // Geschlecht
-				studentDataRecord.add(student.getReligion()); // Konfession
-				studentDataRecord.add(student.getReligionText()); // Konfession-Text
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.EMAIL))); // E-Mail-Adresse
+				String gender = "m".equals(student.getValue(DataField.GENDER)) ? "1" : "2";
+				studentDataRecord.add(gender); // Geschlecht
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.RELIGION))); // Konfession
+				studentDataRecord.add(""); // Konfession-Text
 				studentDataRecord.add("000"); // Staatszugehörigkeit
 				studentDataRecord.add(""); // Familienstand
 				studentDataRecord.add(""); // SFO
@@ -116,16 +103,15 @@ public class BbsPlanungExporter {
 				studentDataRecord.add(""); // BG_DAUER
 				studentDataRecord.add(""); // P_FAKTOR
 				studentDataRecord.add(""); // KO
-				studentDataRecord.add(student.getStartOfTraining()); // EINTR_DAT
-				studentDataRecord.add(student.getStartOfTraining()); // AUSB_BEGDAT
-				studentDataRecord.add(String.valueOf(student
-						.getDurationOfTraining() * 12)); // A_DAUER
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.START_OF_TRAINING))); // EINTR_DAT
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.START_OF_TRAINING))); // AUSB_BEGDAT
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.DURATION_OF_TRAINING))); // A_DAUER
 				studentDataRecord.add(""); // A_ENDEDAT
 				// TODO calculate end date for vocational training
 				studentDataRecord.add(""); // ANRECH_BGJ
 				studentDataRecord.add(""); // WIEDERHOL
-				studentDataRecord.add(student.getDegree()); // ABSCHLUSS
-				studentDataRecord.add(student.getLastSchool()); // HERKUNFT
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.DEGREE))); // ABSCHLUSS
+				studentDataRecord.add(String.valueOf(student.getValue(DataField.SCHOOL))); // HERKUNFT
 				studentDataRecord.add(""); // HER_ZUSATZ
 				studentDataRecord.add(""); // FH_Z
 				studentDataRecord.add(""); // SCHULPFLICHT
@@ -135,7 +121,8 @@ public class BbsPlanungExporter {
 				studentDataRecord.add(""); // LM_M
 				studentDataRecord.add(""); // LM_Z
 				studentDataRecord.add(""); // LM_DAT
-				studentDataRecord.add(student.isRetraining() ? "J" : "N"); // UM
+				boolean r = DataField.RETRAINING.getFrom(student);
+				studentDataRecord.add(r ? "J" : "N"); // UM
 				studentDataRecord.add(""); // A_AMT
 				studentDataRecord.add(""); // A_BEZIRK
 				studentDataRecord.add(""); // BETRAG
@@ -236,7 +223,7 @@ public class BbsPlanungExporter {
 
 			logger.info("CSV file was created successfully.");
 
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.warn("Could not write to CSV file.");
 
 		} finally {
