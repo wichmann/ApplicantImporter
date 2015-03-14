@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -48,9 +49,9 @@ public class ApplicantImporterMain extends JFrame {
 	private JButton exportCsvButton = null;
 	private JButton clearTableButton = null;
 	private JTable applicantInformationTable = null;
+	private JCheckBoxMenuItem exportInvalidApplicantsMenuItem;
 
 	private PdfFormImporter importer = null;
-	private BbsPlanungExporter exporter = null;
 
 	private List<Applicant> listOfApplicants;
 
@@ -96,12 +97,10 @@ public class ApplicantImporterMain extends JFrame {
 			private static final long serialVersionUID = -5076459486279170507L;
 
 			/**
-			 * Overrides the default method from JTable and adds only the
-			 * coloring of rows that contain invalid information. This is easier
+			 * Overrides the default method from JTable and adds only the coloring of rows that contain invalid information. This is easier
 			 * than creating a new TableCellRenderer to handles this!
 			 * 
-			 * Source:
-			 * https://tips4java.wordpress.com/2010/01/24/table-row-rendering/
+			 * Source: https://tips4java.wordpress.com/2010/01/24/table-row-rendering/
 			 */
 			@Override
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -169,6 +168,11 @@ public class ApplicantImporterMain extends JFrame {
 		fileMenu.getAccessibleContext().setAccessibleDescription("Datei-Menü");
 		menuBar.add(fileMenu);
 
+		exportInvalidApplicantsMenuItem = new JCheckBoxMenuItem("Unvollständige Bewerber exportieren");
+		exportInvalidApplicantsMenuItem.setMnemonic(KeyEvent.VK_U);
+		exportInvalidApplicantsMenuItem.setSelected(true);
+		fileMenu.add(exportInvalidApplicantsMenuItem);
+		fileMenu.addSeparator();
 		quitMenuItem = new JMenuItem("Beenden", KeyEvent.VK_B);
 		quitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 		quitMenuItem.getAccessibleContext().setAccessibleDescription("Beenden des Programms");
@@ -258,9 +262,8 @@ public class ApplicantImporterMain extends JFrame {
 	}
 
 	/**
-	 * Shows a file selection dialog to chose a directory. Imports all PDF file
-	 * in that given directory and shows a message box informing the user about
-	 * it.
+	 * Shows a file selection dialog to chose a directory. Imports all PDF file in that given directory and shows a message box informing
+	 * the user about it.
 	 */
 	private void doImportFromDirectory() {
 		JFileChooser chooser = new JFileChooser();
@@ -270,10 +273,10 @@ public class ApplicantImporterMain extends JFrame {
 		int returnValue = chooser.showOpenDialog(ApplicantImporterMain.this);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			importFromDirectory(chooser.getSelectedFile());
+			String s = String.format("<html>Aus dem Verzeichnis <strong>%s</strong> wurden %d Bewerber importiert.</html>", chooser
+					.getSelectedFile().getName(), listOfApplicants.size());
+			JOptionPane.showMessageDialog(this, s, "Import erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 		}
-		String s = String.format("<html>Aus dem Verzeichnis <strong>%s</strong> wurden %d Bewerber importiert.</html>", chooser
-				.getSelectedFile().getName(), listOfApplicants.size());
-		JOptionPane.showMessageDialog(this, s, "Import erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void importFromDirectory(File selectedFile) {
@@ -283,8 +286,7 @@ public class ApplicantImporterMain extends JFrame {
 	}
 
 	/**
-	 * Shows a file selection dialog to chose a output file. Exports all
-	 * applicants data to this file as CSV format and shows a message box
+	 * Shows a file selection dialog to chose a output file. Exports all applicants data to this file as CSV format and shows a message box
 	 * informing the user about it.
 	 */
 	private void doExportToFile() {
@@ -292,13 +294,15 @@ public class ApplicantImporterMain extends JFrame {
 		chooser.setDialogTitle("Datei für exportierte Daten auswählen...");
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setAcceptAllFileFilterUsed(false);
+
 		int returnValue = chooser.showSaveDialog(ApplicantImporterMain.this);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
-			exporter = new BbsPlanungExporter(chooser.getSelectedFile().toPath(), listOfApplicants);
+			BbsPlanungExporter exporter = new BbsPlanungExporter(chooser.getSelectedFile().toPath(), listOfApplicants,
+					exportInvalidApplicantsMenuItem.isSelected());
+			String s = String.format("<html>%d Bewerber in die Datei <strong>%s</strong> exportiert.</html>",
+					exporter.getNumberExportedApplicants(), chooser.getSelectedFile().getName());
+			JOptionPane.showMessageDialog(this, s, "Export erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 		}
-		String s = String.format("<html>%d Bewerber in die Datei <strong>%s</strong> exportiert.</html>", listOfApplicants.size(), chooser
-				.getSelectedFile().getName());
-		JOptionPane.showMessageDialog(this, s, "Export erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public static void main(String[] args) {

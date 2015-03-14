@@ -2,30 +2,32 @@ package studentImporter;
 
 public enum Degree {
 
-	OHNE_ABSCHLUSS(0),
+	OHNE_ABSCHLUSS("OA"),
 
-	SEKUNDAR_I_HAUPTSCHULE(0),
+	SEKUNDAR_I_HAUPTSCHULE("HA"),
 
-	SEKUNDAR_I_REALSCHULE(0),
+	SEKUNDAR_I_REALSCHULE("SI"),
 
-	ERWEITERTER_SEKUNDAR_I(0),
+	ERWEITERTER_SEKUNDAR_I("EI"),
 
-	FACHHOCHSCHULREIFE(0),
+	FACHHOCHSCHULREIFE("FH"),
 
-	ALLGEMEINE_HOCHSCHULEREIFE(0),
+	ALLGEMEINE_HOCHSCHULEREIFE("AH"),
 
-	SONSTIGES(0);
+	SONSTIGES("");
 
-	private final int id;
+	private final String id;
 
-	private Degree(int id) {
+	private Degree(String id) {
 		this.id = id;
 	}
 
 	/**
-	 * @return the id
+	 * Returns the ID identifying the achieved degree in the BBS-Planung software.
+	 * 
+	 * @return id of achieved degree
 	 */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 }

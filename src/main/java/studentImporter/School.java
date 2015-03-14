@@ -2,36 +2,38 @@ package studentImporter;
 
 public enum School {
 
-	FOERDERSCHULE(0),
+	FOERDERSCHULE(""),
 
-	HAUPTSCHULE(0),
+	HAUPTSCHULE(""),
 
-	REALSCHULE(0),
+	REALSCHULE(""),
 
-	OBERSCHULE(0),
+	OBERSCHULE(""),
 
-	GESAMTSCHULE(0),
+	GESAMTSCHULE("IG"),
 
-	GYMNASIUM(0),
+	GYMNASIUM(""),
 
-	FACHOBERSCHULE(0),
+	FACHOBERSCHULE(""),
 
-	BERUFSSCHULE(0),
+	BERUFSSCHULE(""),
 
-	BERUFSFACHSCHULE(0),
+	BERUFSFACHSCHULE(""),
 
-	SONSTIGES(0);
+	SONSTIGES("");
 
-	private final int id;
+	private final String id;
 
-	private School(int id) {
+	private School(String id) {
 		this.id = id;
 	}
 
 	/**
-	 * @return the id
+	 * Returns the ID identifying the school type in the BBS-Planung software.
+	 * 
+	 * @return id of school type
 	 */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 }
