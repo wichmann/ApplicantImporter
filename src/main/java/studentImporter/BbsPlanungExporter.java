@@ -1,7 +1,6 @@
 package studentImporter;
 
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
@@ -52,7 +51,7 @@ public class BbsPlanungExporter {
 			// open file to write to
 			FileOutputStream fos = new FileOutputStream(file.toFile());
 			osw = new OutputStreamWriter(fos, Charset.forName("ISO-8859-15").newEncoder());
-			
+
 			// initialize CSVPrinter object
 			csvFilePrinter = new CSVPrinter(osw, csvFileFormat);
 
@@ -235,15 +234,15 @@ public class BbsPlanungExporter {
 			}
 
 			numberExportedApplicants = index - 1;
-			logger.info(String.format("%d applicants sucessfully exported to CSV file.", index));
+			logger.info(String.format("%d applicants sucessfully exported to CSV file.", index - 1));
 
 		} catch (IOException e) {
 			logger.warn("Could not write to CSV file.");
 
 		} finally {
 			try {
-				//osw.flush();
-				//osw.close();
+				osw.flush();
+				osw.close();
 				csvFilePrinter.close();
 			} catch (IOException e) {
 				logger.error("Error while flushing/closing fileWriter/csvPrinter !!!");

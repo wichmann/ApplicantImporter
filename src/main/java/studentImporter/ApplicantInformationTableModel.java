@@ -1,6 +1,8 @@
 package studentImporter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -10,14 +12,23 @@ public class ApplicantInformationTableModel extends AbstractTableModel {
 
 	private List<Applicant> listOfApplicants;
 
+	private Map<Integer, DataField> columns;
+
 	public ApplicantInformationTableModel(List<Applicant> listOfApplicants) {
 
 		this.listOfApplicants = listOfApplicants;
+		columns = new HashMap<>();
+		columns.put(0, DataField.LAST_NAME);
+		columns.put(1, DataField.FIRST_NAME);
+		columns.put(2, DataField.BIRTHDAY);
+		columns.put(3, DataField.VOCATION);
+		columns.put(4, DataField.SPECIALIZATION);
+		columns.put(5, DataField.COMPANY_NAME);
+		columns.put(6, DataField.RETRAINING);
 	}
 
 	/**
-	 * Returns the Applicant object for a given row of the table containing all
-	 * data of that applicant.
+	 * Returns the Applicant object for a given row of the table containing all data of that applicant.
 	 * 
 	 * @param rowIndex
 	 *            index of row to get Applicant data for
@@ -34,69 +45,33 @@ public class ApplicantInformationTableModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 8;
+		return columns.size();
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
+		assert columnIndex < columns.size() : "Given column does not exists!";
 		Applicant chosenApplicant = listOfApplicants.get(rowIndex);
-		switch (columnIndex) {
-		case 0:
-			return chosenApplicant.getValue(DataField.LAST_NAME);
-		case 1:
-			return chosenApplicant.getValue(DataField.FIRST_NAME);
-		case 2:
-			return chosenApplicant.getValue(DataField.VOCATION);
-		case 3:
-			return chosenApplicant.getValue(DataField.SPECIALIZATION);
-		case 4:
-			return chosenApplicant.getValue(DataField.BIRTHDAY);
-		case 5:
-			return chosenApplicant.getValue(DataField.BIRTHPLACE);
-		case 6:
-			return chosenApplicant.getValue(DataField.EMAIL);
-		case 7:
-			return chosenApplicant.getValue(DataField.RETRAINING);
-		default:
-			return "";
-		}
+		return chosenApplicant.getValue(columns.get(columnIndex));
 	}
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		if (columnIndex == 7) {
-			return Boolean.class;
-		} else {
-			return Object.class;
-		}
+		return columns.get(columnIndex).getTypeOfDataField();
 	}
 
 	@Override
 	public String getColumnName(int col) {
-		switch (col) {
-		case 0:
-			return "Name";
-		case 1:
-			return "Vorname";
-		case 2:
-			return "Ausbildungsberufe";
-		case 3:
-			return "Vertiefungsrichtung";
-		case 4:
-			return "Geburtstag";
-		case 5:
-			return "Geburtsort";
-		case 6:
-			return "E-Mail";
-		case 7:
-			return "Umschüler";
-		default:
-			return "";
-		}
+		return columns.get(col).getDescription();
 	}
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
 		return false;
+	}
+
+	public void removeRow(int row) {
+		listOfApplicants.remove(row);
+		fireTableDataChanged();
 	}
 }

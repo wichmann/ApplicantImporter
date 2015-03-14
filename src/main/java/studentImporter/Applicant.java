@@ -1,6 +1,8 @@
 package studentImporter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -80,5 +82,11 @@ public class Applicant {
 		}
 
 		return true;
+	}
+	
+	public List<DataField> getInvalidDataFields(){
+		List<DataField> invalidFields = new ArrayList<>();
+		// TODO Implement this method!
+		return invalidFields;
 	}
 }

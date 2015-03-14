@@ -14,9 +14,13 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -62,6 +66,8 @@ public class ApplicantImporterMain extends JFrame {
 		initialize();
 
 		addListener();
+
+		addKeyBindings();
 	}
 
 	private void initialize() {
@@ -69,7 +75,7 @@ public class ApplicantImporterMain extends JFrame {
 		setTitle("BewerberImporter");
 		setName("ApplicantImporter");
 		setIconImage(new ImageIcon(getClass().getResource("/icons/icon.png")).getImage());
-		setLocationRelativeTo(null);
+		// setLocationRelativeTo(null);
 		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(buildMenuBar());
@@ -106,12 +112,13 @@ public class ApplicantImporterMain extends JFrame {
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
 				Component c = super.prepareRenderer(renderer, row, column);
 
+				row = applicantInformationTable.convertRowIndexToModel(row);
 				if (!isRowSelected(row)) {
 					// color row in alternating colors
 					c.setBackground(row % 2 == 0 ? getBackground() : Color.LIGHT_GRAY);
-					// color row depending on the underlining data and if it is
-					// plausible
-					Applicant s = ((ApplicantInformationTableModel) getModel()).getApplicantForRow(row);
+					// color row depending on the underlining data and if it is plausible
+					ApplicantInformationTableModel model = (ApplicantInformationTableModel) (applicantInformationTable.getModel());
+					Applicant s = model.getApplicantForRow(row);
 					if (!s.checkPlausibility()) {
 						c.setBackground(ALARM_COLOR);
 					}
@@ -121,6 +128,10 @@ public class ApplicantImporterMain extends JFrame {
 			}
 		};
 		applicantInformationTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		applicantInformationTable.setAutoCreateRowSorter(true);
+		// applicantInformationTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		// TableColumnAdjuster tca = new TableColumnAdjuster(applicantInformationTable);
+		// tca.adjustColumns();
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridheight = 1;
@@ -237,6 +248,28 @@ public class ApplicantImporterMain extends JFrame {
 					JOptionPane.showMessageDialog(ApplicantImporterMain.this, applicant, "Zeile ausgewählt",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
+			}
+		});
+	}
+
+	private void addKeyBindings() {
+		InputMap inputMap = applicantInformationTable.getInputMap(JComponent.WHEN_FOCUSED);
+		ActionMap actionMap = applicantInformationTable.getActionMap();
+
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
+		actionMap.put("delete", new AbstractAction() {
+			private static final long serialVersionUID = -2329856122068030091L;
+
+			public void actionPerformed(ActionEvent evt) {
+				int row = applicantInformationTable.getSelectedRow();
+				int col = applicantInformationTable.getSelectedColumn();
+				if (row >= 0 && col >= 0) {
+					row = applicantInformationTable.convertRowIndexToModel(row);
+					col = applicantInformationTable.convertColumnIndexToModel(col);
+					ApplicantInformationTableModel model = (ApplicantInformationTableModel) (applicantInformationTable.getModel());
+					model.removeRow(row);
+				}
+				applicantInformationTable.repaint();
 			}
 		});
 	}
