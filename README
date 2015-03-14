@@ -11,6 +11,13 @@ KNOWN PROBLEMS AND BUGS
 -----------------------
 
 
+BUILD
+-----
+mvn clean install assembly:single
+mvn clean source:jar
+mvn clean javadoc:jar
+
+
 LICENSE
 -------
 ApplicantImporter is released under the GNU General Public License v2 or newer.
