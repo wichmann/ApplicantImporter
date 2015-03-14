@@ -1,4 +1,4 @@
-package studentImporter;
+package de.ichmann.applicant_importer.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;

@@ -1,4 +1,4 @@
-package studentImporter;
+package de.ichmann.applicant_importer.exporter;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +12,11 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.ichmann.applicant_importer.model.Applicant;
+import de.ichmann.applicant_importer.model.DataField;
+import de.ichmann.applicant_importer.model.Degree;
+import de.ichmann.applicant_importer.model.School;
 
 public class BbsPlanungExporter {
 

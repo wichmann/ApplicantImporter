@@ -1,4 +1,4 @@
-package studentImporter;
+package de.ichmann.applicant_importer.model;
 
 public enum Religion {
 

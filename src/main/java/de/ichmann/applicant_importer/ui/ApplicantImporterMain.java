@@ -1,4 +1,4 @@
-package studentImporter;
+package de.ichmann.applicant_importer.ui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -39,14 +39,16 @@ import javax.swing.table.TableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.ichmann.applicant_importer.exporter.BbsPlanungExporter;
+import de.ichmann.applicant_importer.importer.PdfFormImporter;
+import de.ichmann.applicant_importer.model.Applicant;
+
 public class ApplicantImporterMain extends JFrame {
 
 	private static final long serialVersionUID = -7501718764578733562L;
 
 	private static final Logger logger = LoggerFactory.getLogger(ApplicantImporterMain.class);
 
-	private static final int WINDOW_HEIGHT = 768;
-	private static final int WINDOW_WIDTH = 1024;
 	private static final Color ALARM_COLOR = new Color(255, 155, 155);
 
 	private JButton importDirectoryButton = null;
@@ -338,9 +340,4 @@ public class ApplicantImporterMain extends JFrame {
 		}
 	}
 
-	public static void main(String[] args) {
-		ApplicantImporterMain w = new ApplicantImporterMain();
-		w.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		w.setVisible(true);
-	}
 }

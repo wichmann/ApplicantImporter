@@ -1,4 +1,5 @@
-package studentImporter;
+package de.ichmann.applicant_importer.model;
+
 
 /**
  * Describes all data fields that can be stored for an Applicant. Not all data fields are required, some can be left empty. All required

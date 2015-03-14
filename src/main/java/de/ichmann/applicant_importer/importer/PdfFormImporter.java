@@ -1,7 +1,7 @@
 /**
  * 
  */
-package studentImporter;
+package de.ichmann.applicant_importer.importer;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -23,7 +23,11 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import studentImporter.Applicant.ApplicantBuilder;
+import de.ichmann.applicant_importer.model.Applicant;
+import de.ichmann.applicant_importer.model.DataField;
+import de.ichmann.applicant_importer.model.Degree;
+import de.ichmann.applicant_importer.model.School;
+import de.ichmann.applicant_importer.model.Applicant.ApplicantBuilder;
 
 /**
  * Imports and evaluates data from PDF forms and creates the Applicant objects

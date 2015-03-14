@@ -1,4 +1,4 @@
-package studentImporter;
+package de.ichmann.applicant_importer.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;

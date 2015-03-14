@@ -1,10 +1,13 @@
-package studentImporter;
+package de.ichmann.applicant_importer.ui;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
+
+import de.ichmann.applicant_importer.model.Applicant;
+import de.ichmann.applicant_importer.model.DataField;
 
 public class ApplicantInformationTableModel extends AbstractTableModel {
 
