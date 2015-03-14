@@ -1,7 +1,10 @@
 package studentImporter;
 
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,18 +42,19 @@ public class BbsPlanungExporter {
 
 	public BbsPlanungExporter(Path file, List<Applicant> listOfApplicants, boolean exportInvalidApplicants) {
 
-		FileWriter fileWriter = null;
+		OutputStreamWriter osw = null;
 		CSVPrinter csvFilePrinter = null;
 
-		// Create the CSVFormat object with "\n" as a record delimiter
+		// create the CSVFormat object with correct record separator and delimiter
 		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR).withDelimiter(FIELD_DELIMITER);
 
 		try {
-			// initialize FileWriter object
-			fileWriter = new FileWriter(file.toFile());
-
+			// open file to write to
+			FileOutputStream fos = new FileOutputStream(file.toFile());
+			osw = new OutputStreamWriter(fos, Charset.forName("ISO-8859-15").newEncoder());
+			
 			// initialize CSVPrinter object
-			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+			csvFilePrinter = new CSVPrinter(osw, csvFileFormat);
 
 			// create CSV file header
 			csvFilePrinter.printRecord(FILE_HEADER);
@@ -238,8 +242,8 @@ public class BbsPlanungExporter {
 
 		} finally {
 			try {
-				fileWriter.flush();
-				fileWriter.close();
+				//osw.flush();
+				//osw.close();
 				csvFilePrinter.close();
 			} catch (IOException e) {
 				logger.error("Error while flushing/closing fileWriter/csvPrinter !!!");

@@ -57,8 +57,7 @@ public class Applicant {
 	}
 
 	/**
-	 * Checks all data for plausibility. It checks whether all necessary data is
-	 * present and if all data has the expected format.
+	 * Checks all data for plausibility. It checks whether all necessary data is present and if all data has the expected format.
 	 * 
 	 * @return true, only if all data is OK
 	 */
@@ -75,7 +74,7 @@ public class Applicant {
 			DataField dataField = entry.getKey();
 			Object value = entry.getValue();
 			if (dataField.isRequired() && (value == null || "".equals(value))) {
-				logger.warn("Required value in applicant " + toString() + " is missing!");
+				logger.warn("Required value " + dataField + " in applicant " + toString() + " is missing!");
 				return false;
 			}
 		}

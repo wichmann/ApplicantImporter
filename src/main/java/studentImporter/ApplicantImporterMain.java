@@ -68,7 +68,7 @@ public class ApplicantImporterMain extends JFrame {
 
 		setTitle("BewerberImporter");
 		setName("ApplicantImporter");
-		setIconImage(new ImageIcon(getClass().getResource("/icon.png")).getImage());
+		setIconImage(new ImageIcon(getClass().getResource("/icons/icon.png")).getImage());
 		setLocationRelativeTo(null);
 		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
