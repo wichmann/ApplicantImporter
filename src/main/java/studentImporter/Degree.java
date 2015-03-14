@@ -2,36 +2,30 @@ package studentImporter;
 
 public enum Degree {
 
-	OHNE_ABSCHLUSS,
+	OHNE_ABSCHLUSS(0),
 
-	SEKUNDAR_I_HAUPTSCHULE,
+	SEKUNDAR_I_HAUPTSCHULE(0),
 
-	SEKUNDAR_I_REALSCHULE,
+	SEKUNDAR_I_REALSCHULE(0),
 
-	ERWEITERTER_SEKUNDAR_I,
+	ERWEITERTER_SEKUNDAR_I(0),
 
-	FACHHOCHSCHULREIFE,
+	FACHHOCHSCHULREIFE(0),
 
-	ALLGEMEINE_HOCHSCHULEREIFE,
+	ALLGEMEINE_HOCHSCHULEREIFE(0),
 
-	SONSTIGES;
+	SONSTIGES(0);
 
-	private String information = "";
+	private final int id;
 
-	public void admitAdditionalInformation(String information) {
-		if (this.equals(SONSTIGES)) {
-			this.information = information;
-		} else {
-			assert false : "Additional information is only available on certain types of this Enum.";
-		}
+	private Degree(int id) {
+		this.id = id;
 	}
 
-	public String getAdditionalInformation() {
-		if (this.equals(SONSTIGES)) {
-			return information;
-		} else {
-			assert false : "Additional information is only available on certain types of this Enum.";
-			return "";
-		}
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
 	}
 }

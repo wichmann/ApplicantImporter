@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -64,6 +65,12 @@ public class ApplicantImporterMain extends JFrame {
 
 	private void initialize() {
 
+		setTitle("BewerberImporter");
+		setName("ApplicantImporter");
+		setIconImage(new ImageIcon(getClass().getResource("/icon.png")).getImage());
+		setLocationRelativeTo(null);
+		// setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(buildMenuBar());
 
 		GridBagConstraints c = new GridBagConstraints();
@@ -153,8 +160,8 @@ public class ApplicantImporterMain extends JFrame {
 
 	private JMenuBar buildMenuBar() {
 		JMenuBar menuBar;
-		JMenu fileMenu;
-		JMenuItem quitMenuItem;
+		JMenu fileMenu, helpMenu;
+		JMenuItem quitMenuItem, helpMenuItem;
 
 		menuBar = new JMenuBar();
 		fileMenu = new JMenu("Datei");
@@ -173,6 +180,22 @@ public class ApplicantImporterMain extends JFrame {
 		});
 		fileMenu.add(quitMenuItem);
 
+		helpMenu = new JMenu("Hilfe");
+		helpMenu.setMnemonic(KeyEvent.VK_H);
+		helpMenu.getAccessibleContext().setAccessibleDescription("Hilfe-Menü");
+		menuBar.add(helpMenu);
+
+		helpMenuItem = new JMenuItem("Hilfe", KeyEvent.VK_H);
+		helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
+		helpMenuItem.getAccessibleContext().setAccessibleDescription("Hilfe zum Programms");
+		helpMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO implement help dialog!
+			}
+		});
+		helpMenu.add(helpMenuItem);
+
 		return menuBar;
 	}
 
@@ -180,28 +203,14 @@ public class ApplicantImporterMain extends JFrame {
 		importDirectoryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
-				chooser.setDialogTitle("Verzeichnis mit PDF-Dateien auswählen...");
-				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				chooser.setAcceptAllFileFilterUsed(false);
-				int returnValue = chooser.showOpenDialog(ApplicantImporterMain.this);
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					importFromDirectory(chooser.getSelectedFile());
-				}
+				doImportFromDirectory();
 			}
 		});
 
 		exportCsvButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
-				chooser.setDialogTitle("Datei für exportierte Daten auswählen...");
-				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				chooser.setAcceptAllFileFilterUsed(false);
-				int returnValue = chooser.showSaveDialog(ApplicantImporterMain.this);
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					exportToFile(chooser.getSelectedFile());
-				}
+				doExportToFile();
 			}
 		});
 
@@ -228,16 +237,6 @@ public class ApplicantImporterMain extends JFrame {
 		});
 	}
 
-	private void importFromDirectory(File selectedFile) {
-		importer = new PdfFormImporter(selectedFile.toPath());
-		listOfApplicants = importer.getListOfStudents();
-		applicantInformationTable.setModel(new ApplicantInformationTableModel(listOfApplicants));
-	}
-
-	private void exportToFile(File selectedFile) {
-		exporter = new BbsPlanungExporter(selectedFile.toPath(), listOfApplicants);
-	}
-
 	private void setLookAndFeel() {
 		// set look and feel to new standard (since Java SE 6 Update 10)
 		try {
@@ -256,6 +255,50 @@ public class ApplicantImporterMain extends JFrame {
 		} catch (UnsupportedLookAndFeelException e1) {
 			logger.warn("Could not set look and feel.");
 		}
+	}
+
+	/**
+	 * Shows a file selection dialog to chose a directory. Imports all PDF file
+	 * in that given directory and shows a message box informing the user about
+	 * it.
+	 */
+	private void doImportFromDirectory() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Verzeichnis mit PDF-Dateien auswählen...");
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		int returnValue = chooser.showOpenDialog(ApplicantImporterMain.this);
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			importFromDirectory(chooser.getSelectedFile());
+		}
+		String s = String.format("<html>Aus dem Verzeichnis <strong>%s</strong> wurden %d Bewerber importiert.</html>", chooser
+				.getSelectedFile().getName(), listOfApplicants.size());
+		JOptionPane.showMessageDialog(this, s, "Import erfolgreich", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private void importFromDirectory(File selectedFile) {
+		importer = new PdfFormImporter(selectedFile.toPath());
+		listOfApplicants = importer.getListOfStudents();
+		applicantInformationTable.setModel(new ApplicantInformationTableModel(listOfApplicants));
+	}
+
+	/**
+	 * Shows a file selection dialog to chose a output file. Exports all
+	 * applicants data to this file as CSV format and shows a message box
+	 * informing the user about it.
+	 */
+	private void doExportToFile() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Datei für exportierte Daten auswählen...");
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		int returnValue = chooser.showSaveDialog(ApplicantImporterMain.this);
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			exporter = new BbsPlanungExporter(chooser.getSelectedFile().toPath(), listOfApplicants);
+		}
+		String s = String.format("<html>%d Bewerber in die Datei <strong>%s</strong> exportiert.</html>", listOfApplicants.size(), chooser
+				.getSelectedFile().getName());
+		JOptionPane.showMessageDialog(this, s, "Export erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public static void main(String[] args) {

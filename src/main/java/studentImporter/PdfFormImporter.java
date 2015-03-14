@@ -34,16 +34,16 @@ import studentImporter.Applicant.ApplicantBuilder;
  */
 public final class PdfFormImporter {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(PdfFormImporter.class);
+	private final static Logger logger = LoggerFactory.getLogger(PdfFormImporter.class);
 
 	private final List<Applicant> listOfStudents = new ArrayList<Applicant>();
 
 	/**
-	 * Contains for every data field in the PDF file the associated name of that field. 
+	 * Contains for every data field in the PDF file the associated name of that
+	 * field.
 	 */
 	private final Map<String, DataField> dataFieldNames = new HashMap<>();
-	
+
 	/*
 	 * Current field names (2015-03-13):
 	 * 
@@ -87,6 +87,7 @@ public final class PdfFormImporter {
 	 * Tx - SchulabschlussSonstigerErlaeuterung - SchulabschlussSonstigerErlaeuterung - null
 	 */
 
+
 	private void fillDataFieldNamesDictionary() {
 		dataFieldNames.put("Vorname", DataField.FIRST_NAME);
 		dataFieldNames.put("Name", DataField.LAST_NAME);
@@ -96,6 +97,7 @@ public final class PdfFormImporter {
 		dataFieldNames.put("Konfession", DataField.RELIGION);
 		dataFieldNames.put("StraßeNr", DataField.ADDRESS);
 		dataFieldNames.put("Tel", DataField.PHONE);
+		dataFieldNames.put("Fax", DataField.FAX);
 		dataFieldNames.put("PLZ", DataField.ZIP_CODE);
 		dataFieldNames.put("Ort", DataField.CITY);
 		dataFieldNames.put("EMail", DataField.EMAIL);
@@ -116,6 +118,9 @@ public final class PdfFormImporter {
 		dataFieldNames.put("PLZBetrieb", DataField.COMPANY_ZIP_CODE);
 		dataFieldNames.put("NameBetrieb", DataField.COMPANY_NAME);
 		dataFieldNames.put("Bemerkungen", DataField.NOTES);
+		dataFieldNames.put("SchulabschlussSonstigerErlaeuterung", DataField.DEGREE_ADDITIONAL_INFORMATION);
+		dataFieldNames.put("ErlaeuterungBFS", DataField.SCHOOL_SPECIALIZATION);
+		dataFieldNames.put("SonstigesSchulabschluss", DataField.SCHOOL_OTHER_TYPE);
 
 		/*
 		 * The following fields do not contain text strings or have to be
@@ -177,154 +182,190 @@ public final class PdfFormImporter {
 
 		try {
 			pdfDocument = PDDocument.load(path.toFile());
+			if (pdfDocument != null) {
+				PDDocumentCatalog docCatalog = pdfDocument.getDocumentCatalog();
+				PDAcroForm acroForm = docCatalog.getAcroForm();
+				if (acroForm != null) {
+					@SuppressWarnings("unchecked")
+					List<PDField> formFields = Collections.checkedList(acroForm.getFields(), PDField.class);
 
-			PDDocumentCatalog docCatalog = pdfDocument.getDocumentCatalog();
-			PDAcroForm acroForm = docCatalog.getAcroForm();
-			if (acroForm != null) {
-				@SuppressWarnings("unchecked")
-				List<PDField> formFields = Collections.checkedList(acroForm.getFields(), PDField.class);
-
-				ApplicantBuilder builder = new ApplicantBuilder();
-				for (PDField pdField : formFields) {
-					// ignore useless fields in PDF file
-					if ("Formular drucken".equals(pdField.getValue()) || "Senden".equals(pdField.getValue())) {
-						continue;
-					}
-					// get all plain string elements and store them in builder
-					if (dataFieldNames.containsKey(pdField.getFullyQualifiedName())) {
-						DataField df = dataFieldNames.get(pdField.getFullyQualifiedName());
-						if (pdField.getValue() != null) {
-							// TODO When " þÿ" please do not use! (BOM)
-							if ("þÿ".equals(pdField.getValue())) {
-								builder.setValue(df, "");
+					ApplicantBuilder builder = new ApplicantBuilder();
+					for (PDField pdField : formFields) {
+						// ignore useless fields in PDF file
+						if ("Formular drucken".equals(pdField.getValue()) || "Senden".equals(pdField.getValue())) {
+							continue;
+						}
+						// get all plain string elements and store them in
+						// builder
+						if (dataFieldNames.containsKey(pdField.getFullyQualifiedName())) {
+							DataField df = dataFieldNames.get(pdField.getFullyQualifiedName());
+							if (pdField.getValue() != null) {
+								// TODO When " þÿ" please do not use! (BOM)
+								if ("þÿ".equals(pdField.getValue())) {
+									builder.setValue(df, "");
+								} else {
+									builder.setValue(df, pdField.getValue());
+								}
 							} else {
-								builder.setValue(df, pdField.getValue());
-							}
-						} else {
-							builder.setValue(df, "");
-						}
-					}
-					// get duration of training
-					if ("DauerAusbildung".equals(pdField.getFullyQualifiedName())) {
-						if (pdField.getValue() != null) {
-							Integer i = Double.valueOf(pdField.getValue().replace(",", ".")).intValue();
-							builder.setValue(DataField.DURATION_OF_TRAINING, i);
-						} else {
-							builder.setValue(DataField.DURATION_OF_TRAINING, 0);
-						}
-					}
-					// get gender and whether applicant is in a retraining
-					if ("Umschueler".equals(pdField.getFullyQualifiedName())) {
-						boolean retraining = false;
-						if ("UmschuelerNein".equals(pdField.getValue())) {
-							retraining = false;
-						} else if ("UmschuelerJa".equals(pdField.getValue())) {
-							retraining = true;
-						}
-						builder.setValue(DataField.RETRAINING, retraining);
-					}
-					if ("Geschlecht".equals(pdField.getFullyQualifiedName())) {
-						if ("m".equals(pdField.getValue())) {
-							builder.setValue(DataField.GENDER, pdField.getValue());
-						} else if ("w".equals(pdField.getValue())) {
-							builder.setValue(DataField.GENDER, pdField.getValue());
-						} else {
-							logger.warn("Invalid gender!");
-							assert false : "Invalid gender chosen!";
-						}
-					}
-					// get attended school
-					if ("SchulbesuchBisher".equals(pdField.getFullyQualifiedName())) {
-						// TODO Read field ErlaeuterungBFS -
-						// SonstigesSchulabschluss
-						School schoolType = School.SONSTIGES;
-						if (pdField.getValue() != null) {
-							switch (pdField.getValue()) {
-							case "RS":
-								schoolType = School.REALSCHULE;
-								break;
-							case "HS":
-								schoolType = School.HAUPTSCHULE;
-								break;
-							case "GYM???":
-								schoolType = School.GYMNASIUM;
-								break;
-							case "B1":
-								schoolType = School.BERUFSFACHSCHULE;
-								break;
-							case "BS":
-								schoolType = School.BERUFSSCHULE;
-								break;
-							case "GS???":
-								schoolType = School.GESAMTSCHULE;
-								break;
-							case "OS???":
-								schoolType = School.OBERSCHULE;
-								break;
-							case "FO":
-								schoolType = School.FACHOBERSCHULE;
-								break;
-							case "Förder":
-								schoolType = School.FOERDERSCHULE;
-								break;
-							case "Sonstiges???":
-								schoolType = School.SONSTIGES;
-								break;
-							default:
-								logger.warn("Invalid school type: " + pdField.getValue());
-								assert false : "No attended school chosen!";
+								builder.setValue(df, "");
 							}
 						}
-						builder.setValue(DataField.SCHOOL, schoolType);
-					}
-					// get last degree
-					if ("Schulabschluss".equals(pdField.getFullyQualifiedName())) {
-						// TODO Read field SchulabschlussSonstigerErlaeuterung
-						Degree degree = Degree.SONSTIGES;
-						if (pdField.getValue() != null) {
-							switch (pdField.getValue()) {
-							case "HA":
-								degree = Degree.SEKUNDAR_I_HAUPTSCHULE;
-								break;
-							case "SI":
-								degree = Degree.SEKUNDAR_I_REALSCHULE;
-								break;
-							case "EI":
-								degree = Degree.ERWEITERTER_SEKUNDAR_I;
-								break;
-							case "FH":
-								degree = Degree.FACHHOCHSCHULREIFE;
-								break;
-							case "HS":
-								degree = Degree.ALLGEMEINE_HOCHSCHULEREIFE;
-								break;
-							case "??":
-								degree = Degree.OHNE_ABSCHLUSS;
-								break;
-							case "XS":
-								degree = Degree.SONSTIGES;
-								break;
-							default:
-								logger.warn("Invalid degree type: " + pdField.getValue());
-								assert false : "No attended school chosen!";
+						// get duration of training
+						if ("DauerAusbildung".equals(pdField.getFullyQualifiedName())) {
+							if (pdField.getValue() != null) {
+								Double d = Double.valueOf(pdField.getValue().replace(",", ".")) * 12;
+								Integer i = d.intValue();
+								builder.setValue(DataField.DURATION_OF_TRAINING, i);
+							} else {
+								builder.setValue(DataField.DURATION_OF_TRAINING, 0);
 							}
 						}
-						builder.setValue(DataField.DEGREE, degree);
-					}
+						// get gender and whether applicant is in a retraining
+						if ("Umschueler".equals(pdField.getFullyQualifiedName())) {
+							boolean retraining = false;
+							if ("UmschuelerNein".equals(pdField.getValue())) {
+								retraining = false;
+							} else if ("UmschuelerJa".equals(pdField.getValue())) {
+								retraining = true;
+							}
+							builder.setValue(DataField.RETRAINING, retraining);
+						}
+						if ("Geschlecht".equals(pdField.getFullyQualifiedName())) {
+							if ("m".equals(pdField.getValue())) {
+								builder.setValue(DataField.GENDER, pdField.getValue());
+							} else if ("w".equals(pdField.getValue())) {
+								builder.setValue(DataField.GENDER, pdField.getValue());
+							} else {
+								logger.warn("Invalid gender!");
+								assert false : "Invalid gender chosen!";
+							}
+						}
+						// get attended school
+						extractAttendedSchool(pdField, builder);
+						// get last degree
+						extractLastDegree(pdField, builder);
 
-					logger.info(pdField.getFieldType() + " - " + pdField.getFullyQualifiedName() + " - " + pdField.getPartialName() + " - "
-							+ pdField.getValue());
+						logger.debug(pdField.getFieldType() + " - " + pdField.getFullyQualifiedName() + " - " + pdField.getPartialName()
+								+ " - " + pdField.getValue());
+					}
+					student = builder.build();
+					logger.info("Added student registration: " + student);
 				}
-				student = builder.build();
-				logger.info("Added student registration: " + student);
-
-				pdfDocument.close();
 			}
 		} catch (IOException e) {
 			logger.warn("Could not open PDF file.");
+		} finally {
+			try {
+				if (pdfDocument != null) {
+					pdfDocument.close();
+				}
+			} catch (IOException e) {
+				logger.warn("Could not close PDF file.");
+			}
 		}
 
 		return student;
+	}
+
+	/**
+	 * Extracts information about the last accieved degree from a given PDF form
+	 * field and stores the data inside a provided ApplicantBuilder instance.
+	 * 
+	 * @param pdField
+	 *            PDF form field data
+	 * @param builder
+	 *            builder object for Applicant data
+	 * @throws IOException
+	 *             if reading of PDF form data failed
+	 */
+	private void extractLastDegree(PDField pdField, ApplicantBuilder builder) throws IOException {
+		if ("Schulabschluss".equals(pdField.getFullyQualifiedName())) { 
+			Degree degree = Degree.SONSTIGES;
+			if (pdField.getValue() != null) {
+				switch (pdField.getValue()) {
+				case "HA":
+					degree = Degree.SEKUNDAR_I_HAUPTSCHULE;
+					break;
+				case "SI":
+					degree = Degree.SEKUNDAR_I_REALSCHULE;
+					break;
+				case "EI":
+					degree = Degree.ERWEITERTER_SEKUNDAR_I;
+					break;
+				case "FH":
+					degree = Degree.FACHHOCHSCHULREIFE;
+					break;
+				case "AH":
+					degree = Degree.ALLGEMEINE_HOCHSCHULEREIFE;
+					break;
+				case "OA":
+					degree = Degree.OHNE_ABSCHLUSS;
+					break;
+				case "XS":
+					degree = Degree.SONSTIGES;
+					break;
+				default:
+					logger.warn("Invalid degree type: " + pdField.getValue());
+					assert false : "No attended school chosen!";
+				}
+			}
+			builder.setValue(DataField.DEGREE, degree);
+		}
+	}
+
+	/**
+	 * Extracts information about the attended school from a given PDF form
+	 * field and stores the data inside a provided ApplicantBuilder instance.
+	 * 
+	 * @param pdField
+	 *            PDF form field data
+	 * @param builder
+	 *            builder object for Applicant data
+	 * @throws IOException
+	 *             if reading of PDF form data failed
+	 */
+	private void extractAttendedSchool(PDField pdField, ApplicantBuilder builder) throws IOException {
+		if ("SchulbesuchBisher".equals(pdField.getFullyQualifiedName())) {
+			School schoolType = School.SONSTIGES;
+			if (pdField.getValue() != null) {
+				switch (pdField.getValue()) {
+				case "RS":
+					schoolType = School.REALSCHULE;
+					break;
+				case "HS":
+					schoolType = School.HAUPTSCHULE;
+					break;
+				case "GY":
+					schoolType = School.GYMNASIUM;
+					break;
+				case "B1": // TODO What is with B2 and B7...
+					schoolType = School.BERUFSFACHSCHULE;
+					break;
+				case "BS":
+					schoolType = School.BERUFSSCHULE;
+					break;
+				case "IG":
+					schoolType = School.GESAMTSCHULE;
+					break;
+				case "OS???":
+					schoolType = School.OBERSCHULE;
+					break;
+				case "FO":
+					schoolType = School.FACHOBERSCHULE;
+					break;
+				case "SA":
+					schoolType = School.FOERDERSCHULE;
+					break;
+				case "Sonstiges???":
+					schoolType = School.SONSTIGES;
+					break;
+				default:
+					logger.warn("Invalid school type: " + pdField.getValue());
+					assert false : "No attended school chosen!";
+				}
+			}
+			builder.setValue(DataField.SCHOOL, schoolType);
+		}
 	}
 
 	public final List<Applicant> getListOfStudents() {

@@ -35,7 +35,7 @@ public class BbsPlanungExporter {
 			"VN_S", "VN_S1", "VN_S2", "VN_S3", "VN_S4", "VN_S5", "ZUSAGE", "ZUSAGE_BG", "ZUSAGE_SNR", "AS", "SNR1", "SNR2", "ZU", "MARKE",
 			"FEHLER", "IDENT", "TEL_HANDY" };
 
-	public BbsPlanungExporter(Path file, List<Applicant> listOfStudents) {
+	public BbsPlanungExporter(Path file, List<Applicant> listOfApplicants) {
 
 		FileWriter fileWriter = null;
 
@@ -53,172 +53,177 @@ public class BbsPlanungExporter {
 
 			// create CSV file header
 			csvFilePrinter.printRecord(FILE_HEADER);
-			
+
 			// write a new student object list to the CSV file
 			int index = 1;
-			for (Applicant student : listOfStudents) {
-				List<String> studentDataRecord = new ArrayList<>();
-				studentDataRecord.add("72679"); // Schulnummer
-				studentDataRecord.add(""); // Klassenname
-				studentDataRecord.add(String.valueOf(index)); // Lfd
-				studentDataRecord.add(""); // Status
-				studentDataRecord.add(String.valueOf(index)); // Schülernummer
+			for (Applicant applicant : listOfApplicants) {
+				List<String> applicantDataRecord = new ArrayList<>();
+				applicantDataRecord.add("72679"); // Schulnummer
+				applicantDataRecord.add(""); // Klassenname
+				applicantDataRecord.add(String.valueOf(index)); // Lfd
+				applicantDataRecord.add(""); // Status
+				applicantDataRecord.add(String.valueOf(index)); // Schülernummer
 				index++;
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.LAST_NAME))); // Nachname
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.FIRST_NAME))); // Vorname
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.BIRTHDAY))); // Geburtstag
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.BIRTHPLACE))); // Geburtsort
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.ADDRESS))); // Strasse, Hausnummer
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.ZIP_CODE))); // PLZ
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.CITY))); // Ort
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.PHONE))); // Telefon
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.FAX))); // Fax
-				studentDataRecord.add("404"); // LDK
-				studentDataRecord.add(""); // LDK_Z
-				studentDataRecord.add("404"); // Landkreis
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.LAST_NAME))); // Nachname
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.FIRST_NAME))); // Vorname
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.BIRTHDAY))); // Geburtstag
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.BIRTHPLACE))); // Geburtsort
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.ADDRESS))); // Strasse,
+																								// Hausnummer
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.ZIP_CODE))); // PLZ
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.CITY))); // Ort
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.PHONE))); // Telefon
+				applicantDataRecord.add(""); // Fax
+				applicantDataRecord.add("404"); // LDK
+				applicantDataRecord.add(""); // LDK_Z
+				applicantDataRecord.add("404"); // Landkreis
 				// TODO get Landkreisnummer from zip code?
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.EMAIL))); // E-Mail-Adresse
-				String gender = "m".equals(student.getValue(DataField.GENDER)) ? "1" : "2";
-				studentDataRecord.add(gender); // Geschlecht
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.RELIGION))); // Konfession
-				studentDataRecord.add(""); // Konfession-Text
-				studentDataRecord.add("000"); // Staatszugehörigkeit
-				studentDataRecord.add(""); // Familienstand
-				studentDataRecord.add(""); // SFO
-				studentDataRecord.add(""); // TAKURZ
-				studentDataRecord.add(""); // KLST
-				studentDataRecord.add(""); // ORG
-				studentDataRecord.add(""); // DAUER
-				studentDataRecord.add(""); // TAKLSTORG
-				studentDataRecord.add(""); // SFOTEXT
-				studentDataRecord.add(""); // TALANG
-				studentDataRecord.add(""); // ORG_N
-				studentDataRecord.add(""); // A
-				studentDataRecord.add(""); // BG
-				studentDataRecord.add(""); // BG_SFO
-				studentDataRecord.add(""); // BG_BFELD
-				studentDataRecord.add(""); // BG_FREI
-				studentDataRecord.add(""); // BG_KLST
-				studentDataRecord.add(""); // BG_ORG
-				studentDataRecord.add(""); // BG_DAUER
-				studentDataRecord.add(""); // P_FAKTOR
-				studentDataRecord.add(""); // KO
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.START_OF_TRAINING))); // EINTR_DAT
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.START_OF_TRAINING))); // AUSB_BEGDAT
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.DURATION_OF_TRAINING))); // A_DAUER
-				studentDataRecord.add(""); // A_ENDEDAT
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.EMAIL))); // E-Mail-Adresse
+				String gender = "m".equals(applicant.getValue(DataField.GENDER)) ? "1" : "2";
+				applicantDataRecord.add(gender); // Geschlecht
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.RELIGION))); // Konfession
+				applicantDataRecord.add(""); // Konfession-Text
+				applicantDataRecord.add("000"); // Staatszugehörigkeit
+				applicantDataRecord.add(""); // Familienstand
+				applicantDataRecord.add(""); // SFO
+				applicantDataRecord.add(""); // TAKURZ
+				applicantDataRecord.add(""); // KLST
+				applicantDataRecord.add(""); // ORG
+				applicantDataRecord.add(""); // DAUER
+				applicantDataRecord.add(""); // TAKLSTORG
+				applicantDataRecord.add(""); // SFOTEXT
+				applicantDataRecord.add(""); // TALANG
+				applicantDataRecord.add(""); // ORG_N
+				applicantDataRecord.add(""); // A
+				applicantDataRecord.add(""); // BG
+				applicantDataRecord.add(""); // BG_SFO
+				applicantDataRecord.add(""); // BG_BFELD
+				applicantDataRecord.add(""); // BG_FREI
+				applicantDataRecord.add(""); // BG_KLST
+				applicantDataRecord.add(""); // BG_ORG
+				applicantDataRecord.add(""); // BG_DAUER
+				applicantDataRecord.add(""); // P_FAKTOR
+				applicantDataRecord.add(""); // KO
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.START_OF_TRAINING))); // EINTR_DAT
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.START_OF_TRAINING))); // AUSB_BEGDAT
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.DURATION_OF_TRAINING))); // A_DAUER
+				applicantDataRecord.add(""); // A_ENDEDAT
 				// TODO calculate end date for vocational training
-				studentDataRecord.add(""); // ANRECH_BGJ
-				studentDataRecord.add(""); // WIEDERHOL
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.DEGREE))); // ABSCHLUSS
-				studentDataRecord.add(String.valueOf(student.getValue(DataField.SCHOOL))); // HERKUNFT
-				studentDataRecord.add(""); // HER_ZUSATZ
-				studentDataRecord.add(""); // FH_Z
-				studentDataRecord.add(""); // SCHULPFLICHT
-				studentDataRecord.add(""); // N_DE
-				studentDataRecord.add(""); // HER_B
-				studentDataRecord.add(""); // BL_SOLL
-				studentDataRecord.add(""); // LM_M
-				studentDataRecord.add(""); // LM_Z
-				studentDataRecord.add(""); // LM_DAT
-				boolean r = DataField.RETRAINING.getFrom(student);
-				studentDataRecord.add(r ? "J" : "N"); // UM
-				studentDataRecord.add(""); // A_AMT
-				studentDataRecord.add(""); // A_BEZIRK
-				studentDataRecord.add(""); // BETRAG
-				studentDataRecord.add(""); // BETRAG_G
-				studentDataRecord.add(""); // BAFOEG
-				studentDataRecord.add(""); // E_ANREDE
-				studentDataRecord.add(""); // E_NNAME
-				studentDataRecord.add(""); // E_VNAME
-				studentDataRecord.add(""); // E_STR
-				studentDataRecord.add(""); // E_PLZ
-				studentDataRecord.add(""); // E_ORT
-				studentDataRecord.add(""); // E_TEL
-				studentDataRecord.add(""); // E_FAX
-				studentDataRecord.add(""); // E_LDK
-				studentDataRecord.add(""); // E_EMAIL
-				studentDataRecord.add(""); // E_ANREDE2
-				studentDataRecord.add(""); // E_NNAME2
-				studentDataRecord.add(""); // E_VNAME2
-				studentDataRecord.add(""); // E_STR2
-				studentDataRecord.add(""); // E_PLZ2
-				studentDataRecord.add(""); // E_ORT2
-				studentDataRecord.add(""); // E_TEL2
-				studentDataRecord.add(""); // E_FAX2
-				studentDataRecord.add(""); // E_LDK2
-				studentDataRecord.add(""); // E_EMAIL2
-				studentDataRecord.add(""); // BETRIEB_NR
-				studentDataRecord.add(""); // BETRIEB_NR2
-				studentDataRecord.add(""); // BETRIEB_NR3
-				studentDataRecord.add(""); // BETRIEB_NR4
-				studentDataRecord.add(""); // BEMERK
-				studentDataRecord.add(""); // KENNUNG1
-				studentDataRecord.add(""); // KENNUNG2
-				studentDataRecord.add(""); // KENNUNG3
-				studentDataRecord.add(""); // KENNUNG4
-				studentDataRecord.add(""); // KENNUNG5
-				studentDataRecord.add(""); // KENNUNG6
-				studentDataRecord.add(""); // DATUM1
-				studentDataRecord.add(""); // DATUM2
-				studentDataRecord.add(""); // LML1
-				studentDataRecord.add(""); // BEW_W
-				studentDataRecord.add(""); // BEW_E
-				studentDataRecord.add(""); // PRIO1
-				studentDataRecord.add(""); // PRIO1_SNR
-				studentDataRecord.add(""); // PRIO1_KOR
-				studentDataRecord.add(""); // PRIO1_RANG
-				studentDataRecord.add(""); // PRIO1_ZU
-				studentDataRecord.add(""); // PRIO2
-				studentDataRecord.add(""); // PRIO2_SNR
-				studentDataRecord.add(""); // PRIO2_KOR
-				studentDataRecord.add(""); // PRIO2_RANG
-				studentDataRecord.add(""); // PRIO2_ZU
-				studentDataRecord.add(""); // PRIO3
-				studentDataRecord.add(""); // PRIO3_SNR
-				studentDataRecord.add(""); // PRIO3_KOR
-				studentDataRecord.add(""); // PRIO3_RANG
-				studentDataRecord.add(""); // PRIO3_ZU
-				studentDataRecord.add(""); // PRIO4
-				studentDataRecord.add(""); // PRIO4_SNR
-				studentDataRecord.add(""); // PRIO4_KOR
-				studentDataRecord.add(""); // PRIO4_RANG
-				studentDataRecord.add(""); // PRIO4_ZU
-				studentDataRecord.add(""); // PRIO5
-				studentDataRecord.add(""); // PRIO5_SNR
-				studentDataRecord.add(""); // PRIO5_KOR
-				studentDataRecord.add(""); // PRIO5_RANG
-				studentDataRecord.add(""); // PRIO5_ZU
-				studentDataRecord.add(""); // VN1
-				studentDataRecord.add(""); // VN2
-				studentDataRecord.add(""); // VN3
-				studentDataRecord.add(""); // VN4
-				studentDataRecord.add(""); // VN5
-				studentDataRecord.add(""); // VN6
-				studentDataRecord.add(""); // VN7
-				studentDataRecord.add(""); // VN8
-				studentDataRecord.add(""); // VN9
-				studentDataRecord.add(""); // VN10
-				studentDataRecord.add(""); // VN11
-				studentDataRecord.add(""); // VN12
-				studentDataRecord.add(""); // VN_S
-				studentDataRecord.add(""); // VN_S1
-				studentDataRecord.add(""); // VN_S2
-				studentDataRecord.add(""); // VN_S3
-				studentDataRecord.add(""); // VN_S4
-				studentDataRecord.add(""); // VN_S5
-				studentDataRecord.add(""); // ZUSAGE
-				studentDataRecord.add(""); // ZUSAGE_BG
-				studentDataRecord.add(""); // ZUSAGE_SNR
-				studentDataRecord.add(""); // AS
-				studentDataRecord.add(""); // SNR1
-				studentDataRecord.add(""); // SNR2
-				studentDataRecord.add(""); // ZU
-				studentDataRecord.add(""); // MARKE
-				studentDataRecord.add(""); // FEHLER
-				studentDataRecord.add(""); // IDENT
-				studentDataRecord.add(""); // TEL_HANDY
-				csvFilePrinter.printRecord(studentDataRecord);
+				applicantDataRecord.add(""); // ANRECH_BGJ
+				applicantDataRecord.add(""); // WIEDERHOL
+				Degree d = DataField.DEGREE.getFrom(applicant);
+				applicantDataRecord.add(String.valueOf(d.getId())); // ABSCHLUSS
+				School s = DataField.SCHOOL.getFrom(applicant);
+				applicantDataRecord.add(String.valueOf(s.getId())); // HERKUNFT
+				applicantDataRecord.add(""); // HER_ZUSATZ
+				applicantDataRecord.add(""); // FH_Z
+				applicantDataRecord.add(""); // SCHULPFLICHT
+				applicantDataRecord.add(""); // N_DE
+				applicantDataRecord.add(""); // HER_B
+				applicantDataRecord.add(""); // BL_SOLL
+				applicantDataRecord.add(""); // LM_M
+				applicantDataRecord.add(""); // LM_Z
+				applicantDataRecord.add(""); // LM_DAT
+				boolean r = DataField.RETRAINING.getFrom(applicant);
+				applicantDataRecord.add(r ? "J" : "N"); // UM
+				applicantDataRecord.add(""); // A_AMT
+				applicantDataRecord.add(""); // A_BEZIRK
+				applicantDataRecord.add(""); // BETRAG
+				applicantDataRecord.add(""); // BETRAG_G
+				applicantDataRecord.add(""); // BAFOEG
+				applicantDataRecord.add(""); // E_ANREDE
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.NAME_OF_LEGAL_GUARDIAN))); // E_NNAME
+				applicantDataRecord.add(""); // E_VNAME
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.ADDRESS_OF_LEGAL_GUARDIAN))); // E_STR
+				applicantDataRecord.add(""); // E_PLZ
+				applicantDataRecord.add(""); // E_ORT
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.PHONE_OF_LEGAL_GUARDIAN))); // E_TEL
+				applicantDataRecord.add(""); // E_FAX
+				applicantDataRecord.add(""); // E_LDK
+				applicantDataRecord.add(""); // E_EMAIL
+				applicantDataRecord.add(""); // E_ANREDE2
+				applicantDataRecord.add(""); // E_NNAME2
+				applicantDataRecord.add(""); // E_VNAME2
+				applicantDataRecord.add(""); // E_STR2
+				applicantDataRecord.add(""); // E_PLZ2
+				applicantDataRecord.add(""); // E_ORT2
+				applicantDataRecord.add(""); // E_TEL2
+				applicantDataRecord.add(""); // E_FAX2
+				applicantDataRecord.add(""); // E_LDK2
+				applicantDataRecord.add(""); // E_EMAIL2
+				// TODO Check which company information should be in which field!
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.COMPANY_NAME))); // BETRIEB_NR
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.COMPANY_CONTACT_PERSON))); // BETRIEB_NR2
+				applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.COMPANY_ADDRESS))); // BETRIEB_NR3
+				String sc = String.valueOf(applicant.getValue(DataField.COMPANY_ZIP_CODE)) + String.valueOf(applicant.getValue(DataField.COMPANY_CITY));
+				applicantDataRecord.add(sc); // BETRIEB_NR4
+				applicantDataRecord.add(""); // BEMERK
+				applicantDataRecord.add(""); // KENNUNG1
+				applicantDataRecord.add(""); // KENNUNG2
+				applicantDataRecord.add(""); // KENNUNG3
+				applicantDataRecord.add(""); // KENNUNG4
+				applicantDataRecord.add(""); // KENNUNG5
+				applicantDataRecord.add(""); // KENNUNG6
+				applicantDataRecord.add(""); // DATUM1
+				applicantDataRecord.add(""); // DATUM2
+				applicantDataRecord.add(""); // LML1
+				applicantDataRecord.add(""); // BEW_W
+				applicantDataRecord.add(""); // BEW_E
+				applicantDataRecord.add(""); // PRIO1
+				applicantDataRecord.add(""); // PRIO1_SNR
+				applicantDataRecord.add(""); // PRIO1_KOR
+				applicantDataRecord.add(""); // PRIO1_RANG
+				applicantDataRecord.add(""); // PRIO1_ZU
+				applicantDataRecord.add(""); // PRIO2
+				applicantDataRecord.add(""); // PRIO2_SNR
+				applicantDataRecord.add(""); // PRIO2_KOR
+				applicantDataRecord.add(""); // PRIO2_RANG
+				applicantDataRecord.add(""); // PRIO2_ZU
+				applicantDataRecord.add(""); // PRIO3
+				applicantDataRecord.add(""); // PRIO3_SNR
+				applicantDataRecord.add(""); // PRIO3_KOR
+				applicantDataRecord.add(""); // PRIO3_RANG
+				applicantDataRecord.add(""); // PRIO3_ZU
+				applicantDataRecord.add(""); // PRIO4
+				applicantDataRecord.add(""); // PRIO4_SNR
+				applicantDataRecord.add(""); // PRIO4_KOR
+				applicantDataRecord.add(""); // PRIO4_RANG
+				applicantDataRecord.add(""); // PRIO4_ZU
+				applicantDataRecord.add(""); // PRIO5
+				applicantDataRecord.add(""); // PRIO5_SNR
+				applicantDataRecord.add(""); // PRIO5_KOR
+				applicantDataRecord.add(""); // PRIO5_RANG
+				applicantDataRecord.add(""); // PRIO5_ZU
+				applicantDataRecord.add(""); // VN1
+				applicantDataRecord.add(""); // VN2
+				applicantDataRecord.add(""); // VN3
+				applicantDataRecord.add(""); // VN4
+				applicantDataRecord.add(""); // VN5
+				applicantDataRecord.add(""); // VN6
+				applicantDataRecord.add(""); // VN7
+				applicantDataRecord.add(""); // VN8
+				applicantDataRecord.add(""); // VN9
+				applicantDataRecord.add(""); // VN10
+				applicantDataRecord.add(""); // VN11
+				applicantDataRecord.add(""); // VN12
+				applicantDataRecord.add(""); // VN_S
+				applicantDataRecord.add(""); // VN_S1
+				applicantDataRecord.add(""); // VN_S2
+				applicantDataRecord.add(""); // VN_S3
+				applicantDataRecord.add(""); // VN_S4
+				applicantDataRecord.add(""); // VN_S5
+				applicantDataRecord.add(""); // ZUSAGE
+				applicantDataRecord.add(""); // ZUSAGE_BG
+				applicantDataRecord.add(""); // ZUSAGE_SNR
+				applicantDataRecord.add(""); // AS
+				applicantDataRecord.add(""); // SNR1
+				applicantDataRecord.add(""); // SNR2
+				applicantDataRecord.add(""); // ZU
+				applicantDataRecord.add(""); // MARKE
+				applicantDataRecord.add(""); // FEHLER
+				applicantDataRecord.add(""); // IDENT
+				applicantDataRecord.add(""); // TEL_HANDY
+				csvFilePrinter.printRecord(applicantDataRecord);
 			}
 
 			logger.info("CSV file was created successfully.");

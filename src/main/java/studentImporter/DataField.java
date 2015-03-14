@@ -56,39 +56,10 @@ public enum DataField {
 	BIRTHPLACE(String.class, true),
 
 	/**
-	 * Religion (dt. Konfession) of the applicant defined by a number between 0
-	 * and 6???.
-	 * <p>
-	 * <table>
-	 * <tr>
-	 * <td>0</td>
-	 * <td>ohne Angabe</td>
-	 * </tr>
-	 * <tr>
-	 * <td>1</td>
-	 * <td>evangelisch</td>
-	 * </tr>
-	 * <tr>
-	 * <td>2</td>
-	 * <td>römisch-katholisch</td>
-	 * </tr>
-	 * <tr>
-	 * <td>3</td>
-	 * <td>alevitisch</td>
-	 * </tr>
-	 * <tr>
-	 * <td>4</td>
-	 * <td>islamisch</td>
-	 * </tr>
-	 * <tr>
-	 * <td>5</td>
-	 * <td>sonstige</td>
-	 * </tr>
-	 * <tr>
-	 * <td>6</td>
-	 * <td>keine</td>
-	 * </tr>
-	 * </table>
+	 * Religion (Konfession) of the applicant defined by a number.
+	 * 
+	 * 0 = ohne Angabe, 1 = evangelisch, 2 = römisch-katholisch, 3 = alevitisch,
+	 * 4 = islamisch, 5 = sonstige, 6 = keine
 	 */
 	RELIGION(Integer.class, true),
 
@@ -143,7 +114,21 @@ public enum DataField {
 
 	SCHOOL(School.class, true),
 
-	DEGREE(Degree.class, true);
+	/**
+	 * Type of school that has been attended last before applying. Should only
+	 * be used if the value of SCHOOL is SONSTIGES!
+	 */
+	SCHOOL_OTHER_TYPE(String.class, false),
+
+	/**
+	 * Specialization of given school type that has been attended before.
+	 * Currently only used for Berufsfachschulen.
+	 */
+	SCHOOL_SPECIALIZATION(String.class, false),
+
+	DEGREE(Degree.class, true),
+
+	DEGREE_ADDITIONAL_INFORMATION(String.class, false);
 
 	private final Class<?> dataFieldType;
 	private boolean isRequired;
@@ -158,11 +143,11 @@ public enum DataField {
 	 * inside the Enum to allow correct casts of the return value of Applicant's
 	 * getValue() method.
 	 * <p>
-	 * <b>Example:</b> 
+	 * <b>Example:</b>
 	 * <p>
 	 * <code>DataField.BIRTHDAY.getTypeOfDataField().cast(object);</code>.
 	 * 
-	 * @return type of 
+	 * @return type of
 	 */
 	public Class<?> getTypeOfDataField() {
 		return dataFieldType;

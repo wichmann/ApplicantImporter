@@ -2,42 +2,36 @@ package studentImporter;
 
 public enum School {
 
-	FOERDERSCHULE,
+	FOERDERSCHULE(0),
 
-	HAUPTSCHULE,
+	HAUPTSCHULE(0),
 
-	REALSCHULE,
+	REALSCHULE(0),
 
-	OBERSCHULE,
+	OBERSCHULE(0),
 
-	GESAMTSCHULE,
+	GESAMTSCHULE(0),
 
-	GYMNASIUM,
+	GYMNASIUM(0),
 
-	FACHOBERSCHULE,
+	FACHOBERSCHULE(0),
 
-	BERUFSSCHULE,
+	BERUFSSCHULE(0),
 
-	BERUFSFACHSCHULE,
+	BERUFSFACHSCHULE(0),
 
-	SONSTIGES;
+	SONSTIGES(0);
 
-	private String information = "";
+	private final int id;
 
-	public void admitAdditionalInformation(String information) {
-		if (this.equals(BERUFSFACHSCHULE) || this.equals(SONSTIGES)) {
-			this.information = information;
-		} else {
-			assert false : "Additional information is only available on certain types of this Enum.";
-		}
+	private School(int id) {
+		this.id = id;
 	}
 
-	public String getAdditionalInformation() {
-		if (this.equals(BERUFSFACHSCHULE) || this.equals(SONSTIGES)) {
-			return information;
-		} else {
-			assert false : "Additional information is only available on certain types of this Enum.";
-			return "";
-		}
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
 	}
 }
