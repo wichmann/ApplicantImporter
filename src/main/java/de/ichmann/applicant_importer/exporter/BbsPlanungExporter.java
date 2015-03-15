@@ -114,9 +114,11 @@ public class BbsPlanungExporter {
 					applicantDataRecord.add(""); // BG_DAUER
 					applicantDataRecord.add(""); // P_FAKTOR
 					applicantDataRecord.add(""); // KO
-					applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.START_OF_TRAINING))); // EINTR_DAT
-					applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.START_OF_TRAINING))); // AUSB_BEGDAT
-					applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.DURATION_OF_TRAINING))); // A_DAUER
+					String sot = DataField.START_OF_TRAINING.getFrom(applicant);
+					Integer dot = DataField.DURATION_OF_TRAINING.getFrom(applicant);
+					applicantDataRecord.add(sot); // EINTR_DAT
+					applicantDataRecord.add(sot); // AUSB_BEGDAT
+					applicantDataRecord.add(dot.toString()); // A_DAUER
 					applicantDataRecord.add(""); // A_ENDEDAT
 					// TODO calculate end date for vocational training
 					applicantDataRecord.add(""); // ANRECH_BGJ
@@ -142,12 +144,15 @@ public class BbsPlanungExporter {
 					applicantDataRecord.add(""); // BETRAG_G
 					applicantDataRecord.add(""); // BAFOEG
 					applicantDataRecord.add(""); // E_ANREDE
-					applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.NAME_OF_LEGAL_GUARDIAN))); // E_NNAME
+					String nlg = DataField.NAME_OF_LEGAL_GUARDIAN.getFrom(applicant);
+					String alg = DataField.ADDRESS_OF_LEGAL_GUARDIAN.getFrom(applicant);
+					String plg = DataField.PHONE_OF_LEGAL_GUARDIAN.getFrom(applicant);
+					applicantDataRecord.add(nlg); // E_NNAME
 					applicantDataRecord.add(""); // E_VNAME
-					applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.ADDRESS_OF_LEGAL_GUARDIAN))); // E_STR
+					applicantDataRecord.add(alg); // E_STR
 					applicantDataRecord.add(""); // E_PLZ
 					applicantDataRecord.add(""); // E_ORT
-					applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.PHONE_OF_LEGAL_GUARDIAN))); // E_TEL
+					applicantDataRecord.add(plg); // E_TEL
 					applicantDataRecord.add(""); // E_FAX
 					applicantDataRecord.add(""); // E_LDK
 					applicantDataRecord.add(""); // E_EMAIL
