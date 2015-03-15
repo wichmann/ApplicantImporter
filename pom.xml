@@ -28,6 +28,12 @@
 			<artifactId>commons-csv</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -36,7 +42,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>studentImporter.ApplicantImporterMain</mainClass>
+							<mainClass>de.ichmann.applicant_importer.RunApplicantImporterGUI</mainClass>
 						</manifest>
 					</archive>
 					<finalName>BewerberImport</finalName>
