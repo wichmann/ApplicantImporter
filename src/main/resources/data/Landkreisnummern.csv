@@ -1,90 +1,974 @@
-Postleitzahl;Landkreisschlüssel;Bezeichnung;Regionalname
-38100;101;Stadt;Braunschweig
-38023;101;Stadt;Braunschweig
-38226;102;Stadt;Salzgitter
-38206;102;Stadt;Salzgitter
-38409;103;Stadt;Wolfsburg
-38440;103;Stadt;Wolfsburg
-38516;151;Landkreis;Gifhorn
-38518;151;Landkreis;Gifhorn
-37070;152;Landkreis;Göttingen
-37083;152;Landkreis;Göttingen
-38610;153;Landkreis;Goslar
-38640;153;Landkreis;Goslar
-38335;154;Landkreis;Helmstedt
-38350;154;Landkreis;Helmstedt
-37143;155;Landkreis;Northeim
-37154;155;Landkreis;Northeim
-37504;156;Landkreis;Osterode am Harz
-37520;156;Landkreis;Osterode am Harz
-31221;157;Landkreis;Peine
-31224;157;Landkreis;Peine
-38299;158;Landkreis;Wolfenbüttel
-38300;158;Landkreis;Wolfenbüttel
-30001;241;Region;Hannover
-30169;241;Region;Hannover
-49356;251;Landkreis;Diepholz
-31763;252;Landkreis;Hameln-Pyrmont
-31785;252;Landkreis;Hameln-Pyrmont
-31132;254;Landkreis;Hildesheim
-31134;254;Landkreis;Hildesheim
-37593;255;Landkreis;Holzminden
-37603;255;Landkreis;Holzminden
-31580;256;Landkreis;Nienburg (Weser)
-31582;256;Landkreis;Nienburg (Weser)
-31653;257;Landkreis;Schaumburg
-31655;257;Landkreis;Schaumburg
-29201;351;Landkreis;Celle
-29221;351;Landkreis;Celle
-27470;352;Landkreis;Cuxhaven
-27474;352;Landkreis;Cuxhaven
-21414;353;Landkreis;Harburg
-21423;353;Landkreis;Harburg
-29432;354;Landkreis;Lüchow-Dannenberg
-29439;354;Landkreis;Lüchow-Dannenberg
-21332;355;Landkreis;Lüneburg
-21335;355;Landkreis;Lüneburg
-27702;356;Landkreis;Osterholz
-27711;356;Landkreis;Osterholz
-27344;357;Landkreis;Rotenburg (Wümme)
-27356;357;Landkreis;Rotenburg (Wümme)
-29676;358;Landkreis;Soltau-Fallingbostel
-29683;358;Landkreis;Soltau-Fallingbostel
-21677;359;Landkreis;Stade
-21682;359;Landkreis;Stade
-29507;360;Landkreis;Uelzen
-29525;360;Landkreis;Uelzen
-27283;361;Landkreis;Verden
-27747;401;Stadt;Delmenhorst
-27749;401;Stadt;Delmenhorst
-26702;402;Stadt;Emden
-26721;402;Stadt;Emden
-26105;403;Stadt;Oldenburg (Oldenburg)
-26122;403;Stadt;Oldenburg (Oldenburg)
-49034;404;Stadt;Osnabrück
-49074;404;Stadt;Osnabrück
-26380;405;Stadt;Wilhelmshaven
-26382;405;Stadt;Wilhelmshaven
-26643;451;Landkreis;Ammerland
-26655;451;Landkreis;Ammerland
-26584;452;Landkreis;Aurich
-26603;452;Landkreis;Aurich
-49644;453;Landkreis;Cloppenburg
-49661;453;Landkreis;Cloppenburg
-49705;454;Landkreis;Emsland
-49716;454;Landkreis;Emsland
-26436;455;Landkreis;Friesland
-26441;455;Landkreis;Friesland
-48507;456;Landkreis;Grafschaft Bentheim
-48529;456;Landkreis;Grafschaft Bentheim
-26766;457;Landkreis;Leer
-26789;457;Landkreis;Leer
-27781;458;Landkreis;Oldenburg
-27793;458;Landkreis;Oldenburg
-49015;459;Landkreis;Osnabrück
-49082;459;Landkreis;Osnabrück
-49375;460;Landkreis;Vechta
-49377;460;Landkreis;Vechta
-26913;461;Landkreis;Wesermarsch
-26919;461;Landkreis;Wesermarsch
-26409;462;Landkreis;Wittmund
+Postleitzahl;Landkreisschlüssel;Bezeichnung
+38100;101;Braunschweig, Stadt
+38226;102;Salzgitter, Stadt
+38440;103;Wolfsburg, Stadt
+38518;151;Gifhorn, Stadt
+38524;151;Sassenburg
+29378;151;Wittingen, Stadt
+38476;151;Barwedel
+38556;151;Bokensdorf
+38477;151;Jembke
+38557;151;Osloß
+38479;151;Tappenbeck
+38554;151;Weyhausen
+38467;151;Bergfeld
+38465;151;Brome, Flecken
+38468;151;Ehra-Lessien
+38470;151;Parsau
+38471;151;Rühen
+38473;151;Tiddische
+38474;151;Tülau
+29386;151;Dedelstorf
+29386;151;Hankensbüttel
+29386;151;Obernholz
+29365;151;Sprakensehl
+29367;151;Steinhorst
+38547;151;Calberlah
+38550;151;Isenbüttel
+38551;151;Ribbesbüttel
+38553;151;Wasbüttel
+38543;151;Hillerse
+38542;151;Leiferde
+38536;151;Meinersen
+38539;151;Müden (Aller)
+38528;151;Adenbüttel
+38527;151;Meine
+38531;151;Rötgesbüttel
+38179;151;Schwülper
+38533;151;Vordorf
+38530;151;Didderse
+29393;151;Groß Oesingen
+29396;151;Schönewörde
+29369;151;Ummern
+38559;151;Wagenhoff
+29399;151;Wahrenholz
+29392;151;Wesendorf
+37139;152;Adelebsen, Flecken
+37120;152;Bovenden, Flecken
+37115;152;Duderstadt, Stadt
+37133;152;Friedland
+37130;152;Gleichen
+37083;152;Göttingen, Stadt
+34346;152;Hann. Münden, Stadt
+37124;152;Rosdorf
+34355;152;Staufenberg
+37127;152;Bühren
+37127;152;Dransfeld, Stadt
+37127;152;Jühnde
+37127;152;Niemetal
+37127;152;Scheden
+37434;152;Bilshausen
+37434;152;Bodensee
+37434;152;Gieboldehausen, Flecken
+37434;152;Krebeck
+37434;152;Obernfeld
+37434;152;Rhumspringe
+37434;152;Rollshausen
+37434;152;Rüdershausen
+37434;152;Wollbrandshausen
+37434;152;Wollershausen
+37136;152;Ebergötzen
+37136;152;Landolfshausen
+37136;152;Seeburg
+37136;152;Seulingen
+37136;152;Waake
+38667;153;Bad Harzburg, Stadt
+38685;153;Langelsheim, Stadt
+38704;153;Liebenburg
+38723;153;Seesen, Stadt
+38700;153;Braunlage, Stadt
+38640;153;Goslar, Stadt
+38678;153;Clausthal-Zellerfeld, Berg- und Universitätsstadt
+38729;153;Hahausen
+38729;153;Lutter am Barenberge, Flecken
+38729;153;Wallmoden
+38372;154;Büddenstedt
+38350;154;Helmstedt, Stadt
+38154;154;Königslutter am Elm, Stadt
+38165;154;Lehre
+38364;154;Schöningen, Stadt
+38368;154;Grasleben
+38368;154;Mariental
+38368;154;Querenhorst
+38368;154;Rennau
+38382;154;Beierstedt
+38384;154;Gevensleben
+38385;154;Ingeleben
+38381;154;Jerxheim
+38387;154;Söllingen
+38388;154;Twieflingen
+38373;154;Frellstedt
+38375;154;Räbke
+38373;154;Süpplingen
+38376;154;Süpplingenburg
+38378;154;Warberg
+38379;154;Wolsdorf
+38459;154;Bahrdorf
+38461;154;Danndorf
+38462;154;Grafhorst
+38464;154;Groß Twülpstedt
+38458;154;Velpke
+37581;155;Bad Gandersheim, Stadt
+37194;155;Bodenfelde, Flecken
+37586;155;Dassel, Stadt
+37181;155;Hardegsen, Stadt
+37589;155;Kalefeld
+37191;155;Katlenburg-Lindau
+37186;155;Moringen, Stadt
+37176;155;Nörten-Hardenberg, Flecken
+37154;155;Northeim, Stadt
+37170;155;Uslar, Stadt
+37574;155;Einbeck, Stadt
+37431;156;Bad Lauterberg im Harz, Stadt
+37441;156;Bad Sachsa, Stadt
+37412;156;Herzberg am Harz, Stadt
+37520;156;Osterode am Harz, Stadt
+37539;156;Bad Grund (Harz)
+37412;156;Elbingerode
+37197;156;Hattorf am Harz
+37412;156;Hörden am Harz
+37199;156;Wulften am Harz
+37445;156;Walkenried
+37447;156;Wieda
+37449;156;Zorge
+31234;157;Edemissen
+31249;157;Hohenhameln
+38268;157;Lengede
+31224;157;Peine, Stadt
+38159;157;Vechelde
+38176;157;Wendeburg
+31241;157;Ilsede
+38162;158;Cremlingen
+38300;158;Wolfenbüttel, Stadt
+38315;158;Schladen-Werla
+38271;158;Baddeckenstedt
+38272;158;Burgdorf
+38274;158;Elbe
+38275;158;Haverlah
+38277;158;Heere
+38279;158;Sehlde
+38312;158;Cramme
+38312;158;Dorstadt
+38312;158;Flöthe
+38312;158;Heiningen
+38312;158;Ohrum
+38312;158;Börßum
+38173;158;Dettum
+38173;158;Erkerode
+38173;158;Evessen
+38173;158;Sickte
+38173;158;Veltheim (Ohe)
+38170;158;Dahlum
+38170;158;Denkte
+38170;158;Hedeper
+38170;158;Kissenbrück
+38170;158;Kneitlingen
+38170;158;Remlingen
+38170;158;Roklum
+38170;158;Schöppenstedt, Stadt
+38170;158;Semmenstedt
+38170;158;Uehrde
+38170;158;Vahlberg
+38170;158;Winnigstedt
+38170;158;Wittmar
+30159;241;Hannover, Landeshauptstadt
+30890;241;Barsinghausen, Stadt
+31303;241;Burgdorf, Stadt
+30938;241;Burgwedel, Stadt
+30827;241;Garbsen, Stadt
+30989;241;Gehrden, Stadt
+30966;241;Hemmingen, Stadt
+30916;241;Isernhagen
+30880;241;Laatzen, Stadt
+30853;241;Langenhagen, Stadt
+31275;241;Lehrte, Stadt
+31535;241;Neustadt am Rübenberge, Stadt
+30982;241;Pattensen, Stadt
+30952;241;Ronnenberg, Stadt
+30926;241;Seelze, Stadt
+31319;241;Sehnde, Stadt
+31832;241;Springe, Stadt
+31311;241;Uetze
+30900;241;Wedemark
+30974;241;Wennigsen (Deister)
+31515;241;Wunstorf, Stadt
+27211;251;Bassum, Stadt
+49356;251;Diepholz, Stadt
+28816;251;Stuhr
+27232;251;Sulingen, Stadt
+28857;251;Syke, Stadt
+27239;251;Twistringen, Stadt
+49419;251;Wagenfeld
+28844;251;Weyhe
+49448;251;Brockum
+49448;251;Hüde
+49459;251;Lembruch
+49448;251;Lemförde, Flecken
+49448;251;Marl
+49448;251;Quernheim
+49448;251;Stemshorn
+49406;251;Barnstorf, Flecken
+49457;251;Drebber
+49406;251;Drentwede
+49406;251;Eydelstedt
+27330;251;Asendorf
+27327;251;Martfeld
+27327;251;Schwarme
+27305;251;Süstedt
+27305;251;Bruchhausen-Vilsen, Flecken
+27245;251;Bahrenborstel
+27245;251;Barenburg, Flecken
+27259;251;Freistatt
+27245;251;Kirchdorf
+27259;251;Varrel
+27259;251;Wehrbleck
+49453;251;Barver
+49453;251;Dickel
+49453;251;Hemsloh
+49453;251;Rehden
+49453;251;Wetschen
+27257;251;Affinghausen
+27248;251;Ehrenburg
+27251;251;Neuenkirchen
+27251;251;Scholen
+27252;251;Schwaförden
+27257;251;Sudwalde
+27246;251;Borstel
+27249;251;Maasen
+27249;251;Mellinghausen
+27254;251;Siedenburg, Flecken
+27254;251;Staffhorst
+31855;252;Aerzen, Flecken
+31848;252;Bad Münder am Deister, Stadt
+31812;252;Bad Pyrmont, Stadt
+31863;252;Coppenbrügge, Flecken
+31860;252;Emmerthal
+31785;252;Hameln, Stadt
+31840;252;Hessisch Oldendorf, Stadt
+31020;252;Salzhemmendorf, Flecken
+31061;254;Alfeld (Leine), Stadt
+31191;254;Algermissen
+31162;254;Bad Salzdetfurth, Stadt
+31167;254;Bockenem, Stadt
+31199;254;Diekholzen
+31008;254;Elze, Stadt
+31180;254;Giesen
+31177;254;Harsum
+31134;254;Hildesheim, Stadt
+31188;254;Holle
+31171;254;Nordstemmen
+31157;254;Sarstedt, Stadt
+31174;254;Schellerten
+31185;254;Söhlde
+31085;254;Everode
+31084;254;Freden (Leine)
+31087;254;Landwehr
+31088;254;Winzenburg
+31029;254;Banteln
+31032;254;Betheln
+31033;254;Brüggen
+31035;254;Despetal
+31036;254;Eime, Flecken
+31028;254;Gronau (Leine), Stadt
+31039;254;Rheden
+31097;254;Harbarnsen
+31195;254;Lamspringe, Flecken
+31195;254;Neuhof
+31196;254;Sehlem
+31099;254;Woltershausen
+31079;254;Adenstedt
+31079;254;Almstedt
+31079;254;Eberholzen
+31079;254;Sibbesse
+31079;254;Westfeld
+31091;254;Coppengrave
+31089;254;Duingen, Flecken
+31093;254;Hoyershausen
+31094;254;Marienhagen
+31096;254;Weenzen
+31073;255;Delligsen, Flecken
+37603;255;Holzminden, Stadt
+37639;255;Bevern, Flecken
+37640;255;Golmbach
+37642;255;Holenberg
+37643;255;Negenborn
+37691;255;Boffzen
+37691;255;Derental
+37699;255;Fürstenberg
+37697;255;Lauenförde, Flecken
+37619;255;Bodenwerder, Münchhausenstadt
+37647;255;Brevörde
+37620;255;Halle
+37619;255;Hehlen
+37649;255;Heinsen
+37619;255;Heyen
+37619;255;Kirchbrak
+31868;255;Ottenstein, Flecken
+37619;255;Pegestorf
+37647;255;Polle, Flecken
+37647;255;Vahlbruch
+37627;255;Arholzen
+37627;255;Deensen
+37633;255;Dielmissen
+37632;255;Eimen
+37632;255;Eschershausen, Stadt
+37627;255;Heinade
+37632;255;Holzen
+37627;255;Lenne
+37635;255;Lüerdissen
+37627;255;Stadtoldendorf, Stadt
+37627;255;Wangelnstedt
+31582;256;Nienburg (Weser), Stadt
+31547;256;Rehburg-Loccum, Stadt
+31595;256;Steyerberg, Flecken
+31623;256;Drakenburg, Flecken
+31626;256;Haßbergen
+31622;256;Heemsen
+31627;256;Rohrsen
+31619;256;Binnen
+31618;256;Liebenau, Flecken
+31621;256;Pennigsehl
+31609;256;Balge
+31608;256;Marklohe
+31613;256;Wietzen
+31636;256;Linsburg
+31637;256;Rodewald
+31634;256;Steimbke
+31638;256;Stöckse
+31603;256;Diepenau, Flecken
+31604;256;Raddestorf
+31600;256;Uchte, Flecken
+31606;256;Warmsen
+27333;256;Bücken, Flecken
+27324;256;Eystrup
+27324;256;Gandesbergen
+27324;256;Hämelhausen
+27324;256;Hassel (Weser)
+27318;256;Hilgermissen
+27318;256;Hoya, Stadt
+27318;256;Hoyerhagen
+27324;256;Schweringen
+27333;256;Warpe
+31629;256;Estorf
+31632;256;Husum
+31628;256;Landesbergen
+31633;256;Leese
+31592;256;Stolzenau
+31749;257;Auetal
+31675;257;Bückeburg, Stadt
+31683;257;Obernkirchen, Stadt
+31737;257;Rinteln, Stadt
+31655;257;Stadthagen, Stadt
+31708;257;Ahnsen
+31707;257;Bad Eilsen
+31710;257;Buchholz
+31707;257;Heeßen
+31711;257;Luhden
+31699;257;Beckedorf
+31700;257;Heuerßen
+31698;257;Lindhorst
+31702;257;Lüdersfeld
+31542;257;Bad Nenndorf, Stadt
+31559;257;Haste
+31559;257;Hohnhorst
+31555;257;Suthfeld
+31714;257;Lauenhagen
+31715;257;Meerbeck
+31712;257;Niedernwöhren
+31717;257;Nordsehl
+31718;257;Pollhagen
+31719;257;Wiedensahl, Flecken
+31691;257;Helpsen
+31693;257;Hespe
+31688;257;Nienstädt
+31691;257;Seggebruch
+31552;257;Apelern
+31867;257;Hülsede
+31867;257;Lauenau, Flecken
+31867;257;Messenkamp
+31867;257;Pohle
+31552;257;Rodenberg, Stadt
+31553;257;Auhagen
+31558;257;Hagenburg, Flecken
+31553;257;Sachsenhagen, Stadt
+31556;257;Wölpinghausen
+29303;351;Bergen, Stadt
+29221;351;Celle, Stadt
+29328;351;Faßberg
+29313;351;Hambühren
+29323;351;Wietze
+29308;351;Winsen (Aller)
+29348;351;Eschede
+29320;351;Südheide
+29356;351;Bröckel
+29358;351;Eicklingen
+29364;351;Langlingen
+29342;351;Wienhausen, Klostergemeinde
+29353;351;Ahnsbeck
+29355;351;Beedenbostel
+29351;351;Eldingen
+29362;351;Hohne
+29331;351;Lachendorf
+29352;351;Adelheidsdorf
+29336;351;Nienhagen
+29339;351;Wathlingen
+29303;351;Lohheide, gemfr. Bezirk
+27472;352;Cuxhaven, Stadt
+27612;352;Loxstedt
+27619;352;Schiffdorf
+27616;352;Beverstedt
+27628;352;Hagen im Bremischen
+27637;352;Wurster Nordseeküste
+27607;352;Geestland, Stadt
+21785;352;Belum
+21782;352;Bülkau
+21781;352;Cadenberge
+21784;352;Geversdorf
+21785;352;Neuhaus (Oste), Flecken
+21787;352;Oberndorf
+21789;352;Wingst
+21769;352;Armstorf
+21769;352;Hollnseth
+21769;352;Lamstedt
+21770;352;Mittelstenahe
+21772;352;Stinstedt
+21755;352;Hechthausen
+21745;352;Hemmoor, Stadt
+21756;352;Osten
+21775;352;Ihlienworth
+21763;352;Neuenkirchen
+21765;352;Nordleda
+21775;352;Odisheim
+21762;352;Osterbruch
+21762;352;Otterndorf, Stadt
+21775;352;Steinau
+21776;352;Wanna
+21244;353;Buchholz in der Nordheide, Stadt
+21629;353;Neu Wulmstorf
+21224;353;Rosengarten
+21218;353;Seevetal
+21435;353;Stelle
+21423;353;Winsen (Luhe), Stadt
+21423;353;Drage
+21436;353;Marschacht
+21395;353;Tespe
+21271;353;Asendorf
+21438;353;Brackel
+21272;353;Egestorf
+21271;353;Hanstedt
+21439;353;Marxen
+21274;353;Undeloh
+21279;353;Appel
+21279;353;Drestedt
+21646;353;Halvesbostel
+21279;353;Hollenstedt
+21647;353;Moisburg
+21649;353;Regesbostel
+21279;353;Wenzendorf
+21227;353;Bendestorf
+21228;353;Harmstorf
+21266;353;Jesteburg
+21376;353;Eyendorf
+21376;353;Garlstorf
+21441;353;Garstedt
+21376;353;Gödenstorf
+21376;353;Salzhausen
+21442;353;Toppenstedt
+21444;353;Vierhöfen
+21445;353;Wulfsen
+21255;353;Dohren
+21256;353;Handeloh
+21258;353;Heidenau
+21255;353;Kakenstorf
+21255;353;Königsmoor
+21259;353;Otter
+21255;353;Tostedt
+21261;353;Welle
+21255;353;Wistedt
+29471;354;Gartow, Flecken
+29475;354;Gorleben
+29478;354;Höhbeck
+29491;354;Prezelle
+29493;354;Schnackenburg, Stadt
+29472;354;Damnatz
+29451;354;Dannenberg (Elbe), Stadt
+29473;354;Göhrde
+29476;354;Gusborn
+29456;354;Hitzacker (Elbe), Stadt
+29479;354;Jameln
+29481;354;Karwitz
+29484;354;Langendorf
+29490;354;Neu Darchau
+29499;354;Zernien
+29468;354;Bergen an der Dumme, Flecken
+29459;354;Clenze, Flecken
+29482;354;Küsten
+29485;354;Lemgow
+29487;354;Luckau (Wendland)
+29488;354;Lübbow
+29439;354;Lüchow (Wendland), Stadt
+29465;354;Schnega
+29494;354;Trebel
+29496;354;Waddeweitz
+29497;354;Woltersdorf
+29462;354;Wustrow (Wendland), Stadt
+21365;355;Adendorf
+21354;355;Bleckede, Stadt
+21335;355;Lüneburg, Hansestadt
+19273;355;Amt Neuhaus
+21385;355;Amelinghausen
+21386;355;Betzendorf
+21385;355;Oldendorf (Luhe)
+21385;355;Rehlingen
+21388;355;Soderstorf
+21357;355;Bardowick, Flecken
+21357;355;Barum
+21447;355;Handorf
+21358;355;Mechtersen
+21449;355;Radbruch
+21360;355;Vögelsen
+21357;355;Wittorf
+21368;355;Boitze
+21368;355;Dahlem
+21368;355;Dahlenburg, Flecken
+21369;355;Nahrendorf
+21371;355;Tosterglope
+21394;355;Kirchgellersen
+21391;355;Reppenstedt
+21394;355;Südergellersen
+21394;355;Westergellersen
+21406;355;Barnstedt
+21407;355;Deutsch Evern
+21409;355;Embsen
+21406;355;Melbeck
+21397;355;Barendorf
+21398;355;Neetze
+21400;355;Reinstorf
+21401;355;Thomasburg
+21397;355;Vastorf
+21403;355;Wendisch Evern
+21380;355;Artlenburg, Flecken
+21382;355;Brietlingen
+21379;355;Echem
+21522;355;Hittbergen
+21522;355;Hohnstorf (Elbe)
+21379;355;Lüdersburg
+21379;355;Rullstorf
+21379;355;Scharnebeck
+28879;356;Grasberg
+28865;356;Lilienthal
+27711;356;Osterholz-Scharmbeck, Stadt
+27721;356;Ritterhude
+28790;356;Schwanewede
+27726;356;Worpswede
+27729;356;Axstedt
+27729;356;Hambergen
+27729;356;Holste
+27729;356;Lübberstedt
+27729;356;Vollersode
+27432;357;Bremervörde, Stadt
+27442;357;Gnarrenburg
+27356;357;Rotenburg (Wümme), Stadt
+27383;357;Scheeßel
+27374;357;Visselhövede, Stadt
+27386;357;Bothel
+27386;357;Brockel
+27386;357;Hemsbünde
+27386;357;Hemslingen
+27386;357;Kirchwalsede
+27386;357;Westerwalsede
+27389;357;Fintel
+27389;357;Helvesiek
+27389;357;Lauenbrück
+27389;357;Stemmen
+27389;357;Vahlde
+27432;357;Alfstedt
+27432;357;Basdahl
+27432;357;Ebersdorf
+27432;357;Hipstedt
+27432;357;Oerel
+27446;357;Anderlingen
+27446;357;Deinstedt
+27446;357;Farven
+27404;357;Ostereistedt
+27404;357;Rhade
+27446;357;Sandbostel
+27404;357;Seedorf
+27446;357;Selsingen
+27419;357;Groß Meckelsen
+27419;357;Hamersen
+27419;357;Kalbe
+27419;357;Klein Meckelsen
+27419;357;Lengenbostel
+27419;357;Sittensen
+27419;357;Tiste
+27419;357;Vierden
+27419;357;Wohnste
+27367;357;Ahausen
+27367;357;Bötersen
+27367;357;Hassendorf
+27367;357;Hellwege
+27367;357;Horstedt
+27367;357;Reeßum
+27367;357;Sottrum
+27412;357;Breddorf
+27412;357;Bülstedt
+27412;357;Hepstedt
+27412;357;Kirchtimke
+27412;357;Tarmstedt
+27412;357;Vorwerk
+27412;357;Westertimke
+27412;357;Wilstedt
+27404;357;Elsdorf
+27404;357;Gyhum
+27404;357;Heeslingen
+27404;357;Zeven, Stadt
+29646;358;Bispingen
+29699;358;Bomlitz
+29683;358;Bad Fallingbostel, Stadt
+29633;358;Munster, Stadt
+29643;358;Neuenkirchen
+29640;358;Schneverdingen, Stadt
+29614;358;Soltau, Stadt
+29664;358;Walsrode, Stadt
+29649;358;Wietzendorf
+29693;358;Ahlden (Aller), Flecken
+29693;358;Eickeloh
+29690;358;Grethem
+29693;358;Hademstorf
+29693;358;Hodenhagen
+29693;358;Böhme
+27336;358;Frankenfeld
+27336;358;Häuslingen
+27336;358;Rethem (Aller), Stadt
+29690;358;Buchholz (Aller)
+29690;358;Essel
+29690;358;Gilten
+29690;358;Lindwedel
+29690;358;Schwarmstedt
+29664;358;Osterheide, gemfr. Bezirk
+21614;359;Buxtehude, Hansestadt
+21706;359;Drochtersen
+21635;359;Jork
+21682;359;Stade, Hansestadt
+21641;359;Apensen
+21643;359;Beckdorf
+21644;359;Sauensiek
+21717;359;Deinste
+21717;359;Fredenbeck
+27449;359;Kutenholz
+21702;359;Ahlerstedt
+21698;359;Bargstedt
+21698;359;Brest
+21698;359;Harsefeld, Flecken
+21684;359;Agathenburg
+21640;359;Bliedersdorf
+21739;359;Dollern
+21640;359;Horneburg, Flecken
+21640;359;Nottensdorf
+21720;359;Grünendeich
+21720;359;Guderhandviertel
+21723;359;Hollern-Twielenfleth
+21720;359;Mittelnkirchen
+21640;359;Neuenkirchen
+21720;359;Steinkirchen
+21730;359;Balje
+21729;359;Freiburg (Elbe), Flecken
+21732;359;Krummendeich
+21734;359;Oederquart
+21737;359;Wischhafen
+21709;359;Burweg
+21709;359;Düdenbüttel
+21710;359;Engelschoff
+21727;359;Estorf
+21712;359;Großenwörden
+21714;359;Hammah
+21726;359;Heinbockel
+21709;359;Himmelpforten
+21726;359;Kranenburg
+21726;359;Oldendorf
+29553;360;Bienenbüttel
+29525;360;Uelzen, Stadt
+29588;360;Oetzen
+29590;360;Rätzlingen
+29571;360;Rosche
+29597;360;Stoetze
+29562;360;Suhlendorf
+29578;360;Eimke
+29581;360;Gerdau
+29556;360;Suderburg
+29575;360;Altenmedingen
+29549;360;Bad Bevensen, Stadt
+29576;360;Barum
+29574;360;Ebstorf,Klosterflecken
+29579;360;Emmendorf
+29582;360;Hanstedt
+29584;360;Himbergen
+29585;360;Jelmstorf
+29587;360;Natendorf
+29591;360;Römstedt
+29593;360;Schwienau
+29599;360;Weste
+29565;360;Wriedel
+29389;360;Bad Bodenteich, Flecken
+29394;360;Lüder
+29594;360;Soltendieck
+29559;360;Wrestedt
+28832;361;Achim, Stadt
+27313;361;Dörverden
+27308;361;Kirchlinteln
+27299;361;Langwedel, Flecken
+28870;361;Ottersberg, Flecken
+28876;361;Oyten
+27283;361;Verden (Aller), Stadt
+27337;361;Blender
+27321;361;Emtinghausen
+27339;361;Riede
+27321;361;Thedinghausen
+27749;401;Delmenhorst, Stadt
+26721;402;Emden, Stadt
+26122;403;Oldenburg (Oldenburg), Stadt
+49074;404;Osnabrück, Stadt
+26382;405;Wilhelmshaven, Stadt
+26689;451;Apen
+26160;451;Bad Zwischenahn
+26188;451;Edewecht
+26180;451;Rastede
+26655;451;Westerstede, Stadt
+26215;451;Wiefelstede
+26603;452;Aurich, Stadt
+26579;452;Baltrum
+26629;452;Großefehn
+26532;452;Großheide
+26759;452;Hinte
+26632;452;Ihlow
+26571;452;Juist
+26736;452;Krummhörn
+26506;452;Norden, Stadt
+26548;452;Norderney, Stadt
+26624;452;Südbrookmerland
+26639;452;Wiesmoor, Stadt
+26553;452;Dornum
+26529;452;Leezdorf
+26529;452;Marienhafe, Flecken
+26529;452;Osteel
+26529;452;Rechtsupweg
+26529;452;Upgant-Schott
+26529;452;Wirdum
+26524;452;Berumbur
+26524;452;Hage, Flecken
+26524;452;Hagermarsch
+26524;452;Halbemond
+26524;452;Lütetsburg
+26676;453;Barßel
+26219;453;Bösel
+49692;453;Cappeln (Oldenburg)
+49661;453;Cloppenburg, Stadt
+49685;453;Emstek
+49632;453;Essen (Oldenburg)
+26169;453;Friesoythe, Stadt
+49681;453;Garrel
+49688;453;Lastrup
+49699;453;Lindern (Oldenburg)
+49624;453;Löningen, Stadt
+49696;453;Molbergen
+26683;453;Saterland
+48488;454;Emsbüren
+49744;454;Geeste
+49733;454;Haren (Ems), Stadt
+49740;454;Haselünne, Stadt
+49808;454;Lingen (Ems), Stadt
+49716;454;Meppen, Stadt
+26871;454;Papenburg, Stadt
+26899;454;Rhede (Ems)
+48499;454;Salzbergen
+49767;454;Twist
+26906;454;Dersum
+26892;454;Dörpen
+26892;454;Heede
+26892;454;Kluse
+26892;454;Lehe
+26909;454;Neubörger
+26909;454;Neulehe
+26907;454;Walchum
+26892;454;Wippingen
+49832;454;Andervenne
+49832;454;Beesten
+49832;454;Freren, Stadt
+49832;454;Messingen
+49832;454;Thuine
+49770;454;Dohren
+49770;454;Herzlake
+49774;454;Lähden
+49762;454;Fresenburg
+49762;454;Lathen
+49779;454;Niederlangen
+49779;454;Oberlangen
+49762;454;Renkenberge
+49762;454;Sustrum
+49844;454;Bawinkel
+49838;454;Gersten
+49838;454;Handrup
+49838;454;Langen
+49838;454;Lengerich
+49838;454;Wettrup
+26897;454;Bockhorst
+26897;454;Breddenberg
+26897;454;Esterwegen
+26897;454;Hilkenbrook
+26903;454;Surwold
+26904;454;Börger
+49777;454;Groß Berßen
+49751;454;Hüven
+49777;454;Klein Berßen
+49751;454;Sögel
+49751;454;Spahnharrenstätte
+49777;454;Stavern
+49751;454;Werpeloh
+48480;454;Lünne
+48480;454;Schapen
+48480;454;Spelle
+49757;454;Lahn
+26901;454;Lorup
+26901;454;Rastdorf
+49757;454;Vrees
+49757;454;Werlte
+26441;455;Jever, Stadt
+26452;455;Sande
+26419;455;Schortens, Stadt
+26434;455;Wangerland
+26486;455;Wangerooge, Nordseebad
+26345;455;Bockhorn
+26316;455;Varel, Stadt
+26340;455;Zetel
+48455;456;Bad Bentheim, Stadt
+48529;456;Nordhorn, Stadt
+49835;456;Wietmarschen
+49824;456;Emlichheim
+49846;456;Hoogstede
+49824;456;Laar
+49824;456;Ringe
+49828;456;Esche
+49828;456;Georgsdorf
+49828;456;Lage
+49828;456;Neuenhaus, Stadt
+49828;456;Osterwald
+48465;456;Engden
+48465;456;Isterberg
+48465;456;Ohne
+48465;456;Quendorf
+48465;456;Samern
+48465;456;Schüttorf, Stadt
+49843;456;Getelo
+49843;456;Gölenkamp
+49843;456;Halle
+49847;456;Itterbeck
+49843;456;Uelsen
+49847;456;Wielen
+49849;456;Wilsum
+26757;457;Borkum, Stadt
+26844;457;Jemgum
+26789;457;Leer (Ostfriesland), Stadt
+26802;457;Moormerland
+26842;457;Ostrhauderfehn
+26817;457;Rhauderfehn
+26670;457;Uplengen
+26826;457;Weener, Stadt
+26810;457;Westoverledingen
+26831;457;Bunde
+26835;457;Brinkum
+26835;457;Firrel
+26835;457;Hesel
+26835;457;Holtland
+26835;457;Neukamperfehn
+26835;457;Schwerinsdorf
+26847;457;Detern, Flecken
+26849;457;Filsum
+26845;457;Nortmoor
+27801;458;Dötlingen
+27777;458;Ganderkesee
+26197;458;Großenkneten
+26209;458;Hatten
+27798;458;Hude (Oldb)
+26203;458;Wardenburg
+27793;458;Wildeshausen, Stadt
+27243;458;Beckeln
+27243;458;Colnrade
+27243;458;Dünsen
+27243;458;Groß Ippener
+27243;458;Harpstedt, Flecken
+27243;458;Kirchseelte
+27243;458;Prinzhöfte
+27243;458;Winkelsett
+49152;459;Bad Essen
+49186;459;Bad Iburg, Stadt
+49196;459;Bad Laer
+49214;459;Bad Rothenfelde
+49191;459;Belm
+49143;459;Bissendorf
+49163;459;Bohmte
+49565;459;Bramsche, Stadt
+49201;459;Dissen am Teutoburger Wald, Stadt
+49124;459;Georgsmarienhütte, Stadt
+49170;459;Hagen am Teutoburger Wald
+49205;459;Hasbergen
+49176;459;Hilter am Teutoburger Wald
+49324;459;Melle, Stadt
+49179;459;Ostercappeln
+49134;459;Wallenhorst
+49219;459;Glandorf
+49635;459;Badbergen
+49637;459;Menslage
+49638;459;Nortrup
+49610;459;Quakenbrück, Stadt
+49594;459;Alfhausen
+49577;459;Ankum
+49593;459;Bersenbrück, Stadt
+49577;459;Eggermühlen
+49596;459;Gehrde
+49577;459;Kettenkamp
+49597;459;Rieste
+49626;459;Berge
+49626;459;Bippen
+49584;459;Fürstenau, Stadt
+49586;459;Merzen
+49586;459;Neuenkirchen
+49599;459;Voltlage
+49456;460;Bakum
+49401;460;Damme, Stadt
+49413;460;Dinklage, Stadt
+49424;460;Goldenstedt
+49451;460;Holdorf
+49393;460;Lohne (Oldenburg), Stadt
+49434;460;Neuenkirchen-Vörden
+49439;460;Steinfeld (Oldenburg)
+49377;460;Vechta, Stadt
+49429;460;Visbek
+27804;461;Berne
+26919;461;Brake (Unterweser), Stadt
+26969;461;Butjadingen
+26931;461;Elsfleth, Stadt
+26349;461;Jade
+27809;461;Lemwerder
+26954;461;Nordenham, Stadt
+26939;461;Ovelgönne
+26935;461;Stadland
+26446;462;Friedeburg
+26465;462;Langeoog
+26474;462;Spiekeroog
+26409;462;Wittmund, Stadt
+26427;462;Dunum
+26427;462;Esens, Stadt
+26427;462;Holtgast
+26427;462;Moorweg
+26427;462;Neuharlingersiel
+26427;462;Stedesdorf
+26427;462;Werdum
+26487;462;Blomberg
+26556;462;Eversmeer
+26556;462;Nenndorf
+26487;462;Neuschoo
+26489;462;Ochtersum
+26556;462;Schweindorf
+26556;462;Utarp
+26556;462;Westerholt
