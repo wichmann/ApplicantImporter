@@ -36,6 +36,7 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<finalName>${project.name}_${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -45,7 +46,6 @@
 							<mainClass>de.ichmann.applicant_importer.RunApplicantImporterGUI</mainClass>
 						</manifest>
 					</archive>
-					<finalName>BewerberImport</finalName>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
@@ -74,6 +74,44 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+                <groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+                <artifactId>launch4j-plugin</artifactId>
+                <version>1.5.0.0</version>
+                <executions>
+                    <execution>
+                        <id>l4j-gui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <outfile>target/${project.name}_${project.version}.exe</outfile>
+                            <jar>target/${project.name}_${project.version}.jar</jar>
+                            <errTitle>${project.artifactId} ${project.version} - Error</errTitle>
+                            <icon>src/main/resources/icons/icon.ico</icon>
+                            <jre>
+                                <path>jre7</path>
+                                <minVersion>1.7.0_17</minVersion>
+                                <initialHeapSize>128</initialHeapSize>
+                                <maxHeapSize>512</maxHeapSize>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>0.1.0.0</fileVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
+                                <fileDescription>${project.description}</fileDescription>
+                                <copyright>Christian Wichmann</copyright>
+                                <productVersion>0.1.0.0</productVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
+                                <productName>${project.name}</productName>
+                                <internalName>${project.artifactId}</internalName>
+                                <originalFilename>${project.name}_${project.version}.exe</originalFilename>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 </project>

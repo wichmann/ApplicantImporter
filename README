@@ -13,6 +13,7 @@ KNOWN PROBLEMS AND BUGS
 
 BUILD
 -----
+mvn clean install assembly:single package 
 mvn clean install assembly:single
 mvn clean source:jar
 mvn clean javadoc:jar
