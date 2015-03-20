@@ -77,8 +77,6 @@ public class ApplicantImporterMain extends JFrame {
 		setTitle("BewerberImporter");
 		setName("ApplicantImporter");
 		setIconImage(new ImageIcon(getClass().getResource("/icons/icon.png")).getImage());
-		// setLocationRelativeTo(null);
-		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(buildMenuBar());
 
@@ -247,11 +245,24 @@ public class ApplicantImporterMain extends JFrame {
 				ApplicantInformationTableModel model = (ApplicantInformationTableModel) (table.getModel());
 				Applicant applicant = model.getApplicantForRow(row);
 				if (me.getClickCount() == 2) {
-					JOptionPane.showMessageDialog(ApplicantImporterMain.this, applicant, "Zeile ausgewählt",
+					JOptionPane.showMessageDialog(ApplicantImporterMain.this, buildInfoMessage(applicant), "Bewerberdaten",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
+	}
+
+	protected String buildInfoMessage(Applicant applicant) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("<html>");
+		builder.append("<strong>Bewerber: ");
+		builder.append(applicant.toString());
+		builder.append("</strong>");
+		builder.append("<br>");
+		builder.append("<br>");
+		builder.append(applicant.buildCommentFromApplicant());
+		builder.append("</html>");
+		return builder.toString();
 	}
 
 	private void addKeyBindings() {
