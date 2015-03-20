@@ -9,7 +9,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,10 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.ichmann.applicant_importer.model.Applicant;
+import de.ichmann.applicant_importer.model.Applicant.ApplicantBuilder;
 import de.ichmann.applicant_importer.model.DataField;
 import de.ichmann.applicant_importer.model.Degree;
 import de.ichmann.applicant_importer.model.School;
-import de.ichmann.applicant_importer.model.Applicant.ApplicantBuilder;
 
 /**
  * Imports and evaluates data from PDF forms and creates the Applicant objects
@@ -41,12 +40,13 @@ public final class PdfFormImporter {
 	private final static Logger logger = LoggerFactory.getLogger(PdfFormImporter.class);
 
 	private final List<Applicant> listOfStudents = new ArrayList<Applicant>();
-
+	private final List<String> listOfInvalidPdfFiles = new ArrayList<String>();
+	
 	/**
 	 * Contains for every data field in the PDF file the associated name of that
 	 * field.
 	 */
-	private final Map<String, DataField> dataFieldNames = new HashMap<>();
+	private final Map<String, DataField> dataFieldNames = new HashMap<>();	
 
 	/*
 	 * Current field names (2015-03-13):
@@ -91,6 +91,35 @@ public final class PdfFormImporter {
 	 * Tx - SchulabschlussSonstigerErlaeuterung - SchulabschlussSonstigerErlaeuterung - null
 	 */
 
+	public PdfFormImporter(final Path directory) {
+		fillDataFieldNamesDictionary();
+		parseFiles(directory);
+	}
+
+	/**
+	 * Finds and parses all PDF files in a given directory (not the subdirectories!).
+	 */
+	private void parseFiles(final Path directory) {
+		// find all PDF files and parse them
+		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.pdf");
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+			for (Path path : directoryStream) {
+				if (matcher.matches(path.getFileName())) {
+					logger.info("Found PDF file: " + path);
+					// parse every PDF file in given directory
+					Applicant a = parsePDFFile(path);
+					if (a != null) {
+						listOfStudents.add(a);
+					}
+					else {
+						listOfInvalidPdfFiles.add(path.getFileName().toString());
+					}
+				}
+			}
+		} catch (IOException ex) {
+			logger.warn("Could not open PDF file!");
+		}
+	}
 
 	private void fillDataFieldNamesDictionary() {
 		dataFieldNames.put("Vorname", DataField.FIRST_NAME);
@@ -127,60 +156,31 @@ public final class PdfFormImporter {
 		dataFieldNames.put("SonstigesSchulabschluss", DataField.SCHOOL_OTHER_TYPE);
 
 		/*
-		 * The following fields do not contain text strings or have to be
-		 * evaluated otherwise:
+		 * The following fields do not contain text strings or have to be evaluated otherwise:
 		 * 
-		 * DauerAusbildung: Has to be parsed as decimal number and multiplicated
-		 * by 12 to get month.
+		 * DauerAusbildung: Has to be parsed as decimal number and multiplicated by 12 to get month.
 		 * 
-		 * ErlaeuterungBFS - SonstigesSchulabschluss: Stored as additional info
-		 * in School Enum.
+		 * ErlaeuterungBFS - SonstigesSchulabschluss: Stored as additional info in School Enum.
 		 * 
-		 * SchulabschlussSonstigerErlaeuterung: Stored as additional info in
-		 * Degree Enum.
+		 * SchulabschlussSonstigerErlaeuterung: Stored as additional info in Degree Enum.
 		 * 
 		 * Formular drucken - Senden: Ignored because control buttons.
 		 * 
-		 * Umschueler (UmschuelerNein, UmschuelerJa), Geschlecht (m, w): Binary
-		 * choices that have to be evaluated.
+		 * Umschueler (UmschuelerNein, UmschuelerJa), Geschlecht (m, w): Binary choices that have to be evaluated.
 		 * 
 		 * SchulbesuchBisher (RS), Schulabschluss(EI)
 		 */
 	}
 
-	public PdfFormImporter(Path directory) {
-
-		fillDataFieldNamesDictionary();
-
-		// find all PDF files and parse them
-		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.pdf");
-		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
-			for (Path path : directoryStream) {
-				if (matcher.matches(path.getFileName())) {
-					logger.info("Found PDF file: " + path);
-					// parse every PDF file in given directory
-					Applicant a = parsePDFFile(path);
-					if (a != null) {
-						listOfStudents.add(a);
-					}
-				}
-			}
-		} catch (IOException ex) {
-			logger.warn("Could not open PDF file!");
-		}
-	}
-
 	/**
-	 * Parses a single PDF file defined by a given Path. If the PDF file
-	 * contains no form fields and has no useable data, null is returned to the
-	 * caller!
+	 * Parses a single PDF file defined by a given Path. If the PDF file contains no form fields and has no useable data, null is returned
+	 * to the caller!
 	 * 
 	 * @param path
 	 *            path describing the PDF file to be parsed
 	 * @return applicants data or null, if file did not contain any form fields
 	 */
-	private Applicant parsePDFFile(Path path) {
-
+	private Applicant parsePDFFile(final Path path) {
 		PDDocument pdfDocument = null;
 		Applicant student = null;
 
@@ -240,6 +240,7 @@ public final class PdfFormImporter {
 							} else if ("w".equals(pdField.getValue())) {
 								builder.setValue(DataField.GENDER, pdField.getValue());
 							} else {
+								// TODO Check whether to add a non-chosen gender type or to assign a best guess.
 								logger.warn("Invalid gender!");
 								assert false : "Invalid gender chosen!";
 							}
@@ -272,8 +273,8 @@ public final class PdfFormImporter {
 	}
 
 	/**
-	 * Extracts information about the last accieved degree from a given PDF form
-	 * field and stores the data inside a provided ApplicantBuilder instance.
+	 * Extracts information about the last accieved degree from a given PDF form field and stores the data inside a provided
+	 * ApplicantBuilder instance.
 	 * 
 	 * @param pdField
 	 *            PDF form field data
@@ -282,9 +283,9 @@ public final class PdfFormImporter {
 	 * @throws IOException
 	 *             if reading of PDF form data failed
 	 */
-	private void extractLastDegree(PDField pdField, ApplicantBuilder builder) throws IOException {
-		if ("Schulabschluss".equals(pdField.getFullyQualifiedName())) { 
-			Degree degree = Degree.SONSTIGES;
+	private void extractLastDegree(final PDField pdField, final ApplicantBuilder builder) throws IOException {
+		if ("Schulabschluss".equals(pdField.getFullyQualifiedName())) {
+			Degree degree = Degree.SONSTIGER_ABSCHLUSS;
 			if (pdField.getValue() != null) {
 				switch (pdField.getValue()) {
 				case "HA":
@@ -306,7 +307,7 @@ public final class PdfFormImporter {
 					degree = Degree.OHNE_ABSCHLUSS;
 					break;
 				case "XS":
-					degree = Degree.SONSTIGES;
+					degree = Degree.SONSTIGER_ABSCHLUSS;
 					break;
 				default:
 					logger.warn("Invalid degree type: " + pdField.getValue());
@@ -318,8 +319,8 @@ public final class PdfFormImporter {
 	}
 
 	/**
-	 * Extracts information about the attended school from a given PDF form
-	 * field and stores the data inside a provided ApplicantBuilder instance.
+	 * Extracts information about the attended school from a given PDF form field and stores the data inside a provided ApplicantBuilder
+	 * instance.
 	 * 
 	 * @param pdField
 	 *            PDF form field data
@@ -328,7 +329,7 @@ public final class PdfFormImporter {
 	 * @throws IOException
 	 *             if reading of PDF form data failed
 	 */
-	private void extractAttendedSchool(PDField pdField, ApplicantBuilder builder) throws IOException {
+	private void extractAttendedSchool(final PDField pdField, final ApplicantBuilder builder) throws IOException {
 		if ("SchulbesuchBisher".equals(pdField.getFullyQualifiedName())) {
 			School schoolType = School.SONSTIGES;
 			if (pdField.getValue() != null) {
@@ -340,10 +341,10 @@ public final class PdfFormImporter {
 					schoolType = School.HAUPTSCHULE;
 					break;
 				case "GY":
-					schoolType = School.GYMNASIUM;
+					schoolType = School.GYMNASIUM_OBERSTUFE;
 					break;
-				case "B1": // TODO What is with B2 and B7...
-					schoolType = School.BERUFSFACHSCHULE;
+				case "B1": // TODO Check which Berufsfachschule should be default.
+					schoolType = School.BERUFSFACHSCHULE_ZWEIJAEHRIG_RS;
 					break;
 				case "BS":
 					schoolType = School.BERUFSSCHULE;
@@ -351,7 +352,7 @@ public final class PdfFormImporter {
 				case "IG":
 					schoolType = School.GESAMTSCHULE;
 					break;
-				case "OS???":
+				case "Oberschule":
 					schoolType = School.OBERSCHULE;
 					break;
 				case "FO":
@@ -360,7 +361,7 @@ public final class PdfFormImporter {
 				case "SA":
 					schoolType = School.FOERDERSCHULE;
 					break;
-				case "Sonstiges???":
+				case "XS":
 					schoolType = School.SONSTIGES;
 					break;
 				default:
@@ -376,7 +377,7 @@ public final class PdfFormImporter {
 		return listOfStudents;
 	}
 
-	public static void main(String[] args) {
-		new PdfFormImporter(Paths.get("/home/christian/Desktop/"));
+	public final List<String> getListOfInvalidPdfFiles() {
+		return listOfInvalidPdfFiles;
 	}
 }
