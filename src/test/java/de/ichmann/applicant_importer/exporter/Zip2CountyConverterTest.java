@@ -22,10 +22,13 @@ public class Zip2CountyConverterTest {
 	@Test
 	public final void testConvertZipCode() {
 		assertEquals(converter.convertZipCode(49074), "404");
-		assertEquals(converter.convertZipCode(38023), "101");
+		assertEquals(converter.convertZipCode(38100), "101");
 		assertEquals(converter.convertZipCode(38300), "158");
-		assertEquals(converter.convertZipCode(49034), "404");
-		assertEquals(converter.convertZipCode(27781), "458");
+		assertEquals(converter.convertZipCode(49074), "404");
+		assertEquals(converter.convertZipCode(27243), "458");
+		assertEquals(converter.convertZipCode(49565), "459");
+		assertEquals(converter.convertZipCode(0), "");
+		assertEquals(converter.convertZipCode(12345), "");
 	}
 
 }
