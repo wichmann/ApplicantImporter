@@ -61,6 +61,8 @@ public enum DataField {
 	RELIGION(Integer.class, "Konfession", true),
 
 	ZIP_CODE(Integer.class, "PLZ", true),
+	
+	CITIZENSHIP(String.class, "Staatsangehörigkeit", true),
 
 	CITY(String.class, "Ort", true),
 

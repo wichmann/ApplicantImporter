@@ -6,13 +6,13 @@ public enum Religion {
 
 	EVANGELISCH(1),
 
-	KATHOLISCH(2),
+	KATHOLISCH(3),
 
-	ALEVITISCH(3), // TODO check if number is correct!
+	ALEVITISCH(5),
 
-	ISLAMISCH(4),
+	ISLAMISCH(6),
 
-	SONSTIGE(5),
+	SONSTIGE(7),
 
 	KEINE(6);
 
