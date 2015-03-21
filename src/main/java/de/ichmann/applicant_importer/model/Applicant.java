@@ -9,117 +9,132 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Contains all data field information for a given applicant that has been imported. This class is immutable and new objects can only be
- * created by use of the contained ApplicantBuilder.
+ * Contains all data field information for a given applicant that has been imported. This class is
+ * immutable and new objects can only be created by use of the contained ApplicantBuilder.
  * 
  * @author Christian Wichmann
  */
 public class Applicant {
 
-	private final static Logger logger = LoggerFactory.getLogger(Applicant.class);
+    private final static Logger logger = LoggerFactory.getLogger(Applicant.class);
 
-	private final Map<DataField, Object> applicantData = new HashMap<>();
+    private final Map<DataField, Object> applicantData = new HashMap<>();
+    private String filename;
 
-	/**
-	 * Collects all data field information and builds Applicant object with this data.
-	 * 
-	 * @author Christian Wichmann
-	 */
-	public static class ApplicantBuilder {
+    /**
+     * Collects all data field information and builds Applicant object with this data.
+     * 
+     * @author Christian Wichmann
+     */
+    public static class ApplicantBuilder {
 
-		private final Map<DataField, Object> applicantData = new HashMap<>();
+        private final Map<DataField, Object> applicantData = new HashMap<>();
+        private String filename;
 
-		public ApplicantBuilder() {
-		}
+        public ApplicantBuilder() {
+        }
 
-		public ApplicantBuilder setValue(DataField dataField, Object data) {
-			applicantData.put(dataField, data);
-			return this;
-		}
+        public ApplicantBuilder setValue(DataField dataField, Object data) {
+            applicantData.put(dataField, data);
+            return this;
+        }
 
-		public Applicant build() {
-			return new Applicant(this);
-		}
-	}
+        public ApplicantBuilder setFileName(String filename) {
+            this.filename = filename;
+            return this;
+        }
 
-	private Applicant(ApplicantBuilder builder) {
-		this.applicantData.putAll(builder.applicantData);
-	}
+        public Applicant build() {
+            return new Applicant(this);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return applicantData.get(DataField.FIRST_NAME) + " " + applicantData.get(DataField.LAST_NAME);
-	}
+    private Applicant(ApplicantBuilder builder) {
+        this.applicantData.putAll(builder.applicantData);
+        this.filename = builder.filename;
+    }
 
-	public final Object getValue(DataField dataField) {
-		return applicantData.get(dataField);
-	}
+    @Override
+    public String toString() {
+        return applicantData.get(DataField.FIRST_NAME) + " "
+                + applicantData.get(DataField.LAST_NAME);
+    }
 
-	/**
-	 * Checks all data for plausibility. It checks whether all necessary data is present and if all data has the expected format.
-	 * 
-	 * @return true, only if all data is OK
-	 */
-	public boolean checkPlausibility() {
+    public final Object getValue(DataField dataField) {
+        return applicantData.get(dataField);
+    }
 
-		for (Object o : applicantData.values()) {
-			if (o == null) {
-				logger.warn("Null value in applicant " + toString());
-				return false;
-			}
-		}
+    public final String getFileName() {
+        return filename;
+    }
 
-		for (Entry<DataField, Object> entry : applicantData.entrySet()) {
-			DataField dataField = entry.getKey();
-			Object value = entry.getValue();
-			if (dataField.isRequired() && (value == null || "".equals(value))) {
-				logger.warn("Required value " + dataField + " in applicant " + toString() + " is missing!");
-				return false;
-			}
-		}
+    /**
+     * Checks all data for plausibility. It checks whether all necessary data is present and if all
+     * data has the expected format.
+     * 
+     * @return true, only if all data is OK
+     */
+    public boolean checkPlausibility() {
 
-		return true;
-	}
+        for (Object o : applicantData.values()) {
+            if (o == null) {
+                logger.warn("Null value in applicant " + toString());
+                return false;
+            }
+        }
 
-	/**
-	 * Returns a set containing all data fields that have either a invalid value or are required and not given for this applicant. The
-	 * decision is based only on the currently stored values.
-	 * 
-	 * @return set containing all invalid data fields
-	 */
-	public EnumSet<DataField> getInvalidDataFields() {
-		EnumSet<DataField> invalidFields = EnumSet.noneOf(DataField.class);
-		for (Entry<DataField, Object> entry : applicantData.entrySet()) {
-			DataField dataField = entry.getKey();
-			Object value = entry.getValue();
-			if (dataField.isRequired() && (value == null || "".equals(value))) {
-				invalidFields.add(dataField);
-			}
-		}
-		return invalidFields;
-	}
+        for (Entry<DataField, Object> entry : applicantData.entrySet()) {
+            DataField dataField = entry.getKey();
+            Object value = entry.getValue();
+            if (dataField.isRequired() && (value == null || "".equals(value))) {
+                logger.warn("Required value " + dataField + " in applicant " + toString()
+                        + " is missing!");
+                return false;
+            }
+        }
 
-	/**
-	 * Constructs and returns a string containing a help message mentioning those data fields of an applicant that contain invalid
-	 * information.
-	 * 
-	 * @return help message mentioning all invalid data fields
-	 */
-	public String buildCommentFromApplicant() {
-		StringBuilder commentBuilder = new StringBuilder();
-		commentBuilder.append("Bitte die folgenden Felder überprüfen: ");
-		boolean firstTime = true;
-		for (DataField dataField : getInvalidDataFields()) {
-			if (firstTime) {
-				firstTime = false;
-			} else {
-				commentBuilder.append(", ");
-			}
-			commentBuilder.append(dataField.getDescription());
-		}
-		if (firstTime) {
-			commentBuilder.append("KEINE");
-		}
-		return commentBuilder.toString();
-	}
+        return true;
+    }
+
+    /**
+     * Returns a set containing all data fields that have either a invalid value or are required and
+     * not given for this applicant. The decision is based only on the currently stored values.
+     * 
+     * @return set containing all invalid data fields
+     */
+    public EnumSet<DataField> getInvalidDataFields() {
+        EnumSet<DataField> invalidFields = EnumSet.noneOf(DataField.class);
+        for (Entry<DataField, Object> entry : applicantData.entrySet()) {
+            DataField dataField = entry.getKey();
+            Object value = entry.getValue();
+            if (dataField.isRequired() && (value == null || "".equals(value))) {
+                invalidFields.add(dataField);
+            }
+        }
+        return invalidFields;
+    }
+
+    /**
+     * Constructs and returns a string containing a help message mentioning those data fields of an
+     * applicant that contain invalid information.
+     * 
+     * @return help message mentioning all invalid data fields
+     */
+    public String buildCommentFromApplicant() {
+        StringBuilder commentBuilder = new StringBuilder();
+        commentBuilder.append("Bitte die folgenden Felder überprüfen: ");
+        boolean firstTime = true;
+        for (DataField dataField : getInvalidDataFields()) {
+            if (firstTime) {
+                firstTime = false;
+            } else {
+                commentBuilder.append(", ");
+            }
+            commentBuilder.append(dataField.getDescription());
+        }
+        if (firstTime) {
+            commentBuilder.append("KEINE");
+        }
+        return commentBuilder.toString();
+    }
 }

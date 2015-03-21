@@ -5,17 +5,33 @@ import org.slf4j.LoggerFactory;
 
 import de.ichmann.applicant_importer.ui.ApplicantImporterMain;
 
-public class RunApplicantImporterGUI {
+/**
+ * Main running class for the ApplicantImporter.
+ *
+ * @author Christian Wichmann
+ */
+public final class RunApplicantImporterGUI {
 
-	private static final Logger logger = LoggerFactory.getLogger(RunApplicantImporterGUI.class);
+    private static final Logger logger = LoggerFactory.getLogger(RunApplicantImporterGUI.class);
 
-	private static final int WINDOW_HEIGHT = 768;
-	private static final int WINDOW_WIDTH = 1024;
+    /**
+     * Height of the main window.
+     */
+    
+    private static final int WINDOW_HEIGHT = 768;
+    /**
+     * Width of the main window.
+     */
+    private static final int WINDOW_WIDTH = 1024;
 
-	public static void main(String[] args) {
-		logger.info("Starting ApplicantImporter...");
-		ApplicantImporterMain w = new ApplicantImporterMain();
-		w.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		w.setVisible(true);
-	}
+    public static void main(String[] args) {
+        logger.info("Starting ApplicantImporter...");
+        try {
+            ApplicantImporterMain w = new ApplicantImporterMain();
+            w.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+            w.setVisible(true);
+        } catch (Exception e) {
+            logger.error("Uncaught exception in ApplicantImporter: " + e.getMessage());
+        }
+    }
 }
