@@ -7,23 +7,51 @@ package de.ichmann.applicant_importer.model;
  */
 public enum Religion {
 
+    /**
+     * 
+     */
     OHNE_ANGABE(0),
 
+    /**
+     * 
+     */
     EVANGELISCH(1),
 
+    /**
+     * 
+     */
     KATHOLISCH(3),
 
+    /**
+     * 
+     */
     ALEVITISCH(5),
 
+    /**
+     * 
+     */
     ISLAMISCH(6),
 
+    /**
+     * 
+     */
     SONSTIGE(7),
 
+    /**
+     * 
+     */
     KEINE(8);
 
     private final int value;
 
-    private Religion(int value) {
+    /**
+     * Instantiates a new enumeration value for a specific religion. Each religion has a
+     * corresponding id that is used in BBS-Planung to identify it.
+     * 
+     * @param value
+     *            id identifying a specific religion in BBS-Planung
+     */
+    private Religion(final int value) {
         this.value = value;
     }
 

@@ -96,6 +96,8 @@ public final class PdfFormImporter {
 
     /**
      * Finds and parses all PDF files in a given directory (not the subdirectories!).
+     * 
+     * @param directory directory from which to parse PDF files
      */
     private void parseFiles(final Path directory) {
         // find all PDF files and parse them
@@ -122,6 +124,9 @@ public final class PdfFormImporter {
         }
     }
 
+    /**
+     * Fills a map with all form field names and the corresponding data fields from the enumeration.
+     */
     private void fillDataFieldNamesDictionary() {
         dataFieldNames.put("Vorname", DataField.FIRST_NAME);
         dataFieldNames.put("Name", DataField.LAST_NAME);
@@ -258,7 +263,8 @@ public final class PdfFormImporter {
      * @throws IOException
      *             if reading of PDF form data failed
      */
-    private void extractStringValues(PDField pdField, ApplicantBuilder builder) throws IOException {
+    private void extractStringValues(final PDField pdField, final ApplicantBuilder builder)
+            throws IOException {
         if (dataFieldNames.containsKey(pdField.getFullyQualifiedName())) {
             DataField df = dataFieldNames.get(pdField.getFullyQualifiedName());
             if (pdField.getValue() != null) {
@@ -287,10 +293,11 @@ public final class PdfFormImporter {
      * @throws IOException
      *             if reading of PDF form data failed
      */
-    private void extractDuration(PDField pdField, ApplicantBuilder builder) throws IOException {
+    private void extractDuration(final PDField pdField, final ApplicantBuilder builder) throws IOException {
         if ("DauerAusbildung".equals(pdField.getFullyQualifiedName())) {
             if (pdField.getValue() != null) {
-                Double d = Double.valueOf(pdField.getValue().replace(",", ".")) * 12;
+                final int monthsInYear = 12;
+                Double d = Double.valueOf(pdField.getValue().replace(",", ".")) * monthsInYear;
                 Integer i = d.intValue();
                 builder.setValue(DataField.DURATION_OF_TRAINING, i);
             } else {
@@ -310,7 +317,8 @@ public final class PdfFormImporter {
      * @throws IOException
      *             if reading of PDF form data failed
      */
-    private void extractBooleanValues(PDField pdField, ApplicantBuilder builder) throws IOException {
+    private void extractBooleanValues(final PDField pdField, final ApplicantBuilder builder)
+            throws IOException {
         if ("Umschueler".equals(pdField.getFullyQualifiedName())) {
             boolean retraining = false;
             if ("UmschuelerNein".equals(pdField.getValue())) {
@@ -436,11 +444,21 @@ public final class PdfFormImporter {
         }
     }
 
-    public final List<Applicant> getListOfStudents() {
+    /**
+     * Returns a list of all applicants data.
+     * 
+     * @return list of all applicants data
+     */
+    public List<Applicant> getListOfStudents() {
         return listOfStudents;
     }
 
-    public final List<String> getListOfInvalidPdfFiles() {
+    /**
+     * Returns a list with the file names of all invalid PDF files.
+     * 
+     * @return list with the file names of all invalid PDF files
+     */
+    public List<String> getListOfInvalidPdfFiles() {
         return listOfInvalidPdfFiles;
     }
 }

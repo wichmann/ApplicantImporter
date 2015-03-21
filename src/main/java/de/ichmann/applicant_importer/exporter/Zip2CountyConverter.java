@@ -14,8 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Converts a given ZIP code into the associated county ID (dt. Landkreisnummer). To use this
- * converter you have to get the Singleton instance and call the method convertZipCode() on it.
+ * Converts a given ZIP code into the associated county ID (dt. Landkreisnummer) used in
+ * BBS-Planung. To use this converter you have to get the Singleton instance and call the method
+ * convertZipCode() on it.
+ * <p>
+ * The county id is defined by the German government.
+ *
+ * @see <a
+ *      href="http://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis/Administrativ/AdministrativeUebersicht.html">destatis
+ *      Statistisches Bundesamt</a>
  * 
  * @author Christian Wichmann
  */

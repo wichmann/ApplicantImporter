@@ -45,6 +45,11 @@ import de.ichmann.applicant_importer.exporter.BbsPlanungExporter;
 import de.ichmann.applicant_importer.importer.PdfFormImporter;
 import de.ichmann.applicant_importer.model.Applicant;
 
+/**
+ * Shows main window of Applicant Importer.
+ * 
+ * @author Christian Wichmann
+ */
 public final class ApplicantImporterMain extends JFrame {
 
     private static final long serialVersionUID = -7501718764578733562L;
@@ -113,7 +118,8 @@ public final class ApplicantImporterMain extends JFrame {
              * Source: https://tips4java.wordpress.com/2010/01/24/table-row-rendering/
              */
             @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+            public Component prepareRenderer(final TableCellRenderer renderer, final int row,
+                    final int column) {
                 Component c = super.prepareRenderer(renderer, row, column);
                 if (!isRowSelected(row)) {
                     // color row in alternating colors
@@ -126,10 +132,10 @@ public final class ApplicantImporterMain extends JFrame {
                          * should be colored as viewed and showed. But to get the correct applicant of a row to
                          * check for its plausibility the conversion is necessary!
                          */
-                        row = applicantInformationTable.convertRowIndexToModel(row);
+                        final int rowInModel = applicantInformationTable.convertRowIndexToModel(row);
                         ApplicantInformationTableModel model = (ApplicantInformationTableModel) (applicantInformationTable
                                 .getModel());
-                        Applicant s = model.getApplicantForRow(row);
+                        Applicant s = model.getApplicantForRow(rowInModel);
                         if (!s.checkPlausibility()) {
                             c.setBackground(ALARM_COLOR);
                         }
@@ -202,7 +208,7 @@ public final class ApplicantImporterMain extends JFrame {
         highlightInvalidApplicantsMenuItem.setSelected(false);
         highlightInvalidApplicantsMenuItem.addChangeListener(new ChangeListener() {
             @Override
-            public void stateChanged(ChangeEvent e) {
+            public void stateChanged(final ChangeEvent e) {
                 // repaint applicant table if this option has been changed
                 applicantInformationTable.repaint();
             }
@@ -214,7 +220,7 @@ public final class ApplicantImporterMain extends JFrame {
         quitMenuItem.getAccessibleContext().setAccessibleDescription("Beenden des Programms");
         quitMenuItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 dispose();
             }
         });
@@ -250,10 +256,16 @@ public final class ApplicantImporterMain extends JFrame {
         return menuBar;
     }
 
+    /**
+     * Shows help information dialog.
+     */
     protected void showHelpDialog() {
 
     }
 
+    /**
+     * Shows a about dialog with information about the author and this program.
+     */
     protected void showAboutDialog() {
         // TODO Make mail link clickable. (see
         // http://stackoverflow.com/questions/527719/how-to-add-hyperlink-in-jlabel)
@@ -269,6 +281,9 @@ public final class ApplicantImporterMain extends JFrame {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Adds action listeners for all buttons and the mouse listener for the applicants data table.
+     */
     private void addListener() {
         importDirectoryButton.addActionListener(new ActionListener() {
             @Override
@@ -310,7 +325,15 @@ public final class ApplicantImporterMain extends JFrame {
         });
     }
 
+    /**
+     * Builds a information message that is shown when double-clicking on an applicant in the table.
+     * 
+     * @param applicant
+     *            applicant for which to show information
+     * @return string containing information message
+     */
     protected String buildInfoMessage(final Applicant applicant) {
+        final int textWidth = 400;
         final StringBuilder builder = new StringBuilder();
         builder.append("<html>");
         builder.append("<strong>Bewerber: ");
@@ -320,11 +343,14 @@ public final class ApplicantImporterMain extends JFrame {
         builder.append("Dateiname: ");
         builder.append(applicant.getFileName());
         builder.append("<br><br>");
-        builder.append(Tools.wrapTextToWidth(applicant.buildCommentFromApplicant(), 400));
+        builder.append(Tools.wrapTextToWidth(applicant.buildCommentFromApplicant(), textWidth));
         builder.append("</html>");
         return builder.toString();
     }
 
+    /**
+     * Adds key bindings for the main window.
+     */
     private void addKeyBindings() {
         InputMap inputMap = applicantInformationTable.getInputMap(JComponent.WHEN_FOCUSED);
         ActionMap actionMap = applicantInformationTable.getActionMap();
@@ -348,6 +374,9 @@ public final class ApplicantImporterMain extends JFrame {
         });
     }
 
+    /**
+     * Sets Swing LAF to "Nimbus".  
+     */
     private void setLookAndFeel() {
         // set look and feel to new standard (since Java SE 6 Update 10)
         try {

@@ -20,9 +20,15 @@ import de.ichmann.applicant_importer.model.Degree;
 import de.ichmann.applicant_importer.model.Religion;
 import de.ichmann.applicant_importer.model.School;
 
+/**
+ * Exports to the file format read by BBS-Planung Bewerber-Import. Each instance can only be used
+ * once to export one set of applicants data to one file.
+ *
+ * @author Christian Wichmann
+ */
 public class BbsPlanungExporter {
 
-    private final static Logger logger = LoggerFactory.getLogger(BbsPlanungExporter.class);
+    private static final Logger logger = LoggerFactory.getLogger(BbsPlanungExporter.class);
 
     // set delimiter for end-of-line and between fields
     private static final String NEW_LINE_SEPARATOR = "\r\n";
@@ -52,8 +58,18 @@ public class BbsPlanungExporter {
 
     private int numberExportedApplicants = 0;
 
-    public BbsPlanungExporter(Path file, List<Applicant> listOfApplicants,
-            boolean exportInvalidApplicants) {
+    /**
+     * Instantiates a new exporter object.
+     * 
+     * @param file
+     *            file to which export the applicants data
+     * @param listOfApplicants
+     *            list containing all applicants
+     * @param exportInvalidApplicants
+     *            whether to export applicants with invalid data fields
+     */
+    public BbsPlanungExporter(final Path file, final List<Applicant> listOfApplicants,
+            final boolean exportInvalidApplicants) {
 
         OutputStreamWriter osw = null;
         CSVPrinter csvFilePrinter = null;
@@ -124,7 +140,8 @@ public class BbsPlanungExporter {
      * @param applicantDataRecord
      *            list of all data to be exported in the correct order
      */
-    private void filloutApplicantData(Applicant applicant, List<String> applicantDataRecord) {
+    private void filloutApplicantData(final Applicant applicant,
+            final List<String> applicantDataRecord) {
         applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.LAST_NAME))); // Nachname
         applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.FIRST_NAME))); // Vorname
         applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.BIRTHDAY))); // Geburtstag
@@ -174,7 +191,7 @@ public class BbsPlanungExporter {
      * @param applicantDataRecord
      *            list of all data to be exported in the correct order
      */
-    private void filloutSchoolData(Applicant applicant, List<String> applicantDataRecord) {
+    private void filloutSchoolData(final Applicant applicant, final List<String> applicantDataRecord) {
         applicantDataRecord.add(""); // SFO
         applicantDataRecord.add(""); // TAKURZ
         applicantDataRecord.add(""); // KLST
@@ -233,7 +250,7 @@ public class BbsPlanungExporter {
      * @param applicantDataRecord
      *            list of all data to be exported in the correct order
      */
-    private void filloutGuardian(Applicant applicant, List<String> applicantDataRecord) {
+    private void filloutGuardian(final Applicant applicant, final List<String> applicantDataRecord) {
         applicantDataRecord.add(""); // E_ANREDE
         String nlg = DataField.NAME_OF_LEGAL_GUARDIAN.getFrom(applicant);
         applicantDataRecord.add(nlg); // E_NNAME
@@ -278,7 +295,7 @@ public class BbsPlanungExporter {
      * @param applicantDataRecord
      *            list of all data to be exported in the correct order
      */
-    private void filloutCompany(Applicant applicant, List<String> applicantDataRecord) {
+    private void filloutCompany(final Applicant applicant, final List<String> applicantDataRecord) {
         // TODO Check which company information should be in which field!
         applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.COMPANY_NAME))); // BETRIEB_NR
         applicantDataRecord
@@ -297,7 +314,8 @@ public class BbsPlanungExporter {
      * @param applicantDataRecord
      *            list of all data to be exported in the correct order
      */
-    private void filloutMiscellaneous(Applicant applicant, List<String> applicantDataRecord) {
+    private void filloutMiscellaneous(final Applicant applicant,
+            final List<String> applicantDataRecord) {
         applicantDataRecord.add(buildComment(applicant)); // BEMERK
         applicantDataRecord.add(""); // KENNUNG1
         applicantDataRecord.add(""); // KENNUNG2
@@ -366,6 +384,14 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(""); // TEL_HANDY
     }
 
+    /**
+     * Builds a comment string for a given applicant. It contains the vocation, company and invalid
+     * data fields.
+     * 
+     * @param applicant
+     *            applicant for which to build a comment string
+     * @return string containing the comment
+     */
     private String buildComment(final Applicant applicant) {
         final StringBuilder builder = new StringBuilder();
         builder.append("Beruf: ");
@@ -398,7 +424,7 @@ public class BbsPlanungExporter {
      * 
      * @return number of actually exported applicants
      */
-    public int getNumberExportedApplicants() {
+    public final int getNumberExportedApplicants() {
         return numberExportedApplicants;
     }
 }

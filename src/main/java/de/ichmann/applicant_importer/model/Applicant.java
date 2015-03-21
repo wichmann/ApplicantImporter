@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Christian Wichmann
  */
-public class Applicant {
+public final class Applicant {
 
-    private final static Logger logger = LoggerFactory.getLogger(Applicant.class);
+    private static final Logger logger = LoggerFactory.getLogger(Applicant.class);
 
     private final Map<DataField, Object> applicantData = new HashMap<>();
     private String filename;
@@ -34,22 +34,22 @@ public class Applicant {
         public ApplicantBuilder() {
         }
 
-        public ApplicantBuilder setValue(DataField dataField, Object data) {
+        public final ApplicantBuilder setValue(final DataField dataField, final Object data) {
             applicantData.put(dataField, data);
             return this;
         }
 
-        public ApplicantBuilder setFileName(String filename) {
+        public final ApplicantBuilder setFileName(final String filename) {
             this.filename = filename;
             return this;
         }
 
-        public Applicant build() {
+        public final Applicant build() {
             return new Applicant(this);
         }
     }
 
-    private Applicant(ApplicantBuilder builder) {
+    private Applicant(final ApplicantBuilder builder) {
         this.applicantData.putAll(builder.applicantData);
         this.filename = builder.filename;
     }
@@ -60,11 +60,11 @@ public class Applicant {
                 + applicantData.get(DataField.LAST_NAME);
     }
 
-    public final Object getValue(DataField dataField) {
+    public Object getValue(final DataField dataField) {
         return applicantData.get(dataField);
     }
 
-    public final String getFileName() {
+    public String getFileName() {
         return filename;
     }
 

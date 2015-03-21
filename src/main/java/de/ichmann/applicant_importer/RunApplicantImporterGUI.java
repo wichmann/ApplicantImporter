@@ -17,14 +17,26 @@ public final class RunApplicantImporterGUI {
     /**
      * Height of the main window.
      */
-    
     private static final int WINDOW_HEIGHT = 768;
+
     /**
      * Width of the main window.
      */
     private static final int WINDOW_WIDTH = 1024;
 
-    public static void main(String[] args) {
+    /**
+     * Private constructor of utility class.
+     */
+    private RunApplicantImporterGUI() {
+    }
+
+    /**
+     * Starts the Applicant Importer.
+     * 
+     * @param args
+     *            command line arguments
+     */
+    public static void main(final String[] args) {
         logger.info("Starting ApplicantImporter...");
         try {
             ApplicantImporterMain w = new ApplicantImporterMain();
