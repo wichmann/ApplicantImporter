@@ -204,9 +204,16 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(""); // A
         applicantDataRecord.add(""); // BG
         applicantDataRecord.add("BS"); // BG_SFO: Berufsschule
-        applicantDataRecord.add("E"); // BG_BFELD: Elektro (E)
-        applicantDataRecord.add("F1"); // BG_FREI: Fachinformatiker (F1 oder F2 je nach
-                                       // Fachrichtung)
+        String vocationName = applicant.getValue(DataField.VOCATION) + " "
+                + applicant.getValue(DataField.SPECIALIZATION);
+        String vocationID = VocationConverter.getInstance().convertVocation(vocationName);
+        if ("".equals(vocationID)) {
+            applicantDataRecord.add(""); // BG_BFELD: Elektro (E)
+            applicantDataRecord.add(""); // BG_FREI: Fachinformatiker
+        } else {
+            applicantDataRecord.add(vocationID.substring(0, 1)); // BG_BFELD
+            applicantDataRecord.add(vocationID.substring(1, 3)); // BG_FREI
+        }
         applicantDataRecord.add("1"); // BG_KLST: Klassenstufe
         applicantDataRecord.add("A"); // BG_ORG: Organisationsart übliche Klasse/Teilzeit ohne
                                       // Blockunterricht
