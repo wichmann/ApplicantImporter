@@ -11,7 +11,7 @@ import de.ichmann.applicant_importer.model.DataField;
 
 /**
  * Defines a table model for displaying applicants data.
- * 
+ *
  * @author Christian Wichmann
  */
 public final class ApplicantInformationTableModel extends AbstractTableModel {
@@ -22,23 +22,30 @@ public final class ApplicantInformationTableModel extends AbstractTableModel {
 
     private Map<Integer, DataField> columns;
 
+    /**
+     * Initializes an instance of the model for a applicants table.
+     * 
+     * @param listOfApplicants
+     *            list with all applicants to be shown in the table
+     */
     public ApplicantInformationTableModel(final List<Applicant> listOfApplicants) {
 
         this.listOfApplicants = listOfApplicants;
         columns = new HashMap<>();
-        columns.put(0, DataField.LAST_NAME);
-        columns.put(1, DataField.FIRST_NAME);
-        columns.put(2, DataField.BIRTHDAY);
-        columns.put(3, DataField.VOCATION);
-        columns.put(4, DataField.SPECIALIZATION);
-        columns.put(5, DataField.COMPANY_NAME);
-        columns.put(6, DataField.RETRAINING);
+        int count = 0;
+        columns.put(count++, DataField.LAST_NAME);
+        columns.put(count++, DataField.FIRST_NAME);
+        columns.put(count++, DataField.BIRTHDAY);
+        columns.put(count++, DataField.VOCATION);
+        columns.put(count++, DataField.SPECIALIZATION);
+        columns.put(count++, DataField.COMPANY_NAME);
+        columns.put(count++, DataField.RETRAINING);
     }
 
     /**
      * Returns the Applicant object for a given row of the table containing all data of that
      * applicant.
-     * 
+     *
      * @param rowIndex
      *            index of row to get Applicant data for
      * @return Applicant object with applicant data
@@ -82,7 +89,7 @@ public final class ApplicantInformationTableModel extends AbstractTableModel {
     /**
      * Removes a row by its index from the applicants data table. After removing the applicant from
      * the internal list the table data changed event is fired to update the view.
-     * 
+     *
      * @param row
      *            index of row to be removed from table
      */

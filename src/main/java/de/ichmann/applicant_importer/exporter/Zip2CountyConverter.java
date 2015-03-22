@@ -39,7 +39,7 @@ public final class Zip2CountyConverter {
     private static final String ZIP_CODE = "Postleitzahl";
     private static final char FIELD_DELIMITER = ';';
 
-    private static final Map<Integer, Integer> zip2idMapping = new HashMap<>();
+    private static final Map<Integer, Integer> ZIP_2_ID_MAPPING = new HashMap<>();
 
     /**
      * Private constructor to prevent multiple instances.
@@ -70,7 +70,7 @@ public final class Zip2CountyConverter {
             // read the CSV file records starting from the second record to skip the header
             logger.info("Reading mapping data from CSV file...");
             for (CSVRecord csvRecord : csvFileParser) {
-                zip2idMapping.put(Integer.parseInt(csvRecord.get(ZIP_CODE)),
+                ZIP_2_ID_MAPPING.put(Integer.parseInt(csvRecord.get(ZIP_CODE)),
                         Integer.parseInt(csvRecord.get(COUNTY_ID)));
             }
             logger.info("Read mapping data from CSV file.");
@@ -107,8 +107,8 @@ public final class Zip2CountyConverter {
      * @return string containing the county id for the given zip code
      */
     public String convertZipCode(final int zipCode) {
-        if (zip2idMapping.containsKey(zipCode)) {
-            return zip2idMapping.get(zipCode).toString();
+        if (ZIP_2_ID_MAPPING.containsKey(zipCode)) {
+            return ZIP_2_ID_MAPPING.get(zipCode).toString();
         } else {
             return "";
         }

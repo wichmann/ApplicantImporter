@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.ichmann.applicant_importer.importer;
 
@@ -30,8 +30,18 @@ import de.ichmann.applicant_importer.model.School;
 
 /**
  * Imports and evaluates data from PDF forms and creates the Applicant objects accordingly. Form
- * fields inside the PDF file are defined by their fully qualified name.
- * 
+ * fields inside the PDF file are defined by their fully qualified name. Only one parameter has to
+ * be given: the directory in which to search for PDF files.
+ * <p>
+ * All string fields are read and stored in a new Applicant instance for each PDF file with form
+ * fields. Data fields that have been declared in this importer but are not present in the PDF file
+ * (because e.g. older PDF file version) will not set to a default value. If the value is later used
+ * by calling of Applicant.getValue() a <code>null</code> is returned!
+ * <p>
+ * Besides the string fields some special fields are evaluated sperately: boolean fields
+ * (Umschueler, Geschlecht), fields containing a duration (DauerAusbildung), and enumerated values
+ * (SchulbesuchBisher, Schulabschluss).
+ *
  * @author Christian Wichmann
  */
 public final class PdfFormImporter {
@@ -48,7 +58,7 @@ public final class PdfFormImporter {
 
     /*
      * Current field names (2015-03-13):
-     * 
+     *
      * Tx - Name - Name - Wichmann
      * Tx - Vorname - Vorname - Christian
      * Tx - Ausbildungsberuf - Ausbildungsberuf - Energieelektroniker
@@ -89,6 +99,12 @@ public final class PdfFormImporter {
      * Tx - SchulabschlussSonstigerErlaeuterung - SchulabschlussSonstigerErlaeuterung - null
      */
 
+    /**
+     * Initialize an instance of PDF form importer.
+     *
+     * @param directory
+     *            directory from which to import the PDF files containing the forms
+     */
     public PdfFormImporter(final Path directory) {
         fillDataFieldNamesDictionary();
         parseFiles(directory);
@@ -96,7 +112,7 @@ public final class PdfFormImporter {
 
     /**
      * Finds and parses all PDF files in a given directory (not the subdirectories!).
-     * 
+     *
      * @param directory
      *            directory from which to parse PDF files
      */
@@ -138,9 +154,10 @@ public final class PdfFormImporter {
         dataFieldNames.put("Tel", DataField.PHONE);
         dataFieldNames.put("Fax", DataField.FAX);
         dataFieldNames.put("PLZ", DataField.ZIP_CODE);
-        // TODO Add nationality as data field!!!
         dataFieldNames.put("Ort", DataField.CITY);
         dataFieldNames.put("EMail", DataField.EMAIL);
+        // TODO Check form field name for nationality data field!
+        dataFieldNames.put("Staatsangehörigkeit", DataField.NATIONALITY);
         dataFieldNames.put("Geburtsdatum", DataField.BIRTHDAY);
         dataFieldNames.put("Geburtsort", DataField.BIRTHPLACE);
         dataFieldNames.put("Namen der Erziehungsberechtigten", DataField.NAME_OF_LEGAL_GUARDIAN);
@@ -165,18 +182,18 @@ public final class PdfFormImporter {
 
         /*
          * The following fields do not contain text strings or have to be evaluated otherwise:
-         * 
+         *
          * DauerAusbildung: Has to be parsed as decimal number and multiplicated by 12 to get month.
-         * 
+         *
          * ErlaeuterungBFS - SonstigesSchulabschluss: Stored as additional info in School Enum.
-         * 
+         *
          * SchulabschlussSonstigerErlaeuterung: Stored as additional info in Degree Enum.
-         * 
+         *
          * Formular drucken - Senden: Ignored because control buttons.
-         * 
+         *
          * Umschueler (UmschuelerNein, UmschuelerJa), Geschlecht (m, w): Binary choices that have to be
          * evaluated.
-         * 
+         *
          * SchulbesuchBisher (RS), Schulabschluss(EI)
          */
     }
@@ -184,7 +201,7 @@ public final class PdfFormImporter {
     /**
      * Parses a single PDF file defined by a given Path. If the PDF file contains no form fields and
      * has no useable data, null is returned to the caller!
-     * 
+     *
      * @param path
      *            path describing the PDF file to be parsed
      * @return applicants data or null, if file did not contain any form fields
@@ -248,7 +265,7 @@ public final class PdfFormImporter {
     /**
      * Extracts the religion from a given PDF form field and stores the data inside a provided
      * ApplicantBuilder instance.
-     * 
+     *
      * @param pdField
      *            PDF form field data
      * @param builder
@@ -256,7 +273,8 @@ public final class PdfFormImporter {
      * @throws IOException
      *             if reading of PDF form data failed
      */
-    private void extractReligion(final PDField pdField, final ApplicantBuilder builder) throws IOException {
+    private void extractReligion(final PDField pdField, final ApplicantBuilder builder)
+            throws IOException {
         if ("Konfession".equals(pdField.getFullyQualifiedName())) {
             if (pdField.getValue() != null && !("".equals(pdField.getValue()))) {
                 if ("-1".equals(pdField.getValue())) {
@@ -275,7 +293,7 @@ public final class PdfFormImporter {
     /**
      * Extracts all string values from a given PDF form field and stores the data inside a provided
      * ApplicantBuilder instance.
-     * 
+     *
      * @param pdField
      *            PDF form field data
      * @param builder
@@ -305,7 +323,7 @@ public final class PdfFormImporter {
      * Extracts the duration of the training from a given PDF form field, casts it as integer number
      * and calculates the duration in months. The result is stored inside a provided
      * ApplicantBuilder instance.
-     * 
+     *
      * @param pdField
      *            PDF form field data
      * @param builder
@@ -330,7 +348,7 @@ public final class PdfFormImporter {
     /**
      * Extracts all boolean values from a given PDF form field, evaluates them and stores the data
      * inside a provided ApplicantBuilder instance.
-     * 
+     *
      * @param pdField
      *            PDF form field data
      * @param builder
@@ -365,7 +383,7 @@ public final class PdfFormImporter {
     /**
      * Extracts information about the last accieved degree from a given PDF form field and stores
      * the data inside a provided ApplicantBuilder instance.
-     * 
+     *
      * @param pdField
      *            PDF form field data
      * @param builder
@@ -412,7 +430,7 @@ public final class PdfFormImporter {
     /**
      * Extracts information about the attended school from a given PDF form field and stores the
      * data inside a provided ApplicantBuilder instance.
-     * 
+     *
      * @param pdField
      *            PDF form field data
      * @param builder
@@ -467,7 +485,7 @@ public final class PdfFormImporter {
 
     /**
      * Returns a list of all applicants data.
-     * 
+     *
      * @return list of all applicants data
      */
     public List<Applicant> getListOfStudents() {
@@ -476,7 +494,7 @@ public final class PdfFormImporter {
 
     /**
      * Returns a list with the file names of all invalid PDF files.
-     * 
+     *
      * @return list with the file names of all invalid PDF files
      */
     public List<String> getListOfInvalidPdfFiles() {

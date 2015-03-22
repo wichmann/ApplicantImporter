@@ -1,12 +1,13 @@
 package de.ichmann.applicant_importer.model;
 
+
 /**
  * Describes all data fields that can be stored for an Applicant. Not all data fields are required,
  * some can be left empty. All required fields must not be empty for a valid Applicant.
  * <p>
  * Every Enum element stores the type of the associated value in the Applicant class. Some utility
  * methods are provided to get the type for a specific data field and to cast its values.
- * 
+ *
  * @author Christian Wichmann
  */
 public enum DataField {
@@ -53,12 +54,12 @@ public enum DataField {
     DURATION_OF_TRAINING(Double.class, "Ausbildungsdauer", true),
 
     /**
-     * 
+     *
      */
     BIRTHDAY(String.class, "Geburtstag", true),
 
     /**
-     * 
+     *
      */
     BIRTHPLACE(String.class, "Geburtsort", true),
 
@@ -68,27 +69,27 @@ public enum DataField {
     RELIGION(Religion.class, "Konfession", true),
 
     /**
-     * 
+     *
      */
     ZIP_CODE(Integer.class, "PLZ", true),
 
     /**
-     * 
+     *
      */
     CITIZENSHIP(String.class, "Staatsangehörigkeit", true),
 
     /**
-     * 
+     *
      */
     CITY(String.class, "Ort", true),
 
     /**
-     * 
+     *
      */
     PHONE(String.class, "Telefon", true),
 
     /**
-     * 
+     *
      */
     FAX(String.class, "Fax", false),
 
@@ -98,17 +99,23 @@ public enum DataField {
     EMAIL(String.class, "E-Mail", true),
 
     /**
-     * 
+     * Nationality of the Applicant. It is stored in text form in German. For exporting it to
+     * BBS-Planung the helper class NationalityConverter can be used.
+     */
+    NATIONALITY(String.class, "Staatsangehörigkeit", true),
+
+    /**
+     *
      */
     NAME_OF_LEGAL_GUARDIAN(String.class, "Name der Erziehungsberechtigten", true),
 
     /**
-     * 
+     *
      */
     ADDRESS_OF_LEGAL_GUARDIAN(String.class, "Adresse der Erziehungsberechtigten", true),
 
     /**
-     * 
+     *
      */
     PHONE_OF_LEGAL_GUARDIAN(String.class, "Telefon der Erziehungsberechtigten", true),
 
@@ -118,72 +125,72 @@ public enum DataField {
     GENDER(Character.class, "Geschlecht", true),
 
     /**
-     * 
+     *
      */
     SCHOOL_ATTENDANCE_BEGIN(String.class, "Beginn des Schulbesuch", false),
 
     /**
-     * 
+     *
      */
     SCHOOL_ATTENDANCE_END(String.class, "Ende des Schulbesuch", false),
 
     /**
-     * 
+     *
      */
     SCHOOL_ATTENDANCE_YEARS(Integer.class, "Jahre des Schulbesuch", false),
 
     /**
-     * 
+     *
      */
     SCHOOL_ATTENDANCE_TYPE(School.class, "Schulart", true),
 
     /**
-     * 
+     *
      */
     ACHIEVED_DEGREE(Degree.class, "Erreichter Abschluss", true),
 
     /**
-     * 
+     *
      */
     COMPANY_NAME(String.class, "Name des Betrieb", true),
 
     /**
-     * 
+     *
      */
     COMPANY_ADDRESS(String.class, "Adresse des Betrieb", true),
 
     /**
-     * 
+     *
      */
     COMPANY_ZIP_CODE(String.class, "PLZ des Betrieb", true),
 
     /**
-     * 
+     *
      */
     COMPANY_CITY(String.class, "Ort des Betrieb", true),
 
     /**
-     * 
+     *
      */
     COMPANY_TELEPHONE(String.class, "Telefon des Betrieb", true),
 
     /**
-     * 
+     *
      */
     COMPANY_FAX(String.class, "Fax des Betrieb", false),
 
     /**
-     * 
+     *
      */
     COMPANY_CONTACT_PERSON(String.class, "Ansprechpartner des Betrieb", true),
 
     /**
-     * 
+     *
      */
     COMPANY_CONTACT_MAIL(String.class, "Kontakt des Betrieb", true),
 
     /**
-     * 
+     *
      */
     NOTES(String.class, "Bemerkungen", false),
 
@@ -205,12 +212,12 @@ public enum DataField {
     SCHOOL_SPECIALIZATION(String.class, "Fachrichtung", false),
 
     /**
-     * 
+     *
      */
     DEGREE(Degree.class, "Erreichter Abschluss", true),
 
     /**
-     * 
+     *
      */
     DEGREE_ADDITIONAL_INFORMATION(String.class, "Sonstiges Abschluss", false);
 
@@ -220,7 +227,7 @@ public enum DataField {
 
     /**
      * Instantiates a new enumeration value of a data field.
-     * 
+     *
      * @param classType
      *            type of the value that this data field contains
      * @param description

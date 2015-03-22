@@ -60,7 +60,7 @@ public class BbsPlanungExporter {
 
     /**
      * Instantiates a new exporter object.
-     * 
+     *
      * @param file
      *            file to which export the applicants data
      * @param listOfApplicants
@@ -134,7 +134,7 @@ public class BbsPlanungExporter {
 
     /**
      * Fill out the applicants data like her name, address and so on.
-     * 
+     *
      * @param applicant
      *            applicants data to be exported
      * @param applicantDataRecord
@@ -185,7 +185,7 @@ public class BbsPlanungExporter {
 
     /**
      * Fill out the school data like the last visited school and the highest achieved degree.
-     * 
+     *
      * @param applicant
      *            applicants data to be exported
      * @param applicantDataRecord
@@ -246,7 +246,7 @@ public class BbsPlanungExporter {
 
     /**
      * Fill out the data of the legal guardians of the applicant.
-     * 
+     *
      * @param applicant
      *            applicants data to be exported
      * @param applicantDataRecord
@@ -272,7 +272,7 @@ public class BbsPlanungExporter {
             applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.ZIP_CODE))); // E_PLZ
             applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.CITY))); // E_ORT
             applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.PHONE))); // E_TEL
-            applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.FAX))); // E_FAX
+            applicantDataRecord.add(""); // E_FAX
         }
         applicantDataRecord.add(""); // E_LDK
         applicantDataRecord.add(""); // E_EMAIL
@@ -291,7 +291,7 @@ public class BbsPlanungExporter {
     /**
      * Fill out the data of the company at which the vocational training of the applicant takes
      * place.
-     * 
+     *
      * @param applicant
      *            applicants data to be exported
      * @param applicantDataRecord
@@ -310,7 +310,7 @@ public class BbsPlanungExporter {
 
     /**
      * Fill out all other data fields, e.g. the comment block.
-     * 
+     *
      * @param applicant
      *            applicants data to be exported
      * @param applicantDataRecord
@@ -389,7 +389,7 @@ public class BbsPlanungExporter {
     /**
      * Builds a comment string for a given applicant. It contains the vocation, company and invalid
      * data fields.
-     * 
+     *
      * @param applicant
      *            applicant for which to build a comment string
      * @return string containing the comment
@@ -423,7 +423,7 @@ public class BbsPlanungExporter {
     /**
      * Returns the number of actually exported applicants. All applicants that have invalid data are
      * only counted if the parameter <code>exportInvalidApplicants</code> is set.
-     * 
+     *
      * @return number of actually exported applicants
      */
     public final int getNumberExportedApplicants() {
