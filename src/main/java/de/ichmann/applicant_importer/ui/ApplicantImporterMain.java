@@ -69,6 +69,9 @@ public final class ApplicantImporterMain extends JFrame {
 
     private List<Applicant> listOfApplicants;
 
+    /**
+     * Instantiate a instance of the main window.
+     */
     public ApplicantImporterMain() {
 
         setLookAndFeel();
@@ -80,6 +83,54 @@ public final class ApplicantImporterMain extends JFrame {
         addKeyBindings();
     }
 
+    /**
+     * Provides a table to display applicants data. The table rows are colered alternatingly and
+     * invalid rows can be highlighted.
+     * 
+     * @author Christian Wichmann
+     */
+    private final class ApplicantInformationTable extends JTable {
+        private static final long serialVersionUID = -5076459486279170507L;
+
+        /**
+         * Overrides the default method from JTable and adds only the coloring of rows that contain
+         * invalid information. This is easier than creating a new TableCellRenderer to handles
+         * this!
+         * 
+         * Source: https://tips4java.wordpress.com/2010/01/24/table-row-rendering/
+         */
+        @Override
+        public Component prepareRenderer(final TableCellRenderer renderer, final int row,
+                final int column) {
+            Component c = super.prepareRenderer(renderer, row, column);
+            if (!isRowSelected(row)) {
+                // color row in alternating colors
+                c.setBackground(row % 2 == 0 ? getBackground() : Color.LIGHT_GRAY);
+                // color row depending on the underlining data and if it is plausible
+                if (highlightInvalidApplicantsMenuItem.isSelected()) {
+                    /*
+                     * Convert the row index from the view to the corresponding row index of the model.
+                     * Before when coloring the rows alternating this was not necessary because the rows
+                     * should be colored as viewed and showed. But to get the correct applicant of a row to
+                     * check for its plausibility the conversion is necessary!
+                     */
+                    final int rowInModel = applicantInformationTable.convertRowIndexToModel(row);
+                    ApplicantInformationTableModel model = (ApplicantInformationTableModel) (applicantInformationTable
+                            .getModel());
+                    Applicant s = model.getApplicantForRow(rowInModel);
+                    if (!s.checkPlausibility()) {
+                        c.setBackground(ALARM_COLOR);
+                    }
+                }
+            }
+
+            return c;
+        }
+    }
+
+    /**
+     * Initialize all components of the user interface and add them to the layout manager.
+     */
     private void initialize() {
 
         setTitle("BewerberImporter");
@@ -107,49 +158,9 @@ public final class ApplicantImporterMain extends JFrame {
         add(importDirectoryButton, c);
 
         // create and add table to show student data
-        applicantInformationTable = new JTable() {
-            private static final long serialVersionUID = -5076459486279170507L;
-
-            /**
-             * Overrides the default method from JTable and adds only the coloring of rows that
-             * contain invalid information. This is easier than creating a new TableCellRenderer to
-             * handles this!
-             * 
-             * Source: https://tips4java.wordpress.com/2010/01/24/table-row-rendering/
-             */
-            @Override
-            public Component prepareRenderer(final TableCellRenderer renderer, final int row,
-                    final int column) {
-                Component c = super.prepareRenderer(renderer, row, column);
-                if (!isRowSelected(row)) {
-                    // color row in alternating colors
-                    c.setBackground(row % 2 == 0 ? getBackground() : Color.LIGHT_GRAY);
-                    // color row depending on the underlining data and if it is plausible
-                    if (highlightInvalidApplicantsMenuItem.isSelected()) {
-                        /*
-                         * Convert the row index from the view to the corresponding row index of the model.
-                         * Before when coloring the rows alternating this was not necessary because the rows
-                         * should be colored as viewed and showed. But to get the correct applicant of a row to
-                         * check for its plausibility the conversion is necessary!
-                         */
-                        final int rowInModel = applicantInformationTable.convertRowIndexToModel(row);
-                        ApplicantInformationTableModel model = (ApplicantInformationTableModel) (applicantInformationTable
-                                .getModel());
-                        Applicant s = model.getApplicantForRow(rowInModel);
-                        if (!s.checkPlausibility()) {
-                            c.setBackground(ALARM_COLOR);
-                        }
-                    }
-                }
-
-                return c;
-            }
-        };
+        applicantInformationTable = new ApplicantInformationTable();
         applicantInformationTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         applicantInformationTable.setAutoCreateRowSorter(true);
-        // applicantInformationTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        // TableColumnAdjuster tca = new TableColumnAdjuster(applicantInformationTable);
-        // tca.adjustColumns();
         c.gridx = 0;
         c.gridy = 1;
         c.gridheight = 1;
@@ -186,6 +197,11 @@ public final class ApplicantImporterMain extends JFrame {
         add(clearTableButton, c);
     }
 
+    /**
+     * Builds a menu bar including all menu items.
+     * 
+     * @return menu bar
+     */
     private JMenuBar buildMenuBar() {
         JMenuBar menuBar;
         JMenu fileMenu, helpMenu;
@@ -375,7 +391,7 @@ public final class ApplicantImporterMain extends JFrame {
     }
 
     /**
-     * Sets Swing LAF to "Nimbus".  
+     * Sets Swing LAF to "Nimbus".
      */
     private void setLookAndFeel() {
         // set look and feel to new standard (since Java SE 6 Update 10)
@@ -415,9 +431,13 @@ public final class ApplicantImporterMain extends JFrame {
             builder.append("<strong>" + chooser.getSelectedFile().getName() + "</strong>");
             builder.append(" wurden " + listOfApplicants.size());
             builder.append(" Bewerber importiert.<br><br>");
-            builder.append("Folgende Dateien konnten nicht eingelesen werden:<br><br>");
-            for (String s : importer.getListOfInvalidPdfFiles()) {
-                builder.append(s + "<br>");
+            // add ignored files to message if there were any
+            final List<String> listOfInvalidPdfFiles = importer.getListOfInvalidPdfFiles();
+            if (listOfInvalidPdfFiles.size() != 0) {
+                builder.append("Folgende Dateien konnten nicht eingelesen werden:<br><br>");
+                for (String s : listOfInvalidPdfFiles) {
+                    builder.append(s + "<br>");
+                }
             }
             builder.append("</html>");
             JOptionPane.showMessageDialog(this, builder.toString(), "Import erfolgreich",
@@ -425,6 +445,13 @@ public final class ApplicantImporterMain extends JFrame {
         }
     }
 
+    /**
+     * Imports all applicants data from a given directory, stores them and updates the table to
+     * display them.
+     * 
+     * @param selectedFile
+     *            directory to be imported
+     */
     private void importFromDirectory(final File selectedFile) {
         importer = new PdfFormImporter(selectedFile.toPath());
         listOfApplicants = importer.getListOfStudents();
@@ -437,9 +464,11 @@ public final class ApplicantImporterMain extends JFrame {
      */
     private void doExportToFile() {
         final JFileChooser chooser = new JFileChooser();
+        final String exportFileDefaultName = "Bewerber_Aus_Nebenstelle.txt";
         chooser.setDialogTitle("Datei für exportierte Daten auswählen...");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setSelectedFile(new File(exportFileDefaultName));
 
         final int returnValue = chooser.showSaveDialog(ApplicantImporterMain.this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {

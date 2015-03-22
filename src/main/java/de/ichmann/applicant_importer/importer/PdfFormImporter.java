@@ -97,7 +97,8 @@ public final class PdfFormImporter {
     /**
      * Finds and parses all PDF files in a given directory (not the subdirectories!).
      * 
-     * @param directory directory from which to parse PDF files
+     * @param directory
+     *            directory from which to parse PDF files
      */
     private void parseFiles(final Path directory) {
         // find all PDF files and parse them
@@ -210,15 +211,7 @@ public final class PdfFormImporter {
                             continue;
                         }
                         // get religion enumeration
-                        if ("Konfession".equals(pdField.getFullyQualifiedName())) {
-                            if (pdField.getValue() != null && !("".equals(pdField.getValue()))) {
-                                Religion religion = Religion.fromInteger(Integer.valueOf(pdField
-                                        .getValue()));
-                                builder.setValue(DataField.RELIGION, religion);
-                            } else {
-                                builder.setValue(DataField.RELIGION, Religion.OHNE_ANGABE);
-                            }
-                        }
+                        extractReligion(pdField, builder);
                         // get all plain string elements and store them in builder
                         extractStringValues(pdField, builder);
                         // get duration of training
@@ -250,6 +243,33 @@ public final class PdfFormImporter {
             }
         }
         return student;
+    }
+
+    /**
+     * Extracts the religion from a given PDF form field and stores the data inside a provided
+     * ApplicantBuilder instance.
+     * 
+     * @param pdField
+     *            PDF form field data
+     * @param builder
+     *            builder object for Applicant data
+     * @throws IOException
+     *             if reading of PDF form data failed
+     */
+    private void extractReligion(final PDField pdField, final ApplicantBuilder builder) throws IOException {
+        if ("Konfession".equals(pdField.getFullyQualifiedName())) {
+            if (pdField.getValue() != null && !("".equals(pdField.getValue()))) {
+                if ("-1".equals(pdField.getValue())) {
+                    // no religion chosen in the form
+                    builder.setValue(DataField.RELIGION, Religion.OHNE_ANGABE);
+                } else {
+                    Religion religion = Religion.fromInteger(Integer.valueOf(pdField.getValue()));
+                    builder.setValue(DataField.RELIGION, religion);
+                }
+            } else {
+                builder.setValue(DataField.RELIGION, Religion.OHNE_ANGABE);
+            }
+        }
     }
 
     /**
@@ -293,7 +313,8 @@ public final class PdfFormImporter {
      * @throws IOException
      *             if reading of PDF form data failed
      */
-    private void extractDuration(final PDField pdField, final ApplicantBuilder builder) throws IOException {
+    private void extractDuration(final PDField pdField, final ApplicantBuilder builder)
+            throws IOException {
         if ("DauerAusbildung".equals(pdField.getFullyQualifiedName())) {
             if (pdField.getValue() != null) {
                 final int monthsInYear = 12;

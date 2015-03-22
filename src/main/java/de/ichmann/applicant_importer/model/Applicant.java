@@ -31,25 +31,68 @@ public final class Applicant {
         private final Map<DataField, Object> applicantData = new HashMap<>();
         private String filename;
 
+        /**
+         * Instantiates a new ApplicantBuilder.
+         */
         public ApplicantBuilder() {
         }
 
+        /**
+         * Sets a value in this ApplicantBuilder instance.
+         * 
+         * @param dataField
+         *            data field to be set
+         * @param data
+         *            data object for given data field
+         * @return this builder itself
+         * @throws IllegalArgumentException
+         *             if parameter string is {@code null}
+         */
         public final ApplicantBuilder setValue(final DataField dataField, final Object data) {
+            if (dataField == null || data == null) {
+                logger.error("" + dataField);
+                throw new IllegalArgumentException("Parameters dataField and data must not be null");
+            }
             applicantData.put(dataField, data);
             return this;
         }
 
+        /**
+         * Sets the name of the PDF file from which the data of this applicant has been read.
+         * 
+         * @param filename
+         *            name of the PDF file for this applicant
+         * @return this builder itself
+         * @throws IllegalArgumentException
+         *             if parameter string is {@code null}
+         */
         public final ApplicantBuilder setFileName(final String filename) {
+            if (filename == null) {
+                throw new IllegalArgumentException("Parameter filename must not be null");
+            }
             this.filename = filename;
             return this;
         }
 
+        /**
+         * Create a new Applicant with the data stored in this ApplicantBuilder object.
+         * 
+         * @return new Applicant object
+         */
         public final Applicant build() {
             return new Applicant(this);
         }
     }
 
+    /**
+     * Creates a new applicant object from a given builder.
+     * 
+     * @param builder
+     *            builder containing the applicants data
+     */
     private Applicant(final ApplicantBuilder builder) {
+        assert builder != null : "Builder instance should not be null!";
+
         this.applicantData.putAll(builder.applicantData);
         this.filename = builder.filename;
     }
@@ -60,10 +103,27 @@ public final class Applicant {
                 + applicantData.get(DataField.LAST_NAME);
     }
 
+    /**
+     * Gets the value of a specific data field for this applicant.
+     * 
+     * @param dataField
+     *            data field to get value for
+     * @return value for data field or {@code null} if no value for that field has been stored
+     * @throws IllegalArgumentException
+     *             if parameter string is {@code null}
+     */
     public Object getValue(final DataField dataField) {
+        if (dataField == null) {
+            throw new IllegalArgumentException("Parameter dataField must not be null");
+        }
         return applicantData.get(dataField);
     }
 
+    /**
+     * Gets the name of the PDF file from which the data of this applicant has been read.
+     * 
+     * @return name of the PDF file for this applicant
+     */
     public String getFileName() {
         return filename;
     }
@@ -75,7 +135,6 @@ public final class Applicant {
      * @return true, only if all data is OK
      */
     public boolean checkPlausibility() {
-
         for (Object o : applicantData.values()) {
             if (o == null) {
                 logger.warn("Null value in applicant " + toString());

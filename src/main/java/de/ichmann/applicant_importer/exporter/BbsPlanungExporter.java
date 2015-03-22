@@ -35,7 +35,7 @@ public class BbsPlanungExporter {
     private static final char FIELD_DELIMITER = ';';
 
     // set all header for fields in CSV file
-    private static final Object[] FILE_HEADER = { "SNR", "KL_NAME", "LFD", "STATUS", "NR_SCHÜLER",
+    private static final Object[] FILE_HEADER = {"SNR", "KL_NAME", "LFD", "STATUS", "NR_SCHÜLER",
             "NNAME", "VNAME", "GEBDAT", "GEBORT", "STR", "PLZ", "ORT", "TEL", "FAX", "LDK",
             "LDK_Z", "LANDKREIS", "EMAIL", "GESCHLECHT", "KONF", "KONF_TEXT", "STAAT", "FAMSTAND",
             "SFO", "TAKURZ", "KLST", "ORG", "DAUER", "TAKLSTORG", "SFOTEXT", "TALANG", "ORG_N",
@@ -54,7 +54,7 @@ public class BbsPlanungExporter {
             "PRIO5", "PRIO5_SNR", "PRIO5_KOR", "PRIO5_RANG", "PRIO5_ZU", "VN1", "VN2", "VN3",
             "VN4", "VN5", "VN6", "VN7", "VN8", "VN9", "VN10", "VN11", "VN12", "VN_S", "VN_S1",
             "VN_S2", "VN_S3", "VN_S4", "VN_S5", "ZUSAGE", "ZUSAGE_BG", "ZUSAGE_SNR", "AS", "SNR1",
-            "SNR2", "ZU", "MARKE", "FEHLER", "IDENT", "TEL_HANDY" };
+            "SNR2", "ZU", "MARKE", "FEHLER", "IDENT", "TEL_HANDY"};
 
     private int numberExportedApplicants = 0;
 
@@ -204,20 +204,22 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(""); // A
         applicantDataRecord.add(""); // BG
         applicantDataRecord.add("BS"); // BG_SFO: Berufsschule
-        applicantDataRecord.add(""); // BG_BFELD: Elektro (E)
-        applicantDataRecord.add(""); // BG_FREI: Fachinformatiker (F1 oder F2 je nach Fachrichtung)
-        applicantDataRecord.add("1"); // BG_KLST: Klassenstuffe
-        applicantDataRecord.add("A"); // BG_ORG: ???
-        applicantDataRecord.add("0"); // BG_DAUER: ???
+        applicantDataRecord.add("E"); // BG_BFELD: Elektro (E)
+        applicantDataRecord.add("F1"); // BG_FREI: Fachinformatiker (F1 oder F2 je nach
+                                       // Fachrichtung)
+        applicantDataRecord.add("1"); // BG_KLST: Klassenstufe
+        applicantDataRecord.add("A"); // BG_ORG: Organisationsart übliche Klasse/Teilzeit ohne
+                                      // Blockunterricht
+        applicantDataRecord.add("0"); // BG_DAUER: Gesamtes Schuljahr
         applicantDataRecord.add(""); // P_FAKTOR
         applicantDataRecord.add(""); // KO
         String sot = DataField.START_OF_TRAINING.getFrom(applicant);
         Integer dot = DataField.DURATION_OF_TRAINING.getFrom(applicant);
+        String eot = DateHelper.getInstance().getEndDateOfTraining(applicant);
         applicantDataRecord.add(""); // EINTR_DAT: Will be added later by the secretaries.
         applicantDataRecord.add(sot); // AUSB_BEGDAT
         applicantDataRecord.add(dot.toString()); // A_DAUER
-        applicantDataRecord.add(""); // A_ENDEDAT
-        // TODO calculate end date for vocational training
+        applicantDataRecord.add(eot); // A_ENDEDAT
         applicantDataRecord.add(""); // ANRECH_BGJ
         applicantDataRecord.add(""); // WIEDERHOL
         Degree d = DataField.DEGREE.getFrom(applicant);
