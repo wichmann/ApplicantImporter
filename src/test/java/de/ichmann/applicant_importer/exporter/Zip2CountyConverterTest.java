@@ -33,7 +33,7 @@ public final class Zip2CountyConverterTest {
         assertEquals(converter.convertZipCode(49074), "404");
         assertEquals(converter.convertZipCode(27243), "458");
         assertEquals(converter.convertZipCode(49565), "459");
+        assertEquals(converter.convertZipCode(12345), "511");
         assertEquals(converter.convertZipCode(0), "");
-        assertEquals(converter.convertZipCode(12345), "");
     }
 }
