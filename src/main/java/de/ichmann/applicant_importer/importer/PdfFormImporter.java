@@ -185,6 +185,8 @@ public final class PdfFormImporter {
          *
          * DauerAusbildung: Has to be parsed as decimal number and multiplicated by 12 to get month.
          *
+         * Staatsangehörigkeit: A integer number representing the nationality.
+         *
          * ErlaeuterungBFS - SonstigesSchulabschluss: Stored as additional info in School Enum.
          *
          * SchulabschlussSonstigerErlaeuterung: Stored as additional info in Degree Enum.
@@ -231,8 +233,8 @@ public final class PdfFormImporter {
                         extractReligion(pdField, builder);
                         // get all plain string elements and store them in builder
                         extractStringValues(pdField, builder);
-                        // get duration of training
-                        extractDuration(pdField, builder);
+                        // get duration of training and nationality
+                        extractNumericValues(pdField, builder);
                         // get gender and whether applicant is in a retraining
                         extractBooleanValues(pdField, builder);
                         // get attended school
@@ -331,16 +333,24 @@ public final class PdfFormImporter {
      * @throws IOException
      *             if reading of PDF form data failed
      */
-    private void extractDuration(final PDField pdField, final ApplicantBuilder builder)
+    private void extractNumericValues(final PDField pdField, final ApplicantBuilder builder)
             throws IOException {
         if ("DauerAusbildung".equals(pdField.getFullyQualifiedName())) {
-            if (pdField.getValue() != null) {
+            if (pdField.getValue() != null && !"-1".equals(pdField.getValue())) {
                 final int monthsInYear = 12;
                 Double d = Double.valueOf(pdField.getValue().replace(",", ".")) * monthsInYear;
                 Integer i = d.intValue();
                 builder.setValue(DataField.DURATION_OF_TRAINING, i);
             } else {
                 builder.setValue(DataField.DURATION_OF_TRAINING, 0);
+            }
+        }
+        if ("Staatsangehörigkeit".equals(pdField.getFullyQualifiedName())) {
+            if (pdField.getValue() != null) {
+                Integer i = Integer.valueOf(pdField.getValue());
+                builder.setValue(DataField.NATIONALITY, i);
+            } else {
+                builder.setValue(DataField.NATIONALITY, 0);
             }
         }
     }
