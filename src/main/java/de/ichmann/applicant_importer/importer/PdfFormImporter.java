@@ -350,7 +350,7 @@ public final class PdfFormImporter {
                 Integer i = Integer.valueOf(pdField.getValue());
                 builder.setValue(DataField.NATIONALITY, i);
             } else {
-                builder.setValue(DataField.NATIONALITY, 0);
+                builder.setValue(DataField.NATIONALITY, new Integer(0));
             }
         }
     }

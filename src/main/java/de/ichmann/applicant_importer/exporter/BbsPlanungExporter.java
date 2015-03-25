@@ -184,7 +184,7 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(""); // Konfession-Text
         Integer i = DataField.NATIONALITY.getFrom(applicant);
         if (i != null) {
-            applicantDataRecord.add(i.toString()); // Staatszugehörigkeit
+            applicantDataRecord.add(String.format("%03d", i)); // Staatszugehörigkeit
         } else {
             applicantDataRecord.add("000"); // Staatszugehörigkeit
         }
@@ -245,7 +245,6 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(eot); // A_ENDEDAT
         applicantDataRecord.add(""); // ANRECH_BGJ
         applicantDataRecord.add(""); // WIEDERHOL
-        // TODO Check if it would be better to never return null from getFrom() method?!
         Degree d = DataField.DEGREE.getFrom(applicant);
         if (d != null) {
             applicantDataRecord.add(String.valueOf(d.getId())); // ABSCHLUSS

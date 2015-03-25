@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Contains all data field information for a given applicant that has been imported. This class is
  * immutable and new objects can only be created by use of the contained ApplicantBuilder.
- * 
+ *
  * @author Christian Wichmann
  */
 public final class Applicant {
@@ -23,7 +23,7 @@ public final class Applicant {
 
     /**
      * Collects all data field information and builds Applicant object with this data.
-     * 
+     *
      * @author Christian Wichmann
      */
     public static class ApplicantBuilder {
@@ -39,7 +39,7 @@ public final class Applicant {
 
         /**
          * Sets a value in this ApplicantBuilder instance.
-         * 
+         *
          * @param dataField
          *            data field to be set
          * @param data
@@ -59,7 +59,7 @@ public final class Applicant {
 
         /**
          * Sets the name of the PDF file from which the data of this applicant has been read.
-         * 
+         *
          * @param filename
          *            name of the PDF file for this applicant
          * @return this builder itself
@@ -76,7 +76,7 @@ public final class Applicant {
 
         /**
          * Create a new Applicant with the data stored in this ApplicantBuilder object.
-         * 
+         *
          * @return new Applicant object
          */
         public final Applicant build() {
@@ -86,7 +86,7 @@ public final class Applicant {
 
     /**
      * Creates a new applicant object from a given builder.
-     * 
+     *
      * @param builder
      *            builder containing the applicants data
      */
@@ -104,11 +104,15 @@ public final class Applicant {
     }
 
     /**
-     * Gets the value of a specific data field for this applicant.
-     * 
+     * Gets the value of a specific data field for this applicant. This method returns never a
+     * {@code null} but always an "empty" value of type string or integer or whatever type is
+     * necessary depending on the specified data field.
+     * <p>
+     * If a data field value has been imported can be checked by the method wasImported().
+     *
      * @param dataField
      *            data field to get value for
-     * @return value for data field or {@code null} if no value for that field has been stored
+     * @return value for data field
      * @throws IllegalArgumentException
      *             if parameter string is {@code null}
      */
@@ -116,12 +120,46 @@ public final class Applicant {
         if (dataField == null) {
             throw new IllegalArgumentException("Parameter dataField must not be null");
         }
-        return applicantData.get(dataField);
+        Object o = applicantData.get(dataField);
+        if (o == null) {
+            if (dataField.getTypeOfDataField() == Boolean.class) {
+                o = new Boolean(false);
+            } else if (dataField.getTypeOfDataField() == Integer.class) {
+                o = new Integer(0);
+            } else if (dataField.getTypeOfDataField() == Religion.class) {
+                o = Religion.OHNE_ANGABE;
+            } else if (dataField.getTypeOfDataField() == Degree.class) {
+                o = Degree.SONSTIGER_ABSCHLUSS;
+            } else if (dataField.getTypeOfDataField() == School.class) {
+                o = School.SONSTIGES;
+            } else if (dataField.getTypeOfDataField() == String.class) {
+                o = new String();
+            } else if (dataField.getTypeOfDataField() == Character.class) {
+                o = new Character('m');
+            } else {
+                logger.error("Could not create value for \"empty\" data field: " + dataField);
+                assert false : "Could not create value for \"empty\" data field: " + dataField;
+            }
+        }
+        return o;
+    }
+
+    /**
+     * Checks whether a value was set for a given data field. If no value was imported a false is
+     * returned.
+     *
+     * @param dataField
+     *            data field to check if it was imported
+     * @return true, if a value was imported and stored for a given data field
+     */
+    public boolean wasImported(final DataField dataField) {
+        Object o = applicantData.get(dataField);
+        return !(o == null);
     }
 
     /**
      * Gets the name of the PDF file from which the data of this applicant has been read.
-     * 
+     *
      * @return name of the PDF file for this applicant
      */
     public String getFileName() {
@@ -131,7 +169,7 @@ public final class Applicant {
     /**
      * Checks all data for plausibility. It checks whether all necessary data is present and if all
      * data has the expected format.
-     * 
+     *
      * @return true, only if all data is OK
      */
     public boolean checkPlausibility() {
@@ -158,7 +196,7 @@ public final class Applicant {
     /**
      * Returns a set containing all data fields that have either a invalid value or are required and
      * not given for this applicant. The decision is based only on the currently stored values.
-     * 
+     *
      * @return set containing all invalid data fields
      */
     public EnumSet<DataField> getInvalidDataFields() {
@@ -176,7 +214,7 @@ public final class Applicant {
     /**
      * Constructs and returns a string containing a help message mentioning those data fields of an
      * applicant that contain invalid information.
-     * 
+     *
      * @return help message mentioning all invalid data fields
      */
     public String buildCommentFromApplicant() {

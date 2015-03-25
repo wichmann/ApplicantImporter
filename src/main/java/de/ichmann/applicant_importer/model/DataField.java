@@ -1,6 +1,5 @@
 package de.ichmann.applicant_importer.model;
 
-
 /**
  * Describes all data fields that can be stored for an Applicant. Not all data fields are required,
  * some can be left empty. All required fields must not be empty for a valid Applicant.
@@ -71,7 +70,7 @@ public enum DataField {
     /**
      *
      */
-    ZIP_CODE(Integer.class, "PLZ", true),
+    ZIP_CODE(String.class, "PLZ", true),
 
     /**
      *
@@ -99,10 +98,10 @@ public enum DataField {
     EMAIL(String.class, "E-Mail", true),
 
     /**
-     * Nationality of the Applicant. It is stored in text form in German. For exporting it to
-     * BBS-Planung the helper class NationalityConverter can be used.
+     * Nationality of the Applicant. It is stored as an integer number containing the nationality ID
+     * used by BBS-Planung.
      */
-    NATIONALITY(String.class, "Staatsangehörigkeit", true),
+    NATIONALITY(Integer.class, "Staatsangehörigkeit", true),
 
     /**
      *
