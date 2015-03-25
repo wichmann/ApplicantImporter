@@ -3,9 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.ichmann</groupId>
 	<artifactId>applicant-importer</artifactId>
-	<version>0.1</version>
+	<version>0.2</version>
 	<name>BewerberImport</name>
 	<description>Imports information about new students from PDF files and provides CSV files to be easily imported into BBSPlanung.</description>
+	<!--scm>
+		<connection>scm:git:git://github.com/wichmann/pplicantImporter</connection>
+		<url>https://github.com/wichmann/applicantImporter.git</url>
+	</scm-->
 	<properties>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   	</properties>
@@ -53,6 +57,14 @@
 						<manifest>
 							<mainClass>de.ichmann.applicant_importer.RunApplicantImporterGUI</mainClass>
 						</manifest>
+						<manifestEntries>
+ 							<Specification-Title>${project.name}</Specification-Title>
+							<Specification-Version>${project.version}</Specification-Version>
+							<Specification-Vendor>Christian Wichmann</Specification-Vendor>
+							<Implementation-Title>${project.name}</Implementation-Title>
+							<Implementation-Version>${maven.build.timestamp}</Implementation-Version>
+							<Implementation-Vendor>Christian Wichmann</Implementation-Vendor>
+						</manifestEntries>
 					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
@@ -106,11 +118,11 @@
                                 <maxHeapSize>512</maxHeapSize>
                             </jre>
                             <versionInfo>
-                                <fileVersion>0.1.0.0</fileVersion>
+                                <fileVersion>0.2.0.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>${project.description}</fileDescription>
                                 <copyright>Christian Wichmann</copyright>
-                                <productVersion>0.1.0.0</productVersion>
+                                <productVersion>0.2.0.0</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>${project.name}</productName>
                                 <internalName>${project.artifactId}</internalName>

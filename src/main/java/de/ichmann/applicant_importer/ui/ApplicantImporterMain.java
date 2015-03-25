@@ -47,7 +47,7 @@ import de.ichmann.applicant_importer.model.Applicant;
 
 /**
  * Shows main window of Applicant Importer.
- * 
+ *
  * @author Christian Wichmann
  */
 public final class ApplicantImporterMain extends JFrame {
@@ -86,7 +86,7 @@ public final class ApplicantImporterMain extends JFrame {
     /**
      * Provides a table to display applicants data. The table rows are colered alternatingly and
      * invalid rows can be highlighted.
-     * 
+     *
      * @author Christian Wichmann
      */
     private final class ApplicantInformationTable extends JTable {
@@ -96,7 +96,7 @@ public final class ApplicantImporterMain extends JFrame {
          * Overrides the default method from JTable and adds only the coloring of rows that contain
          * invalid information. This is easier than creating a new TableCellRenderer to handles
          * this!
-         * 
+         *
          * Source: https://tips4java.wordpress.com/2010/01/24/table-row-rendering/
          */
         @Override
@@ -199,7 +199,7 @@ public final class ApplicantImporterMain extends JFrame {
 
     /**
      * Builds a menu bar including all menu items.
-     * 
+     *
      * @return menu bar
      */
     private JMenuBar buildMenuBar() {
@@ -290,8 +290,14 @@ public final class ApplicantImporterMain extends JFrame {
         builder.append("<font size=+2>BewerberImport</font>");
         builder.append("<font size=+0><br>");
         builder.append("<br>Autor: Christian Wichmann &lt;wichmann@bbs-os-brinkstr.de&gt;");
-        builder.append("<br>Version: 0.1");
-        builder.append("<br>Datum: 21.03.2015");
+
+        String versionInformation = this.getClass().getPackage().getSpecificationVersion();
+        builder.append("<br>Version: ");
+        builder.append(versionInformation);
+
+        String buildDateInformation = this.getClass().getPackage().getImplementationVersion();
+        builder.append("<br>Datum: ");
+        builder.append(buildDateInformation);
         builder.append("</font></html>");
         JOptionPane.showMessageDialog(ApplicantImporterMain.this, builder.toString(), "Über...",
                 JOptionPane.INFORMATION_MESSAGE);
@@ -325,6 +331,7 @@ public final class ApplicantImporterMain extends JFrame {
         });
 
         applicantInformationTable.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(final MouseEvent me) {
                 final JTable table = (JTable) me.getSource();
                 final Point p = me.getPoint();
@@ -343,7 +350,7 @@ public final class ApplicantImporterMain extends JFrame {
 
     /**
      * Builds a information message that is shown when double-clicking on an applicant in the table.
-     * 
+     *
      * @param applicant
      *            applicant for which to show information
      * @return string containing information message
@@ -375,6 +382,7 @@ public final class ApplicantImporterMain extends JFrame {
         actionMap.put("delete", new AbstractAction() {
             private static final long serialVersionUID = -2329856122068030091L;
 
+            @Override
             public void actionPerformed(final ActionEvent evt) {
                 int row = applicantInformationTable.getSelectedRow();
                 int col = applicantInformationTable.getSelectedColumn();
@@ -448,7 +456,7 @@ public final class ApplicantImporterMain extends JFrame {
     /**
      * Imports all applicants data from a given directory, stores them and updates the table to
      * display them.
-     * 
+     *
      * @param selectedFile
      *            directory to be imported
      */
@@ -463,7 +471,32 @@ public final class ApplicantImporterMain extends JFrame {
      * file as CSV format and shows a message box informing the user about it.
      */
     private void doExportToFile() {
-        final JFileChooser chooser = new JFileChooser();
+        final JFileChooser chooser = new JFileChooser() {
+            private static final long serialVersionUID = -6194898076069880017L;
+
+            @Override
+            public void approveSelection() {
+                File f = getSelectedFile();
+                if (f.exists() && getDialogType() == SAVE_DIALOG) {
+                    int result = JOptionPane.showConfirmDialog(this,
+                            "Die Datei existiert bereits. Soll sie überschrieben werden?",
+                            "Bereits existierende Datei überschreiben?",
+                            JOptionPane.YES_NO_CANCEL_OPTION);
+                    switch (result) {
+                    case JOptionPane.YES_OPTION:
+                        super.approveSelection();
+                        return;
+                    case JOptionPane.CANCEL_OPTION:
+                        cancelSelection();
+                        return;
+                    default:
+                        // handle JOptionPane.NO_OPTION and JOptionPane.CLOSED_OPTION
+                        return;
+                    }
+                }
+                super.approveSelection();
+            }
+        };
         final String exportFileDefaultName = "Bewerber_Aus_Nebenstelle.txt";
         chooser.setDialogTitle("Datei für exportierte Daten auswählen...");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
