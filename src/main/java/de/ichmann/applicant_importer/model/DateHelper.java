@@ -30,7 +30,7 @@ public final class DateHelper {
 
     /**
      * Gets the unique instance of this converter.
-     * 
+     *
      * @return singleton instance of this helper class
      */
     public static synchronized DateHelper getInstance() {
@@ -43,13 +43,16 @@ public final class DateHelper {
     /**
      * Returns whether an applicant is older than 18 years. If the given date string can not be
      * correctly parsed a false value is returned to the called.
-     * 
+     *
      * @param applicant
      *            applicant which age should be checked
      * @return whether an applicant is older than 18 years
      */
     public boolean isOlderThan18(final Applicant applicant) {
         String birthdayString = DataField.BIRTHDAY.getFrom(applicant);
+        if (birthdayString == null) {
+            return false;
+        }
         Calendar cal = Calendar.getInstance();
         DateFormat dateFormat = DateFormat.getDateInstance();
         boolean isOlderThan18 = false;
@@ -76,13 +79,18 @@ public final class DateHelper {
     /**
      * Returns the end date of the training for a given applicant. It is calculated by adding the
      * number of its months to the start date minus one day.
-     * 
+     *
      * @param applicant
      *            applicant for which to calculate the end date
      * @return end date of the training
      */
     public String getEndDateOfTraining(final Applicant applicant) {
+        // TODO check parameter for null etc.
         String startDateString = DataField.START_OF_TRAINING.getFrom(applicant);
+        // return empty string when no start date is given
+        if (startDateString == null || "".equals(startDateString)) {
+            return "";
+        }
         String endDateString = "";
         Calendar cal = Calendar.getInstance();
         DateFormat dateFormat = DateFormat.getDateInstance();
@@ -91,6 +99,9 @@ public final class DateHelper {
             startDate = dateFormat.parse(startDateString);
             cal.setTime(startDate);
             Integer months = DataField.DURATION_OF_TRAINING.getFrom(applicant);
+            if (months == null || "".equals(months)) {
+                return "";
+            }
             cal.add(Calendar.MONTH, months);
             cal.add(Calendar.DAY_OF_MONTH, -1);
             endDateString = dateFormat.format(cal.getTime());

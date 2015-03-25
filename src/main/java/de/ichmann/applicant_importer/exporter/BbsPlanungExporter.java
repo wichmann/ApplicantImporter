@@ -157,8 +157,12 @@ public class BbsPlanungExporter {
         String countyID;
         try {
             String zipCode = DataField.ZIP_CODE.getFrom(applicant);
-            Integer zipCodeAsNumber = Integer.valueOf(zipCode.trim());
-            countyID = Zip2CountyConverter.getInstance().convertZipCode(zipCodeAsNumber);
+            if (zipCode != null) {
+                Integer zipCodeAsNumber = Integer.valueOf(zipCode.trim());
+                countyID = Zip2CountyConverter.getInstance().convertZipCode(zipCodeAsNumber);
+            } else {
+                countyID = "";
+            }
         } catch (NumberFormatException e) {
             logger.warn("Could not parse zip code of applicant " + applicant + " while exporting!");
         } finally {
@@ -178,8 +182,12 @@ public class BbsPlanungExporter {
             applicantDataRecord.add(String.valueOf(Religion.OHNE_ANGABE.getValue())); // Konfession
         }
         applicantDataRecord.add(""); // Konfession-Text
-        // TODO Read nationality from form field and convert into id!
-        applicantDataRecord.add("000"); // Staatszugehörigkeit
+        Integer i = DataField.NATIONALITY.getFrom(applicant);
+        if (i != null) {
+            applicantDataRecord.add(i.toString()); // Staatszugehörigkeit
+        } else {
+            applicantDataRecord.add("000"); // Staatszugehörigkeit
+        }
         applicantDataRecord.add(""); // Familienstand
     }
 
@@ -192,11 +200,18 @@ public class BbsPlanungExporter {
      *            list of all data to be exported in the correct order
      */
     private void filloutSchoolData(final Applicant applicant, final List<String> applicantDataRecord) {
-        applicantDataRecord.add(""); // SFO
-        applicantDataRecord.add(""); // TAKURZ
-        applicantDataRecord.add(""); // KLST
-        applicantDataRecord.add(""); // ORG
-        applicantDataRecord.add(""); // DAUER
+        String vocationName = applicant.getValue(DataField.VOCATION) + " "
+                + applicant.getValue(DataField.SPECIALIZATION);
+        String vocationID = VocationConverter.getInstance().convertVocation(vocationName);
+        applicantDataRecord.add("BS"); // SFO
+        if (vocationID == null || "".equals(vocationID)) {
+            applicantDataRecord.add(""); // TAKURZ
+        } else {
+            applicantDataRecord.add(vocationID); // TAKURZ
+        }
+        applicantDataRecord.add("1"); // KLST
+        applicantDataRecord.add("A"); // ORG
+        applicantDataRecord.add("0"); // DAUER
         applicantDataRecord.add(""); // TAKLSTORG
         applicantDataRecord.add(""); // SFOTEXT
         applicantDataRecord.add(""); // TALANG
@@ -204,10 +219,7 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(""); // A
         applicantDataRecord.add(""); // BG
         applicantDataRecord.add("BS"); // BG_SFO: Berufsschule
-        String vocationName = applicant.getValue(DataField.VOCATION) + " "
-                + applicant.getValue(DataField.SPECIALIZATION);
-        String vocationID = VocationConverter.getInstance().convertVocation(vocationName);
-        if ("".equals(vocationID)) {
+        if (vocationID == null || "".equals(vocationID)) {
             applicantDataRecord.add(""); // BG_BFELD: Elektro (E)
             applicantDataRecord.add(""); // BG_FREI: Fachinformatiker
         } else {
@@ -225,14 +237,27 @@ public class BbsPlanungExporter {
         String eot = DateHelper.getInstance().getEndDateOfTraining(applicant);
         applicantDataRecord.add(""); // EINTR_DAT: Will be added later by the secretaries.
         applicantDataRecord.add(sot); // AUSB_BEGDAT
-        applicantDataRecord.add(dot.toString()); // A_DAUER
+        if (dot != null) {
+            applicantDataRecord.add(dot.toString()); // A_DAUER
+        } else {
+            applicantDataRecord.add(""); // A_DAUER
+        }
         applicantDataRecord.add(eot); // A_ENDEDAT
         applicantDataRecord.add(""); // ANRECH_BGJ
         applicantDataRecord.add(""); // WIEDERHOL
+        // TODO Check if it would be better to never return null from getFrom() method?!
         Degree d = DataField.DEGREE.getFrom(applicant);
-        applicantDataRecord.add(String.valueOf(d.getId())); // ABSCHLUSS
+        if (d != null) {
+            applicantDataRecord.add(String.valueOf(d.getId())); // ABSCHLUSS
+        } else {
+            applicantDataRecord.add(String.valueOf(Degree.SONSTIGER_ABSCHLUSS.getId())); // ABSCHLUSS
+        }
         School s = DataField.SCHOOL.getFrom(applicant);
-        applicantDataRecord.add(String.valueOf(s.getId())); // HERKUNFT
+        if (s != null) {
+            applicantDataRecord.add(String.valueOf(s.getId())); // HERKUNFT
+        } else {
+            applicantDataRecord.add(String.valueOf(School.SONSTIGES.getId())); // HERKUNFT
+        }
         applicantDataRecord.add(""); // HER_ZUSATZ
         applicantDataRecord.add(""); // FH_Z
         applicantDataRecord.add(""); // SCHULPFLICHT
@@ -242,7 +267,8 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(""); // LM_M
         applicantDataRecord.add(""); // LM_Z
         applicantDataRecord.add(""); // LM_DAT
-        boolean r = DataField.RETRAINING.getFrom(applicant);
+        Boolean r = DataField.RETRAINING.getFrom(applicant);
+        r = (r == null) ? false : r;
         applicantDataRecord.add(r ? "J" : "N"); // UM
         applicantDataRecord.add(""); // A_AMT
         applicantDataRecord.add(""); // A_BEZIRK

@@ -1,6 +1,7 @@
 package de.ichmann.applicant_importer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -8,13 +9,17 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads a PDF file and extracts all form fields including their values.
- * 
+ *
  * @author Christian Wichmann
  */
 public final class RunExtractFormFields {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RunExtractFormFields.class);
 
     /**
      * Private constructor of utility class.
@@ -24,7 +29,7 @@ public final class RunExtractFormFields {
 
     /**
      * Starts to parse and print all form fields in a given PDF file.
-     * 
+     *
      * @param args
      *            command line arguments
      */
@@ -32,9 +37,8 @@ public final class RunExtractFormFields {
         PDDocument pdfDocument = null;
 
         try {
-            pdfDocument = PDDocument
-                    .load(new File(
-                            "/home/christian/Desktop/BBSAnmeldung/AnmeldungBerufsschuleVerbessertMitDaten6.pdf"));
+            pdfDocument = PDDocument.load(new File(
+                    "/home/christian/Desktop/AnmeldungBerufsschuleV09b.pdf"));
             PDDocumentCatalog docCatalog = pdfDocument.getDocumentCatalog();
             PDAcroForm acroForm = docCatalog.getAcroForm();
 
@@ -45,8 +49,10 @@ public final class RunExtractFormFields {
                 System.out
                         .println("" + pdField.getFullyQualifiedName() + ": " + pdField.getValue());
             }
+        } catch (FileNotFoundException e) {
+            LOGGER.error("Could find given PDF file.");
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Could not open given PDF file.");
         }
     }
 }
