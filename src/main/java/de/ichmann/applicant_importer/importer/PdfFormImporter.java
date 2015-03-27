@@ -156,10 +156,15 @@ public final class PdfFormImporter {
         dataFieldNames.put("PLZ", DataField.ZIP_CODE);
         dataFieldNames.put("Ort", DataField.CITY);
         dataFieldNames.put("EMail", DataField.EMAIL);
-        // TODO Check form field name for nationality data field!
         dataFieldNames.put("Staatsangehörigkeit", DataField.NATIONALITY);
+        /*
+         * Because of changes in the names of PDF form fields there are two different ways of
+         * reading birthday and birthplace.
+         */
         dataFieldNames.put("Geburtsdatum", DataField.BIRTHDAY);
+        dataFieldNames.put("geb am", DataField.BIRTHDAY);
         dataFieldNames.put("Geburtsort", DataField.BIRTHPLACE);
+        dataFieldNames.put("in", DataField.BIRTHPLACE);
         dataFieldNames.put("Namen der Erziehungsberechtigten", DataField.NAME_OF_LEGAL_GUARDIAN);
         dataFieldNames.put("TelEltern", DataField.PHONE_OF_LEGAL_GUARDIAN);
         dataFieldNames.put("AnschriftEltern", DataField.ADDRESS_OF_LEGAL_GUARDIAN);
