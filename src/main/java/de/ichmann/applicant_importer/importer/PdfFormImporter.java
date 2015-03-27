@@ -3,6 +3,8 @@
  */
 package de.ichmann.applicant_importer.importer;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
@@ -56,6 +58,11 @@ public final class PdfFormImporter {
      */
     private final Map<String, DataField> dataFieldNames = new HashMap<>();
 
+    private ActionListener importListener;
+
+    private volatile int numberOfPdfFiles = 0;
+    private volatile int currentPdfFiles = 0;
+
     /*
      * Current field names (2015-03-13):
      *
@@ -104,10 +111,25 @@ public final class PdfFormImporter {
      *
      * @param directory
      *            directory from which to import the PDF files containing the forms
+     * @param importListener
+     *            listener for changes at the import
      */
-    public PdfFormImporter(final Path directory) {
+    public PdfFormImporter(final Path directory, final ActionListener importListener) {
+        this.importListener = importListener;
         fillDataFieldNamesDictionary();
         parseFiles(directory);
+    }
+
+    /**
+     * Fires a new event signaling a change in the importer.
+     *
+     * @param e
+     *            importer event
+     */
+    private synchronized void fireImportEvent(final ActionEvent e) {
+        if (importListener != null) {
+            importListener.actionPerformed(e);
+        }
     }
 
     /**
@@ -117,10 +139,20 @@ public final class PdfFormImporter {
      *            directory from which to parse PDF files
      */
     private void parseFiles(final Path directory) {
-        // find all PDF files and parse them
+        // count number of PDF files in directory
         final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.pdf");
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
             for (Path path : directoryStream) {
+                if (matcher.matches(path.getFileName())) {
+                    numberOfPdfFiles++;
+                }
+            }
+        } catch (IOException e) {
+            logger.warn("Could not read directory listing!");
+        }
+        // find all PDF files and parse them
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+            for (final Path path : directoryStream) {
                 if (matcher.matches(path.getFileName())) {
                     logger.info("Found PDF file: " + path);
                     // parse every PDF file in given directory and add them to list
@@ -130,6 +162,8 @@ public final class PdfFormImporter {
                     } else {
                         listOfInvalidPdfFiles.add(path.getFileName().toString());
                     }
+                    currentPdfFiles++;
+                    fireImportEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
                 }
             }
         } catch (IOException ex) {
@@ -514,5 +548,23 @@ public final class PdfFormImporter {
      */
     public List<String> getListOfInvalidPdfFiles() {
         return listOfInvalidPdfFiles;
+    }
+
+    /**
+     * Gets the number of PDF files in the given directory.
+     *
+     * @return number of PDF files
+     */
+    public synchronized int getNumberOfPdfFiles() {
+        return numberOfPdfFiles;
+    }
+
+    /**
+     * Gets the currently imported PDF file.
+     *
+     * @return currently imported PDF file
+     */
+    public synchronized int getCurrentPdfFiles() {
+        return currentPdfFiles;
     }
 }

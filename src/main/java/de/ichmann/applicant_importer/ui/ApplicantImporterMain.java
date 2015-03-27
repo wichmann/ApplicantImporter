@@ -2,6 +2,7 @@ package de.ichmann.applicant_importer.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -12,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -27,6 +29,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -64,10 +67,11 @@ public final class ApplicantImporterMain extends JFrame {
     private JTable applicantInformationTable = null;
     private JCheckBoxMenuItem exportInvalidApplicantsMenuItem = null;
     private JCheckBoxMenuItem highlightInvalidApplicantsMenuItem = null;
+    private StatusBar statusBar = null;
 
     private PdfFormImporter importer = null;
 
-    private List<Applicant> listOfApplicants;
+    private List<Applicant> listOfApplicants = new ArrayList<Applicant>();
 
     /**
      * Instantiate a instance of the main window.
@@ -125,6 +129,39 @@ public final class ApplicantImporterMain extends JFrame {
             }
 
             return c;
+        }
+    }
+
+    /**
+     * Provides a status bar containing a progress bar.
+     *
+     * @author Christian Wichmann
+     */
+    public class StatusBar extends JProgressBar {
+        private static final long serialVersionUID = 508013547776082253L;
+
+        /**
+         * Initializes a new StatusBar instance.
+         */
+        public StatusBar() {
+            super();
+
+            final int width = 100;
+            final int height = 16;
+
+            setPreferredSize(new Dimension(width, height));
+            setStringPainted(true);
+            setValue(0);
+        }
+
+        public void prepareProgressBar(final int minimum, final int maximum) {
+            setMinimum(minimum);
+            setMaximum(maximum);
+        }
+
+        public void fillProgressBar(final int progress) {
+            setString(String.format("%d von %d Dateien importiert...", progress, getMaximum()));
+            setValue(progress);
         }
     }
 
@@ -195,6 +232,17 @@ public final class ApplicantImporterMain extends JFrame {
         c.anchor = GridBagConstraints.SOUTHEAST;
         c.fill = GridBagConstraints.NONE;
         add(clearTableButton, c);
+
+        statusBar = new StatusBar();
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridheight = 1;
+        c.gridwidth = 2;
+        c.weightx = 1;
+        c.weighty = 0;
+        c.anchor = GridBagConstraints.SOUTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        add(statusBar, c);
     }
 
     /**
@@ -461,7 +509,14 @@ public final class ApplicantImporterMain extends JFrame {
      *            directory to be imported
      */
     private void importFromDirectory(final File selectedFile) {
-        importer = new PdfFormImporter(selectedFile.toPath());
+        importer = new PdfFormImporter(selectedFile.toPath(), new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                // PdfFormImporter importer = ((PdfFormImporter) e.getSource());
+                // statusBar.prepareProgressBar(0, importer.getNumberOfPdfFiles());
+                // statusBar.fillProgressBar(importer.getCurrentPdfFiles());
+            }
+        });
         listOfApplicants = importer.getListOfStudents();
         applicantInformationTable.setModel(new ApplicantInformationTableModel(listOfApplicants));
     }

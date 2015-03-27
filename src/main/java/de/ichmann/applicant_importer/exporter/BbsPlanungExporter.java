@@ -71,6 +71,26 @@ public class BbsPlanungExporter {
     public BbsPlanungExporter(final Path file, final List<Applicant> listOfApplicants,
             final boolean exportInvalidApplicants) {
 
+        if (file == null || listOfApplicants == null) {
+            throw new IllegalArgumentException(
+                    "Parameter file and listOfApplicants must not be null");
+        }
+
+        exportApplicantData(file, listOfApplicants, exportInvalidApplicants);
+    }
+
+    /**
+     * Exports all applicants from a given list to a given file.
+     *
+     * @param file
+     *            file name to export data to
+     * @param listOfApplicants
+     *            list of applicants to be exported
+     * @param exportInvalidApplicants
+     *            whether to export applicants with invalid data
+     */
+    private void exportApplicantData(final Path file, final List<Applicant> listOfApplicants,
+            final boolean exportInvalidApplicants) {
         OutputStreamWriter osw = null;
         CSVPrinter csvFilePrinter = null;
 
