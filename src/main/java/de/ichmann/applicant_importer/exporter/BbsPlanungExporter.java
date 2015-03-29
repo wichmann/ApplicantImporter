@@ -143,9 +143,13 @@ public class BbsPlanungExporter {
 
         } finally {
             try {
-                osw.flush();
-                osw.close();
-                csvFilePrinter.close();
+                if (osw != null) {
+                    osw.flush();
+                    osw.close();
+                }
+                if (csvFilePrinter != null) {
+                    csvFilePrinter.close();
+                }
             } catch (IOException e) {
                 logger.error("Error while flushing/closing fileWriter/csvPrinter !!!");
             }
@@ -220,6 +224,7 @@ public class BbsPlanungExporter {
      *            list of all data to be exported in the correct order
      */
     private void filloutSchoolData(final Applicant applicant, final List<String> applicantDataRecord) {
+        // TODO Clean up this mess!
         String vocationName = applicant.getValue(DataField.VOCATION) + " "
                 + applicant.getValue(DataField.SPECIALIZATION);
         String vocationID = VocationConverter.getInstance().convertVocation(vocationName);

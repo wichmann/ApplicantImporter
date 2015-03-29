@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
@@ -60,8 +63,8 @@ public final class PdfFormImporter {
 
     private ActionListener importListener;
 
-    private volatile int numberOfPdfFiles = 0;
-    private volatile int currentPdfFiles = 0;
+    private final AtomicInteger numberOfPdfFiles = new AtomicInteger(0);
+    private final AtomicInteger currentPdfFiles = new AtomicInteger(0);
 
     /*
      * Current field names (2015-03-13):
@@ -116,8 +119,17 @@ public final class PdfFormImporter {
      */
     public PdfFormImporter(final Path directory, final ActionListener importListener) {
         this.importListener = importListener;
+
         fillDataFieldNamesDictionary();
-        parseFiles(directory);
+
+        final int poolSize = 1;
+        ExecutorService threadPool = Executors.newFixedThreadPool(poolSize);
+        threadPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                parseFiles(directory);
+            }
+        });
     }
 
     /**
@@ -138,13 +150,13 @@ public final class PdfFormImporter {
      * @param directory
      *            directory from which to parse PDF files
      */
-    private void parseFiles(final Path directory) {
+    private synchronized void parseFiles(final Path directory) {
         // count number of PDF files in directory
         final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.pdf");
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
             for (Path path : directoryStream) {
                 if (matcher.matches(path.getFileName())) {
-                    numberOfPdfFiles++;
+                    numberOfPdfFiles.incrementAndGet();
                 }
             }
         } catch (IOException e) {
@@ -160,9 +172,12 @@ public final class PdfFormImporter {
                     if (a != null) {
                         listOfStudents.add(a);
                     } else {
-                        listOfInvalidPdfFiles.add(path.getFileName().toString());
+                        final Path invalidPdfFile = path.getFileName();
+                        if (invalidPdfFile != null) {
+                            listOfInvalidPdfFiles.add(invalidPdfFile.toString());
+                        }
                     }
-                    currentPdfFiles++;
+                    currentPdfFiles.incrementAndGet();
                     fireImportEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
                 }
             }
@@ -247,7 +262,7 @@ public final class PdfFormImporter {
      *            path describing the PDF file to be parsed
      * @return applicants data or null, if file did not contain any form fields
      */
-    private Applicant parsePDFFile(final Path path) {
+    private synchronized Applicant parsePDFFile(final Path path) {
         PDDocument pdfDocument = null;
         Applicant student = null;
 
@@ -261,7 +276,12 @@ public final class PdfFormImporter {
                     List<PDField> formFields = acroForm.getFields();
 
                     ApplicantBuilder builder = new ApplicantBuilder();
-                    builder.setFileName(path.getFileName().toString());
+                    final Path pdfFileName = path.getFileName();
+                    if (pdfFileName != null) {
+                        builder.setFileName(pdfFileName.toString());
+                    } else {
+                        builder.setFileName("");
+                    }
                     for (PDField pdField : formFields) {
                         // ignore useless fields in PDF file
                         if ("Formular drucken".equals(pdField.getValue())
@@ -556,7 +576,7 @@ public final class PdfFormImporter {
      * @return number of PDF files
      */
     public synchronized int getNumberOfPdfFiles() {
-        return numberOfPdfFiles;
+        return numberOfPdfFiles.get();
     }
 
     /**
@@ -565,6 +585,6 @@ public final class PdfFormImporter {
      * @return currently imported PDF file
      */
     public synchronized int getCurrentPdfFiles() {
-        return currentPdfFiles;
+        return currentPdfFiles.get();
     }
 }

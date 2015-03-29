@@ -99,7 +99,7 @@ public final class DateHelper {
             startDate = dateFormat.parse(startDateString);
             cal.setTime(startDate);
             Integer months = DataField.DURATION_OF_TRAINING.getFrom(applicant);
-            if (months == null || "".equals(months)) {
+            if (months == null || months == 0) {
                 return "";
             }
             cal.add(Calendar.MONTH, months);

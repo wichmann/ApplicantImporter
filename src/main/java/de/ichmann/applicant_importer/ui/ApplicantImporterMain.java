@@ -67,9 +67,7 @@ public final class ApplicantImporterMain extends JFrame {
     private JTable applicantInformationTable = null;
     private JCheckBoxMenuItem exportInvalidApplicantsMenuItem = null;
     private JCheckBoxMenuItem highlightInvalidApplicantsMenuItem = null;
-    private StatusBar statusBar = null;
-
-    private PdfFormImporter importer = null;
+    private ProgressStatusBar statusBar = null;
 
     private List<Applicant> listOfApplicants = new ArrayList<Applicant>();
 
@@ -137,13 +135,13 @@ public final class ApplicantImporterMain extends JFrame {
      *
      * @author Christian Wichmann
      */
-    public class StatusBar extends JProgressBar {
+    public final class ProgressStatusBar extends JProgressBar {
         private static final long serialVersionUID = 508013547776082253L;
 
         /**
          * Initializes a new StatusBar instance.
          */
-        public StatusBar() {
+        public ProgressStatusBar() {
             super();
 
             final int width = 100;
@@ -151,14 +149,30 @@ public final class ApplicantImporterMain extends JFrame {
 
             setPreferredSize(new Dimension(width, height));
             setStringPainted(true);
+            setString("");
             setValue(0);
         }
 
+        /**
+         * Sets minimum and maximum value for the progress bar. This method has to be called before
+         * the progress bar can be incremented by using the fillProgressBar() method.
+         *
+         * @param minimum
+         *            minimum value for the progress bar
+         * @param maximum
+         *            maximum value for the progress bar
+         */
         public void prepareProgressBar(final int minimum, final int maximum) {
             setMinimum(minimum);
             setMaximum(maximum);
         }
 
+        /**
+         * Sets the value of the progress bar to a given value.
+         *
+         * @param progress
+         *            value the progress bar should be set to
+         */
         public void fillProgressBar(final int progress) {
             setString(String.format("%d von %d Dateien importiert...", progress, getMaximum()));
             setValue(progress);
@@ -233,7 +247,7 @@ public final class ApplicantImporterMain extends JFrame {
         c.fill = GridBagConstraints.NONE;
         add(clearTableButton, c);
 
-        statusBar = new StatusBar();
+        statusBar = new ProgressStatusBar();
         c.gridx = 0;
         c.gridy = 3;
         c.gridheight = 1;
@@ -481,24 +495,33 @@ public final class ApplicantImporterMain extends JFrame {
         final int returnValue = chooser.showOpenDialog(ApplicantImporterMain.this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             importFromDirectory(chooser.getSelectedFile());
-            StringBuilder builder = new StringBuilder();
-            builder.append("<html>");
-            builder.append("Aus dem Verzeichnis ");
-            builder.append("<strong>" + chooser.getSelectedFile().getName() + "</strong>");
-            builder.append(" wurden " + listOfApplicants.size());
-            builder.append(" Bewerber importiert.<br><br>");
-            // add ignored files to message if there were any
-            final List<String> listOfInvalidPdfFiles = importer.getListOfInvalidPdfFiles();
-            if (listOfInvalidPdfFiles.size() != 0) {
-                builder.append("Folgende Dateien konnten nicht eingelesen werden:<br><br>");
-                for (String s : listOfInvalidPdfFiles) {
-                    builder.append(s + "<br>");
-                }
-            }
-            builder.append("</html>");
-            JOptionPane.showMessageDialog(this, builder.toString(), "Import erfolgreich",
-                    JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    /**
+     * Show a dialog box to indicate to the user that the import has been finished.
+     *
+     * @param listOfInvalidPdfFiles
+     * @param selectedImportDirectory
+     */
+    private void showImportFinishedDialog(final List<String> listOfInvalidPdfFiles,
+            final String selectedImportDirectory) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<html>");
+        builder.append("Aus dem Verzeichnis ");
+        builder.append("<strong>" + selectedImportDirectory + "</strong>");
+        builder.append(" wurden " + listOfApplicants.size());
+        builder.append(" Bewerber importiert.<br><br>");
+        // add ignored files to message if there were any
+        if (listOfInvalidPdfFiles.size() != 0) {
+            builder.append("Folgende Dateien konnten nicht eingelesen werden:<br><br>");
+            for (String s : listOfInvalidPdfFiles) {
+                builder.append(s + "<br>");
+            }
+        }
+        builder.append("</html>");
+        JOptionPane.showMessageDialog(this, builder.toString(), "Import erfolgreich",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -509,16 +532,25 @@ public final class ApplicantImporterMain extends JFrame {
      *            directory to be imported
      */
     private void importFromDirectory(final File selectedFile) {
-        importer = new PdfFormImporter(selectedFile.toPath(), new ActionListener() {
+        new PdfFormImporter(selectedFile.toPath(), new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                // PdfFormImporter importer = ((PdfFormImporter) e.getSource());
-                // statusBar.prepareProgressBar(0, importer.getNumberOfPdfFiles());
-                // statusBar.fillProgressBar(importer.getCurrentPdfFiles());
+                final PdfFormImporter importer = ((PdfFormImporter) e.getSource());
+                final int numberOfPdfFiles = importer.getNumberOfPdfFiles();
+                statusBar.prepareProgressBar(0, numberOfPdfFiles);
+                final int currentPdfFiles = importer.getCurrentPdfFiles();
+                statusBar.fillProgressBar(currentPdfFiles);
+                if (numberOfPdfFiles == currentPdfFiles) {
+                    // show dialog and fill table only when all files have been imported
+                    listOfApplicants = importer.getListOfStudents();
+                    applicantInformationTable.setModel(new ApplicantInformationTableModel(
+                            listOfApplicants));
+                    final List<String> listOfInvalidPdfFiles = importer.getListOfInvalidPdfFiles();
+                    final String selectedImportDirectory = selectedFile.getName();
+                    showImportFinishedDialog(listOfInvalidPdfFiles, selectedImportDirectory);
+                }
             }
         });
-        listOfApplicants = importer.getListOfStudents();
-        applicantInformationTable.setModel(new ApplicantInformationTableModel(listOfApplicants));
     }
 
     /**

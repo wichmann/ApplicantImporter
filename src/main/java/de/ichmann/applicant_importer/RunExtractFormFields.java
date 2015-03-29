@@ -37,8 +37,8 @@ public final class RunExtractFormFields {
         PDDocument pdfDocument = null;
 
         try {
-            pdfDocument = PDDocument.load(new File(
-                    "/home/christian/Desktop/AnmeldungBerufsschuleV09b.pdf"));
+            final String pdfFile = "/home/christian/Desktop/AnmeldungBerufsschuleV09b.pdf";
+            pdfDocument = PDDocument.load(new File(pdfFile));
             PDDocumentCatalog docCatalog = pdfDocument.getDocumentCatalog();
             PDAcroForm acroForm = docCatalog.getAcroForm();
 
