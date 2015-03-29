@@ -46,6 +46,9 @@ import de.ichmann.applicant_importer.model.School;
  * Besides the string fields some special fields are evaluated sperately: boolean fields
  * (Umschueler, Geschlecht), fields containing a duration (DauerAusbildung), and enumerated values
  * (SchulbesuchBisher, Schulabschluss).
+ * <p>
+ * After using the importer the disposeImporter() method has to be called to explicitly shutdown all
+ * thread used to import the data.
  *
  * @author Christian Wichmann
  */
@@ -61,6 +64,7 @@ public final class PdfFormImporter {
      */
     private final Map<String, DataField> dataFieldNames = new HashMap<>();
 
+    private ExecutorService threadPool;
     private ActionListener importListener;
 
     private final AtomicInteger numberOfPdfFiles = new AtomicInteger(0);
@@ -123,13 +127,23 @@ public final class PdfFormImporter {
         fillDataFieldNamesDictionary();
 
         final int poolSize = 1;
-        ExecutorService threadPool = Executors.newFixedThreadPool(poolSize);
+        threadPool = Executors.newFixedThreadPool(poolSize);
         threadPool.submit(new Runnable() {
             @Override
             public void run() {
                 parseFiles(directory);
             }
         });
+    }
+
+    /**
+     * Explicitly dispose the importer to exit VM correctly. The importer uses a executor service
+     * from the concurrency library that produces non-daemon threads. These thread prevent the VM
+     * from shutting down correctly if they are not explicitly closes.
+     */
+    public void disposeImporter() {
+        logger.info("Closing thread for importer...");
+        threadPool.shutdown();
     }
 
     /**

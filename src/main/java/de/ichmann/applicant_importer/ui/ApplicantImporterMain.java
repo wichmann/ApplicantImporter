@@ -187,7 +187,7 @@ public final class ApplicantImporterMain extends JFrame {
         setTitle("BewerberImporter");
         setName("ApplicantImporter");
         setIconImage(new ImageIcon(getClass().getResource("/icons/icon.png")).getImage());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setJMenuBar(buildMenuBar());
 
         final GridBagConstraints c = new GridBagConstraints();
@@ -548,6 +548,9 @@ public final class ApplicantImporterMain extends JFrame {
                     final List<String> listOfInvalidPdfFiles = importer.getListOfInvalidPdfFiles();
                     final String selectedImportDirectory = selectedFile.getName();
                     showImportFinishedDialog(listOfInvalidPdfFiles, selectedImportDirectory);
+                    // explicitly dispose the importer (shuts down the executer service) to exit VM
+                    // correctly
+                    importer.disposeImporter();
                 }
             }
         });
