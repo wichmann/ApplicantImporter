@@ -570,8 +570,7 @@ public final class ApplicantImporterMain extends JFrame {
                 if (f.exists() && getDialogType() == SAVE_DIALOG) {
                     int result = JOptionPane.showConfirmDialog(this,
                             "Die Datei existiert bereits. Soll sie überschrieben werden?",
-                            "Bereits existierende Datei überschreiben?",
-                            JOptionPane.YES_NO_CANCEL_OPTION);
+                            "Bereits existierende Datei überschreiben?", JOptionPane.YES_NO_OPTION);
                     switch (result) {
                     case JOptionPane.YES_OPTION:
                         super.approveSelection();
