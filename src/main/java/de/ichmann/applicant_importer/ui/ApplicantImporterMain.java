@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.ichmann.applicant_importer.exporter.BbsPlanungExporter;
+import de.ichmann.applicant_importer.exporter.BbsPlanungExporter.ExportError;
 import de.ichmann.applicant_importer.importer.PdfFormImporter;
 import de.ichmann.applicant_importer.model.Applicant;
 
@@ -104,7 +105,7 @@ public final class ApplicantImporterMain extends JFrame {
         @Override
         public Component prepareRenderer(final TableCellRenderer renderer, final int row,
                 final int column) {
-            Component c = super.prepareRenderer(renderer, row, column);
+            final Component c = super.prepareRenderer(renderer, row, column);
             if (!isRowSelected(row)) {
                 // color row in alternating colors
                 c.setBackground(row % 2 == 0 ? getBackground() : Color.LIGHT_GRAY);
@@ -117,9 +118,9 @@ public final class ApplicantImporterMain extends JFrame {
                      * check for its plausibility the conversion is necessary!
                      */
                     final int rowInModel = applicantInformationTable.convertRowIndexToModel(row);
-                    ApplicantInformationTableModel model = (ApplicantInformationTableModel) (applicantInformationTable
+                    final ApplicantInformationTableModel model = (ApplicantInformationTableModel) (applicantInformationTable
                             .getModel());
-                    Applicant s = model.getApplicantForRow(rowInModel);
+                    final Applicant s = model.getApplicantForRow(rowInModel);
                     if (!s.checkPlausibility()) {
                         c.setBackground(ALARM_COLOR);
                     }
@@ -220,7 +221,7 @@ public final class ApplicantImporterMain extends JFrame {
         c.weighty = 1;
         c.anchor = GridBagConstraints.CENTER;
         c.fill = GridBagConstraints.BOTH;
-        JScrollPane scrollPane = new JScrollPane(applicantInformationTable);
+        final JScrollPane scrollPane = new JScrollPane(applicantInformationTable);
         add(scrollPane, c);
 
         // create and add button to export data to CSV file
@@ -347,17 +348,17 @@ public final class ApplicantImporterMain extends JFrame {
     protected void showAboutDialog() {
         // TODO Make mail link clickable. (see
         // http://stackoverflow.com/questions/527719/how-to-add-hyperlink-in-jlabel)
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("<html><font face=\"Candara\">");
         builder.append("<font size=+2>BewerberImport</font>");
         builder.append("<font size=+0><br>");
         builder.append("<br>Autor: Christian Wichmann &lt;wichmann@bbs-os-brinkstr.de&gt;");
 
-        String versionInformation = this.getClass().getPackage().getSpecificationVersion();
+        final String versionInformation = this.getClass().getPackage().getSpecificationVersion();
         builder.append("<br>Version: ");
         builder.append(versionInformation);
 
-        String buildDateInformation = this.getClass().getPackage().getImplementationVersion();
+        final String buildDateInformation = this.getClass().getPackage().getImplementationVersion();
         builder.append("<br>Datum: ");
         builder.append(buildDateInformation);
         builder.append("</font></html>");
@@ -437,8 +438,8 @@ public final class ApplicantImporterMain extends JFrame {
      * Adds key bindings for the main window.
      */
     private void addKeyBindings() {
-        InputMap inputMap = applicantInformationTable.getInputMap(JComponent.WHEN_FOCUSED);
-        ActionMap actionMap = applicantInformationTable.getActionMap();
+        final InputMap inputMap = applicantInformationTable.getInputMap(JComponent.WHEN_FOCUSED);
+        final ActionMap actionMap = applicantInformationTable.getActionMap();
 
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
         actionMap.put("delete", new AbstractAction() {
@@ -466,19 +467,19 @@ public final class ApplicantImporterMain extends JFrame {
     private void setLookAndFeel() {
         // set look and feel to new standard (since Java SE 6 Update 10)
         try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            for (final LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             logger.warn("Could not set look and feel.");
-        } catch (InstantiationException e) {
+        } catch (final InstantiationException e) {
             logger.warn("Could not set look and feel.");
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             logger.warn("Could not set look and feel.");
-        } catch (UnsupportedLookAndFeelException e1) {
+        } catch (final UnsupportedLookAndFeelException e1) {
             logger.warn("Could not set look and feel.");
         }
     }
@@ -502,11 +503,13 @@ public final class ApplicantImporterMain extends JFrame {
      * Show a dialog box to indicate to the user that the import has been finished.
      *
      * @param listOfInvalidPdfFiles
+     *            list of all PDF files that could not be imported
      * @param selectedImportDirectory
+     *            directory from which files were imported
      */
     private void showImportFinishedDialog(final List<String> listOfInvalidPdfFiles,
             final String selectedImportDirectory) {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("<html>");
         builder.append("Aus dem Verzeichnis ");
         builder.append("<strong>" + selectedImportDirectory + "</strong>");
@@ -515,7 +518,7 @@ public final class ApplicantImporterMain extends JFrame {
         // add ignored files to message if there were any
         if (listOfInvalidPdfFiles.size() != 0) {
             builder.append("Folgende Dateien konnten nicht eingelesen werden:<br><br>");
-            for (String s : listOfInvalidPdfFiles) {
+            for (final String s : listOfInvalidPdfFiles) {
                 builder.append(s + "<br>");
             }
         }
@@ -566,9 +569,9 @@ public final class ApplicantImporterMain extends JFrame {
 
             @Override
             public void approveSelection() {
-                File f = getSelectedFile();
+                final File f = getSelectedFile();
                 if (f.exists() && getDialogType() == SAVE_DIALOG) {
-                    int result = JOptionPane.showConfirmDialog(this,
+                    final int result = JOptionPane.showConfirmDialog(this,
                             "Die Datei existiert bereits. Soll sie überschrieben werden?",
                             "Bereits existierende Datei überschreiben?", JOptionPane.YES_NO_OPTION);
                     switch (result) {
@@ -596,11 +599,31 @@ public final class ApplicantImporterMain extends JFrame {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             final BbsPlanungExporter exporter = new BbsPlanungExporter(chooser.getSelectedFile()
                     .toPath(), listOfApplicants, exportInvalidApplicantsMenuItem.isSelected());
-            final String s = String.format(
-                    "<html>%d Bewerber in die Datei <strong>%s</strong> exportiert.</html>",
-                    exporter.getNumberExportedApplicants(), chooser.getSelectedFile().getName());
-            JOptionPane.showMessageDialog(this, s, "Export erfolgreich",
-                    JOptionPane.INFORMATION_MESSAGE);
+            final List<ExportError> listOfErrors = exporter.getListOfExportErrors();
+            if (listOfErrors.isEmpty()) {
+                final String s = String
+                        .format("<html>%d Bewerber in die Datei <strong>%s</strong> exportiert.</html>",
+                                exporter.getNumberExportedApplicants(), chooser.getSelectedFile()
+                                        .getName());
+                JOptionPane.showMessageDialog(this, s, "Export erfolgreich",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                final StringBuilder sb = new StringBuilder();
+                sb.append("<html>");
+                sb.append(String
+                        .format("%d Bewerber in die Datei <strong>%s</strong> exportiert.",
+                                exporter.getNumberExportedApplicants(), chooser.getSelectedFile()
+                                        .getName()));
+                sb.append("<br><br>");
+                sb.append("Die folgenden Bewerber wurden auf Grund eines Fehlers nicht korrekt exportiert:");
+                for (final ExportError e : listOfErrors) {
+                    sb.append("<br>");
+                    sb.append(e.getApplicant().toString());
+                }
+                sb.append("</html>");
+                JOptionPane.showMessageDialog(this, sb.toString(),
+                        "Fehler beim Export aufgetreten", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

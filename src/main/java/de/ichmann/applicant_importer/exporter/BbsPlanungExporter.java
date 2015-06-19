@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,10 @@ public class BbsPlanungExporter {
 
     private static final Logger logger = LoggerFactory.getLogger(BbsPlanungExporter.class);
 
-    // set delimiter for end-of-line and between fields
+    // set delimiter for end-of-line and between fields and default encoding
     private static final String NEW_LINE_SEPARATOR = "\r\n";
     private static final char FIELD_DELIMITER = ';';
+    private static final String DEFAULT_ENCODING = "ISO-8859-15";
 
     // set all header for fields in CSV file
     private static final Object[] FILE_HEADER = {"SNR", "KL_NAME", "LFD", "STATUS", "NR_SCHÜLER",
@@ -56,7 +58,62 @@ public class BbsPlanungExporter {
             "VN_S2", "VN_S3", "VN_S4", "VN_S5", "ZUSAGE", "ZUSAGE_BG", "ZUSAGE_SNR", "AS", "SNR1",
             "SNR2", "ZU", "MARKE", "FEHLER", "IDENT", "TEL_HANDY"};
 
+    /**
+     * Contains all types of errors that can occur during exporting applicant data.
+     *
+     * @author Christian Wichmann
+     */
+    public enum ExportErrorType {
+        /**
+         * Error during encoding or decoding of applicant data.
+         */
+        ENCODING_ERROR
+    }
+
+    /**
+     * Encapsulates an error that occured during an export of applicant data.
+     *
+     * @author Christian Wichmann
+     */
+    public final class ExportError {
+        private final Applicant applicant;
+        private final ExportErrorType exportErrorType;
+
+        /**
+         * Initializes a new export error with a given error type and the applicant that triggered
+         * the error.
+         *
+         * @param exportErrorType
+         *            type of error that occured
+         * @param applicant
+         *            applicant that triggered the error
+         */
+        private ExportError(final ExportErrorType exportErrorType, final Applicant applicant) {
+            this.exportErrorType = exportErrorType;
+            this.applicant = applicant;
+        }
+
+        /**
+         * Returns the applicant that triggered the error.
+         *
+         * @return applicant that triggered the error
+         */
+        public Applicant getApplicant() {
+            return applicant;
+        }
+
+        /**
+         * Returns the type of the export error.
+         *
+         * @return the type of export error
+         */
+        public ExportErrorType getExportErrorType() {
+            return exportErrorType;
+        }
+    }
+
     private int numberExportedApplicants = 0;
+    private final List<ExportError> listOfExportErrors = new ArrayList<>();
 
     /**
      * Instantiates a new exporter object.
@@ -91,17 +148,20 @@ public class BbsPlanungExporter {
      */
     private void exportApplicantData(final Path file, final List<Applicant> listOfApplicants,
             final boolean exportInvalidApplicants) {
+        // clear all errors from previous exports
+        listOfExportErrors.clear();
+
         OutputStreamWriter osw = null;
         CSVPrinter csvFilePrinter = null;
 
         // create the CSVFormat object with correct record separator and delimiter
-        CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR)
+        final CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR)
                 .withDelimiter(FIELD_DELIMITER);
 
         try {
             // open file to write to (in Latin encoding because BBS-Planung runs under MS Windows)
-            FileOutputStream fos = new FileOutputStream(file.toFile());
-            osw = new OutputStreamWriter(fos, Charset.forName("ISO-8859-15").newEncoder());
+            final FileOutputStream fos = new FileOutputStream(file.toFile());
+            osw = new OutputStreamWriter(fos, Charset.forName(DEFAULT_ENCODING).newEncoder());
 
             csvFilePrinter = new CSVPrinter(osw, csvFileFormat);
 
@@ -110,16 +170,15 @@ public class BbsPlanungExporter {
 
             // write a new student object list to the CSV file
             int index = 1;
-            for (Applicant applicant : listOfApplicants) {
+            for (final Applicant applicant : listOfApplicants) {
                 if (exportInvalidApplicants || applicant.checkPlausibility()) {
-                    List<String> applicantDataRecord = new ArrayList<>();
+                    final List<String> applicantDataRecord = new ArrayList<>();
 
                     applicantDataRecord.add("72679"); // Schulnummer
                     applicantDataRecord.add(""); // Klassenname
                     applicantDataRecord.add(String.valueOf(index)); // Lfd
                     applicantDataRecord.add(""); // Status
                     applicantDataRecord.add(String.valueOf(index)); // Schülernummer
-                    index++;
 
                     filloutApplicantData(applicant, applicantDataRecord);
 
@@ -131,14 +190,23 @@ public class BbsPlanungExporter {
 
                     filloutMiscellaneous(applicant, applicantDataRecord);
 
-                    csvFilePrinter.printRecord(applicantDataRecord);
+                    if (canApplicantDataBeEncoded(applicant, applicantDataRecord)) {
+                        // increment only when applicant data can be export without an error
+                        index++;
+                        // write data record to CSV file
+                        csvFilePrinter.printRecord(applicantDataRecord);
+                    } else {
+                        logger.warn(String
+                                .format("Applicants data (%s) contains a character that can not be written to file.",
+                                        applicant.toString()));
+                    }
                 }
             }
 
             numberExportedApplicants = index - 1;
             logger.info(String.format("%d applicants sucessfully exported to CSV file.", index - 1));
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.warn("Could not write to CSV file.");
 
         } finally {
@@ -150,10 +218,36 @@ public class BbsPlanungExporter {
                 if (csvFilePrinter != null) {
                     csvFilePrinter.close();
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 logger.error("Error while flushing/closing fileWriter/csvPrinter !!!");
             }
         }
+    }
+
+    /**
+     * Checks whether all data of an applicant can be correctly encoded. If the data of only one
+     * field can not be encoded by the given encoding, the method returns false and stores the error
+     * in the field <code>listOfExportErrors</code>.
+     *
+     * @param applicant
+     *            applicant that triggered the error
+     * @param applicantDataRecord
+     *            applicants data records that should be written to file
+     * @return true, if and only if all fields that should be written to file can be correctly
+     *         encoded
+     */
+    private boolean canApplicantDataBeEncoded(final Applicant applicant,
+            final List<String> applicantDataRecord) {
+
+        final CharsetEncoder encoder = Charset.forName(DEFAULT_ENCODING).newEncoder();
+        for (final String s : applicantDataRecord) {
+            if (!encoder.canEncode(s)) {
+                // register error for later output in the user interface
+                listOfExportErrors.add(new ExportError(ExportErrorType.ENCODING_ERROR, applicant));
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -180,14 +274,14 @@ public class BbsPlanungExporter {
         // parse zip code and corresponding county ID
         String countyID;
         try {
-            String zipCode = DataField.ZIP_CODE.getFrom(applicant);
+            final String zipCode = DataField.ZIP_CODE.getFrom(applicant);
             if (zipCode != null) {
-                Integer zipCodeAsNumber = Integer.valueOf(zipCode.trim());
+                final Integer zipCodeAsNumber = Integer.valueOf(zipCode.trim());
                 countyID = Zip2CountyConverter.getInstance().convertZipCode(zipCodeAsNumber);
             } else {
                 countyID = "";
             }
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             logger.warn("Could not parse zip code of applicant " + applicant + " while exporting!");
         } finally {
             countyID = "";
@@ -197,16 +291,16 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(countyID); // Landkreis
         applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.EMAIL))); // E-Mail-Adresse
 
-        String gender = "m".equals(applicant.getValue(DataField.GENDER)) ? "1" : "2";
+        final String gender = "m".equals(applicant.getValue(DataField.GENDER)) ? "1" : "2";
         applicantDataRecord.add(gender); // Geschlecht
-        Religion r = DataField.RELIGION.getFrom(applicant);
+        final Religion r = DataField.RELIGION.getFrom(applicant);
         if (r != null) {
             applicantDataRecord.add(String.valueOf(r.getValue())); // Konfession
         } else {
             applicantDataRecord.add(String.valueOf(Religion.OHNE_ANGABE.getValue())); // Konfession
         }
         applicantDataRecord.add(""); // Konfession-Text
-        Integer i = DataField.NATIONALITY.getFrom(applicant);
+        final Integer i = DataField.NATIONALITY.getFrom(applicant);
         if (i != null) {
             applicantDataRecord.add(String.format("%03d", i)); // Staatszugehörigkeit
         } else {
@@ -225,9 +319,9 @@ public class BbsPlanungExporter {
      */
     private void filloutSchoolData(final Applicant applicant, final List<String> applicantDataRecord) {
         // TODO Clean up this mess!
-        String vocationName = applicant.getValue(DataField.VOCATION) + " "
+        final String vocationName = applicant.getValue(DataField.VOCATION) + " "
                 + applicant.getValue(DataField.SPECIALIZATION);
-        String vocationID = VocationConverter.getInstance().convertVocation(vocationName);
+        final String vocationID = VocationConverter.getInstance().convertVocation(vocationName);
         applicantDataRecord.add("BS"); // SFO
         if (vocationID == null || "".equals(vocationID)) {
             applicantDataRecord.add(""); // TAKURZ
@@ -257,9 +351,9 @@ public class BbsPlanungExporter {
         applicantDataRecord.add("0"); // BG_DAUER: Gesamtes Schuljahr
         applicantDataRecord.add(""); // P_FAKTOR
         applicantDataRecord.add(""); // KO
-        String sot = DataField.START_OF_TRAINING.getFrom(applicant);
-        Integer dot = DataField.DURATION_OF_TRAINING.getFrom(applicant);
-        String eot = DateHelper.getInstance().getEndDateOfTraining(applicant);
+        final String sot = DataField.START_OF_TRAINING.getFrom(applicant);
+        final Integer dot = DataField.DURATION_OF_TRAINING.getFrom(applicant);
+        final String eot = DateHelper.getInstance().getEndDateOfTraining(applicant);
         applicantDataRecord.add(""); // EINTR_DAT: Will be added later by the secretaries.
         applicantDataRecord.add(sot); // AUSB_BEGDAT
         if (dot != null) {
@@ -270,13 +364,13 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(eot); // A_ENDEDAT
         applicantDataRecord.add(""); // ANRECH_BGJ
         applicantDataRecord.add(""); // WIEDERHOL
-        Degree d = DataField.DEGREE.getFrom(applicant);
+        final Degree d = DataField.DEGREE.getFrom(applicant);
         if (d != null) {
             applicantDataRecord.add(String.valueOf(d.getId())); // ABSCHLUSS
         } else {
             applicantDataRecord.add(String.valueOf(Degree.SONSTIGER_ABSCHLUSS.getId())); // ABSCHLUSS
         }
-        School s = DataField.SCHOOL.getFrom(applicant);
+        final School s = DataField.SCHOOL.getFrom(applicant);
         if (s != null) {
             applicantDataRecord.add(String.valueOf(s.getId())); // HERKUNFT
         } else {
@@ -311,13 +405,13 @@ public class BbsPlanungExporter {
      */
     private void filloutGuardian(final Applicant applicant, final List<String> applicantDataRecord) {
         applicantDataRecord.add(""); // E_ANREDE
-        String nlg = DataField.NAME_OF_LEGAL_GUARDIAN.getFrom(applicant);
+        final String nlg = DataField.NAME_OF_LEGAL_GUARDIAN.getFrom(applicant);
         applicantDataRecord.add(nlg); // E_NNAME
         applicantDataRecord.add(""); // E_VNAME
-        DateHelper dh = DateHelper.getInstance();
+        final DateHelper dh = DateHelper.getInstance();
         if (dh.isOlderThan18(applicant)) {
-            String alg = DataField.ADDRESS_OF_LEGAL_GUARDIAN.getFrom(applicant);
-            String plg = DataField.PHONE_OF_LEGAL_GUARDIAN.getFrom(applicant);
+            final String alg = DataField.ADDRESS_OF_LEGAL_GUARDIAN.getFrom(applicant);
+            final String plg = DataField.PHONE_OF_LEGAL_GUARDIAN.getFrom(applicant);
             applicantDataRecord.add(alg); // E_STR
             applicantDataRecord.add(""); // E_PLZ
             applicantDataRecord.add(""); // E_ORT
@@ -360,7 +454,7 @@ public class BbsPlanungExporter {
         applicantDataRecord
                 .add(String.valueOf(applicant.getValue(DataField.COMPANY_CONTACT_PERSON))); // BETRIEB_NR2
         applicantDataRecord.add(String.valueOf(applicant.getValue(DataField.COMPANY_ADDRESS))); // BETRIEB_NR3
-        String sc = String.valueOf(applicant.getValue(DataField.COMPANY_ZIP_CODE)) + " "
+        final String sc = String.valueOf(applicant.getValue(DataField.COMPANY_ZIP_CODE)) + " "
                 + String.valueOf(applicant.getValue(DataField.COMPANY_CITY));
         applicantDataRecord.add(sc); // BETRIEB_NR4
     }
@@ -486,5 +580,15 @@ public class BbsPlanungExporter {
      */
     public final int getNumberExportedApplicants() {
         return numberExportedApplicants;
+    }
+
+    /**
+     * Returns a list with all errors that occured during the last export. If the list is empty, the
+     * export was completely successful.
+     *
+     * @return list with all errors of last export
+     */
+    public final List<ExportError> getListOfExportErrors() {
+        return listOfExportErrors;
     }
 }
