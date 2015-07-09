@@ -8,7 +8,7 @@ import org.junit.Test;
 
 /**
  * Tests the converter to get an ID for a given string describing a nationality.
- * 
+ *
  * @author Christian Wichmann
  */
 public class NationalityConverterTest {
@@ -31,6 +31,7 @@ public class NationalityConverterTest {
         assertEquals(nc.guessNationality("        "), "Deutschland");
         assertEquals(nc.guessNationality("Deutsch"), "Deutschland");
         assertEquals(nc.guessNationality("deutsch"), "Deutschland");
+        assertEquals(nc.guessNationality("Deutschland   "), "Deutschland");
         assertEquals(nc.guessNationality("französisch"), "Frankreich");
         assertEquals(nc.guessNationality("türkisch"), "Türkei");
         assertEquals(nc.guessNationality("Italian"), "Italien");

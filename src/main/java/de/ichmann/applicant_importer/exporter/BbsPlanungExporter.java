@@ -272,7 +272,7 @@ public class BbsPlanungExporter {
         applicantDataRecord.add(""); // Fax
 
         // parse zip code and corresponding county ID
-        String countyID;
+        String countyID = "";
         try {
             final String zipCode = DataField.ZIP_CODE.getFrom(applicant);
             if (zipCode != null) {
@@ -283,8 +283,6 @@ public class BbsPlanungExporter {
             }
         } catch (final NumberFormatException e) {
             logger.warn("Could not parse zip code of applicant " + applicant + " while exporting!");
-        } finally {
-            countyID = "";
         }
         applicantDataRecord.add(countyID); // LDK
         applicantDataRecord.add(""); // LDK_Z

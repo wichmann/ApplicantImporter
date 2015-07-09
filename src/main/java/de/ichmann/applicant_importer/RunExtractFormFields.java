@@ -37,21 +37,21 @@ public final class RunExtractFormFields {
         PDDocument pdfDocument = null;
 
         try {
-            final String pdfFile = "/home/christian/Desktop/AnmeldungBerufsschuleV09b.pdf";
+            final String pdfFile = "";
             pdfDocument = PDDocument.load(new File(pdfFile));
-            PDDocumentCatalog docCatalog = pdfDocument.getDocumentCatalog();
-            PDAcroForm acroForm = docCatalog.getAcroForm();
+            final PDDocumentCatalog docCatalog = pdfDocument.getDocumentCatalog();
+            final PDAcroForm acroForm = docCatalog.getAcroForm();
 
             @SuppressWarnings("unchecked")
-            List<PDField> formFields = acroForm.getFields();
+            final List<PDField> formFields = acroForm.getFields();
 
-            for (PDField pdField : formFields) {
+            for (final PDField pdField : formFields) {
                 System.out
                         .println("" + pdField.getFullyQualifiedName() + ": " + pdField.getValue());
             }
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             LOGGER.error("Could find given PDF file.");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error("Could not open given PDF file.");
         }
     }

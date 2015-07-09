@@ -8,37 +8,37 @@ package de.ichmann.applicant_importer.model;
 public enum Religion {
 
     /**
-     * 
+     *
      */
     OHNE_ANGABE(0),
 
     /**
-     * 
+     *
      */
     EVANGELISCH(1),
 
     /**
-     * 
+     *
      */
     KATHOLISCH(3),
 
     /**
-     * 
+     *
      */
     ALEVITISCH(5),
 
     /**
-     * 
+     *
      */
     ISLAMISCH(6),
 
     /**
-     * 
+     *
      */
     SONSTIGE(7),
 
     /**
-     * 
+     *
      */
     KEINE(8);
 
@@ -47,7 +47,7 @@ public enum Religion {
     /**
      * Instantiates a new enumeration value for a specific religion. Each religion has a
      * corresponding id that is used in BBS-Planung to identify it.
-     * 
+     *
      * @param value
      *            id identifying a specific religion in BBS-Planung
      */
@@ -73,7 +73,7 @@ public enum Religion {
      * @return instance of Religion
      */
     public static Religion fromInteger(final int x) {
-        for (Religion r : Religion.values()) {
+        for (final Religion r : Religion.values()) {
             if (r.getValue() == x) {
                 return r;
             }

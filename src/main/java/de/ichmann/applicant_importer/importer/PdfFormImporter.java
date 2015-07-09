@@ -26,6 +26,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.ichmann.applicant_importer.exporter.NationalityConverter;
 import de.ichmann.applicant_importer.model.Applicant;
 import de.ichmann.applicant_importer.model.Applicant.ApplicantBuilder;
 import de.ichmann.applicant_importer.model.DataField;
@@ -64,8 +65,8 @@ public final class PdfFormImporter {
      */
     private final Map<String, DataField> dataFieldNames = new HashMap<>();
 
-    private ExecutorService threadPool;
-    private ActionListener importListener;
+    private final ExecutorService threadPool;
+    private final ActionListener importListener;
 
     private final AtomicInteger numberOfPdfFiles = new AtomicInteger(0);
     private final AtomicInteger currentPdfFiles = new AtomicInteger(0);
@@ -168,12 +169,12 @@ public final class PdfFormImporter {
         // count number of PDF files in directory
         final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.pdf");
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
-            for (Path path : directoryStream) {
+            for (final Path path : directoryStream) {
                 if (matcher.matches(path.getFileName())) {
                     numberOfPdfFiles.incrementAndGet();
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.warn("Could not read directory listing!");
         }
         // find all PDF files and parse them
@@ -195,11 +196,11 @@ public final class PdfFormImporter {
                     fireImportEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
                 }
             }
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             logger.warn("Could not open PDF file!");
         }
         // log all not imported files
-        for (String string : listOfInvalidPdfFiles) {
+        for (final String string : listOfInvalidPdfFiles) {
             logger.info("Could not import following file: " + string);
         }
     }
@@ -283,20 +284,20 @@ public final class PdfFormImporter {
         try {
             pdfDocument = PDDocument.load(path.toFile());
             if (pdfDocument != null) {
-                PDDocumentCatalog docCatalog = pdfDocument.getDocumentCatalog();
-                PDAcroForm acroForm = docCatalog.getAcroForm();
+                final PDDocumentCatalog docCatalog = pdfDocument.getDocumentCatalog();
+                final PDAcroForm acroForm = docCatalog.getAcroForm();
                 if (acroForm != null) {
                     @SuppressWarnings("unchecked")
-                    List<PDField> formFields = acroForm.getFields();
+                    final List<PDField> formFields = acroForm.getFields();
 
-                    ApplicantBuilder builder = new ApplicantBuilder();
+                    final ApplicantBuilder builder = new ApplicantBuilder();
                     final Path pdfFileName = path.getFileName();
                     if (pdfFileName != null) {
                         builder.setFileName(pdfFileName.toString());
                     } else {
                         builder.setFileName("");
                     }
-                    for (PDField pdField : formFields) {
+                    for (final PDField pdField : formFields) {
                         // ignore useless fields in PDF file
                         if ("Formular drucken".equals(pdField.getValue())
                                 || "Senden".equals(pdField.getValue())) {
@@ -323,14 +324,14 @@ public final class PdfFormImporter {
                     logger.info("Added student registration: " + student);
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.warn("Could not open PDF file.");
         } finally {
             try {
                 if (pdfDocument != null) {
                     pdfDocument.close();
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 logger.warn("Could not close PDF file.");
             }
         }
@@ -356,8 +357,30 @@ public final class PdfFormImporter {
                     // no religion chosen in the form
                     builder.setValue(DataField.RELIGION, Religion.OHNE_ANGABE);
                 } else {
-                    Religion religion = Religion.fromInteger(Integer.valueOf(pdField.getValue()));
-                    builder.setValue(DataField.RELIGION, religion);
+                    try {
+                        final Religion religion = Religion.fromInteger(Integer.valueOf(pdField
+                                .getValue()));
+                        builder.setValue(DataField.RELIGION, religion);
+                    } catch (final NumberFormatException e) {
+                        /*
+                         * Sometimes the value of a combo box field is not the integer value stored
+                         * inside the PDF file. Instead of the integer the value of the field is the
+                         * string representation of that field. E.g. "katholisch" instead of the
+                         * integer value 3.
+                         *
+                         * The valueOf method of the enum Religion allows the
+                         * conversion from string to enum constant. The string has to be trimmed and
+                         * upper case to allow comparation with the enum constants. If the string
+                         * does not contain a valid enum value, a default value is set.
+                         */
+                        Religion r;
+                        try {
+                            r = Religion.valueOf(pdField.getValue().trim().toUpperCase());
+                        } catch (final IllegalArgumentException e2) {
+                            r = Religion.OHNE_ANGABE;
+                        }
+                        builder.setValue(DataField.RELIGION, r);
+                    }
                 }
             } else {
                 builder.setValue(DataField.RELIGION, Religion.OHNE_ANGABE);
@@ -379,7 +402,7 @@ public final class PdfFormImporter {
     private void extractStringValues(final PDField pdField, final ApplicantBuilder builder)
             throws IOException {
         if (dataFieldNames.containsKey(pdField.getFullyQualifiedName())) {
-            DataField df = dataFieldNames.get(pdField.getFullyQualifiedName());
+            final DataField df = dataFieldNames.get(pdField.getFullyQualifiedName());
             if (pdField.getValue() != null) {
                 // TODO Should all string be trimmed before they are stored?!
                 // TODO When " þÿ" please do not use! (BOM)
@@ -411,8 +434,9 @@ public final class PdfFormImporter {
         if ("DauerAusbildung".equals(pdField.getFullyQualifiedName())) {
             if (pdField.getValue() != null && !"-1".equals(pdField.getValue())) {
                 final int monthsInYear = 12;
-                Double d = Double.valueOf(pdField.getValue().replace(",", ".")) * monthsInYear;
-                Integer i = d.intValue();
+                final Double d = Double.valueOf(pdField.getValue().replace(",", "."))
+                        * monthsInYear;
+                final Integer i = d.intValue();
                 builder.setValue(DataField.DURATION_OF_TRAINING, i);
             } else {
                 builder.setValue(DataField.DURATION_OF_TRAINING, 0);
@@ -420,8 +444,14 @@ public final class PdfFormImporter {
         }
         if ("Staatsangehörigkeit".equals(pdField.getFullyQualifiedName())) {
             if (pdField.getValue() != null) {
-                Integer i = Integer.valueOf(pdField.getValue());
-                builder.setValue(DataField.NATIONALITY, i);
+                try {
+                    final Integer i = Integer.valueOf(pdField.getValue());
+                    builder.setValue(DataField.NATIONALITY, i);
+                } catch (final NumberFormatException e) {
+                    final Integer i = NationalityConverter.getInstance().convertNationality(
+                            pdField.getValue());
+                    builder.setValue(DataField.NATIONALITY, i);
+                }
             } else {
                 builder.setValue(DataField.NATIONALITY, new Integer(0));
             }

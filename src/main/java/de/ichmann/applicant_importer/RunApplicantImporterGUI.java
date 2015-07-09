@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.ichmann.applicant_importer.ui.ApplicantImporterMain;
 
 /**
- * Main running class for the ApplicantImporter.
+ * Main running class for the ApplicantImporter. Starts the main user interface and sets its size.
  *
  * @author Christian Wichmann
  */
@@ -32,17 +32,17 @@ public final class RunApplicantImporterGUI {
 
     /**
      * Starts the Applicant Importer.
-     * 
+     *
      * @param args
      *            command line arguments
      */
     public static void main(final String[] args) {
         logger.info("Starting ApplicantImporter...");
         try {
-            ApplicantImporterMain w = new ApplicantImporterMain();
+            final ApplicantImporterMain w = new ApplicantImporterMain();
             w.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
             w.setVisible(true);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Uncaught exception in ApplicantImporter: " + e.getMessage());
         }
     }
