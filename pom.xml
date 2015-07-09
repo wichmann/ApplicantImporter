@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.ichmann</groupId>
 	<artifactId>applicant-importer</artifactId>
-	<version>0.4</version>
+	<version>0.5</version>
 	<name>BewerberImport</name>
 	<description>Imports information about new students from PDF files and provides CSV files to be easily imported into BBSPlanung.</description>
 	<!--scm>
@@ -47,9 +47,9 @@
 			<version>3.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
+			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>1.3.2</version>
+			<version>2.4</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -123,11 +123,11 @@
                                 <maxHeapSize>512</maxHeapSize>
                             </jre>
                             <versionInfo>
-                                <fileVersion>0.4.0.0</fileVersion>
+                                <fileVersion>0.5.0.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>${project.description}</fileDescription>
                                 <copyright>Christian Wichmann</copyright>
-                                <productVersion>0.4.0.0</productVersion>
+                                <productVersion>0.5.0.0</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>${project.name}</productName>
                                 <internalName>${project.artifactId}</internalName>

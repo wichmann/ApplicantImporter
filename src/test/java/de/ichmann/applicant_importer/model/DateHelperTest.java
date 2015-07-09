@@ -13,7 +13,7 @@ import de.ichmann.applicant_importer.model.Applicant.ApplicantBuilder;
 /**
  * Test the date helper class that provides methods to calculate the end date of a training and
  * whether a applicant is already older than 18.
- * 
+ *
  * @author Christian Wichmann
  */
 public final class DateHelperTest {
@@ -27,7 +27,7 @@ public final class DateHelperTest {
     @Before
     public void setUp() throws Exception {
         dh = DateHelper.getInstance();
-        ApplicantBuilder ab = new ApplicantBuilder();
+        final ApplicantBuilder ab = new ApplicantBuilder();
         ab.setValue(DataField.START_OF_TRAINING, "01.09.1999");
         ab.setValue(DataField.DURATION_OF_TRAINING, 36);
         ab.setValue(DataField.BIRTHDAY, "18.06.1981");
@@ -42,7 +42,7 @@ public final class DateHelperTest {
         a3 = ab.build();
         ab.setValue(DataField.START_OF_TRAINING, "01.9.2012");
         ab.setValue(DataField.DURATION_OF_TRAINING, 42);
-        ab.setValue(DataField.BIRTHDAY, "1.7.1997");
+        ab.setValue(DataField.BIRTHDAY, "1.7.1998");
         a4 = ab.build();
     }
 

@@ -13,10 +13,16 @@ KNOWN PROBLEMS AND BUGS
 
 BUILD
 -----
-mvn clean install assembly:single package 
-mvn clean install assembly:single
-mvn clean source:jar
-mvn clean javadoc:jar
+Building fat-jar file
+    mvn clean install assembly:single package 
+    mvn clean install assembly:single
+
+Building source jar and javadoc
+    mvn clean source:jar
+    mvn clean javadoc:jar
+
+Building without unit tests :-)
+    mvn clean install assembly:single package -DskipTests
 
 
 LICENSE
@@ -36,6 +42,7 @@ packages and programs, so give the developers lots of thanks sometime!
 
 * slf4j
 * commons-logging
+* commons-io
 * commons-CSV
 * Some cliparts from opencliparts.org: 
    - http://openclipart.org/detail/180890/export%20icon

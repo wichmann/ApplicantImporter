@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -47,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import de.ichmann.applicant_importer.exporter.BbsPlanungExporter;
 import de.ichmann.applicant_importer.exporter.BbsPlanungExporter.ExportError;
 import de.ichmann.applicant_importer.importer.PdfFormImporter;
+import de.ichmann.applicant_importer.importer.PdfFormImporter.PdfFormImporterEvent;
 import de.ichmann.applicant_importer.model.Applicant;
 
 /**
@@ -56,11 +58,17 @@ import de.ichmann.applicant_importer.model.Applicant;
  */
 public final class ApplicantImporterMain extends JFrame {
 
+    private static final String LAST_OPENED_DIRECTORY_IMPORT = "lastOpenedDirectoryImport";
+    private static final String LAST_OPENED_DIRECTORY_EXPORT = "lastOpenedDirectoryExport";
+
     private static final long serialVersionUID = -7501718764578733562L;
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicantImporterMain.class);
 
     private static final Color ALARM_COLOR = new Color(255, 155, 155);
+
+    // create an instance of Preferences to hold last opened directory and last saved file path
+    private final Preferences prefs = Preferences.userNodeForPackage(ApplicantImporterMain.class);
 
     private JButton importDirectoryButton = null;
     private JButton exportCsvButton = null;
@@ -493,9 +501,14 @@ public final class ApplicantImporterMain extends JFrame {
         chooser.setDialogTitle("Verzeichnis mit PDF-Dateien auswählen...");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
+        // get last opened directory from Preferences store and set FileChooser to it
+        final String lastOpenedDirectory = prefs.get(LAST_OPENED_DIRECTORY_IMPORT, "");
+        chooser.setSelectedFile(new File(lastOpenedDirectory));
         final int returnValue = chooser.showOpenDialog(ApplicantImporterMain.this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             importFromDirectory(chooser.getSelectedFile());
+            // write opened directory path into Preferences store
+            prefs.put(LAST_OPENED_DIRECTORY_IMPORT, chooser.getSelectedFile().getAbsolutePath());
         }
     }
 
@@ -538,13 +551,14 @@ public final class ApplicantImporterMain extends JFrame {
         new PdfFormImporter(selectedFile.toPath(), new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final PdfFormImporter importer = ((PdfFormImporter) e.getSource());
-                final int numberOfPdfFiles = importer.getNumberOfPdfFiles();
+                final PdfFormImporterEvent event = (PdfFormImporterEvent) e;
+                final int numberOfPdfFiles = event.getNumberOfPdfFiles();
                 statusBar.prepareProgressBar(0, numberOfPdfFiles);
-                final int currentPdfFiles = importer.getCurrentPdfFiles();
+                final int currentPdfFiles = event.getCurrentPdfFile();
                 statusBar.fillProgressBar(currentPdfFiles);
                 if (numberOfPdfFiles == currentPdfFiles) {
                     // show dialog and fill table only when all files have been imported
+                    final PdfFormImporter importer = (PdfFormImporter) e.getSource();
                     listOfApplicants = importer.getListOfStudents();
                     applicantInformationTable.setModel(new ApplicantInformationTableModel(
                             listOfApplicants));
@@ -593,7 +607,10 @@ public final class ApplicantImporterMain extends JFrame {
         chooser.setDialogTitle("Datei für exportierte Daten auswählen...");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setSelectedFile(new File(exportFileDefaultName));
+        // get last opened directory from Preferences store and set FileChooser to it
+        final String lastOpenedDirectory = prefs.get(LAST_OPENED_DIRECTORY_EXPORT,
+                System.getProperty("user.home"));
+        chooser.setSelectedFile(new File(lastOpenedDirectory, exportFileDefaultName));
 
         final int returnValue = chooser.showSaveDialog(ApplicantImporterMain.this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -601,6 +618,7 @@ public final class ApplicantImporterMain extends JFrame {
                     .toPath(), listOfApplicants, exportInvalidApplicantsMenuItem.isSelected());
             final List<ExportError> listOfErrors = exporter.getListOfExportErrors();
             if (listOfErrors.isEmpty()) {
+                // show all-clear message when no errors occured
                 final String s = String
                         .format("<html>%d Bewerber in die Datei <strong>%s</strong> exportiert.</html>",
                                 exporter.getNumberExportedApplicants(), chooser.getSelectedFile()
@@ -608,6 +626,7 @@ public final class ApplicantImporterMain extends JFrame {
                 JOptionPane.showMessageDialog(this, s, "Export erfolgreich",
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
+                // show message with notice concerning not exported applicants
                 final StringBuilder sb = new StringBuilder();
                 sb.append("<html>");
                 sb.append(String
@@ -624,6 +643,8 @@ public final class ApplicantImporterMain extends JFrame {
                 JOptionPane.showMessageDialog(this, sb.toString(),
                         "Fehler beim Export aufgetreten", JOptionPane.ERROR_MESSAGE);
             }
+            // write opened directory path into Preferences store
+            prefs.put(LAST_OPENED_DIRECTORY_EXPORT, chooser.getSelectedFile().getParent());
         }
     }
 

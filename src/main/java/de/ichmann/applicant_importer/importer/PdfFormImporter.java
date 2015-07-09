@@ -71,6 +71,52 @@ public final class PdfFormImporter {
     private final AtomicInteger numberOfPdfFiles = new AtomicInteger(0);
     private final AtomicInteger currentPdfFiles = new AtomicInteger(0);
 
+    /**
+     * Provides an action event fired when a file was imported.
+     *
+     * @author Christian Wichmann
+     */
+    public class PdfFormImporterEvent extends ActionEvent {
+
+        private static final long serialVersionUID = 1759872763624710874L;
+        private final int numberOfPdfFiles;
+        private final int currentPdfFile;
+
+        /**
+         *
+         * @param source
+         *            source of the event
+         * @param numberOfPdfFiles
+         *            number of PDF files to be imported
+         * @param currentPdfFile
+         *            number of the currently importer PDF file
+         */
+        public PdfFormImporterEvent(final Object source, final int numberOfPdfFiles,
+                final int currentPdfFile) {
+            super(source, ActionEvent.ACTION_PERFORMED, "");
+            this.numberOfPdfFiles = numberOfPdfFiles;
+            this.currentPdfFile = currentPdfFile;
+        }
+
+        /**
+         * Returns the number of PDF files to be imported from a given directory.
+         *
+         * @return number of PDF files
+         */
+        public final int getNumberOfPdfFiles() {
+            return numberOfPdfFiles;
+        }
+
+        /**
+         * Returns the number of the currently imported PDF file.
+         *
+         * @return number of the currently imported PDF file
+         */
+        public final int getCurrentPdfFile() {
+            return currentPdfFile;
+        }
+    }
+
     /*
      * Current field names (2015-03-13):
      *
@@ -153,7 +199,7 @@ public final class PdfFormImporter {
      * @param e
      *            importer event
      */
-    private synchronized void fireImportEvent(final ActionEvent e) {
+    private synchronized void fireImportEvent(final PdfFormImporterEvent e) {
         if (importListener != null) {
             importListener.actionPerformed(e);
         }
@@ -193,7 +239,8 @@ public final class PdfFormImporter {
                         }
                     }
                     currentPdfFiles.incrementAndGet();
-                    fireImportEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
+                    fireImportEvent(new PdfFormImporterEvent(this, numberOfPdfFiles.get(),
+                            currentPdfFiles.get()));
                 }
             }
         } catch (final IOException ex) {
