@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,27 +25,42 @@ public final class DateHelperTest {
     private Applicant a2;
     private Applicant a3;
     private Applicant a4;
+
     private DateHelper dh;
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
     @Before
     public void setUp() throws Exception {
         dh = DateHelper.getInstance();
+
+        // create calendar to calculate dates to be tested
+        final Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, -18);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        final String oldDate = dateFormatter.format(calendar.getTime());
+
         final ApplicantBuilder ab = new ApplicantBuilder();
         ab.setValue(DataField.START_OF_TRAINING, "01.09.1999");
         ab.setValue(DataField.DURATION_OF_TRAINING, 36);
-        ab.setValue(DataField.BIRTHDAY, "18.06.1981");
+        ab.setValue(DataField.BIRTHDAY, oldDate);
         a1 = ab.build();
+
         ab.setValue(DataField.START_OF_TRAINING, "1.8.2014");
         ab.setValue(DataField.DURATION_OF_TRAINING, 30);
-        ab.setValue(DataField.BIRTHDAY, "4.11.1984");
+        ab.setValue(DataField.BIRTHDAY, oldDate);
         a2 = ab.build();
+
         ab.setValue(DataField.START_OF_TRAINING, "1-1-2012");
         ab.setValue(DataField.DURATION_OF_TRAINING, 24);
-        ab.setValue(DataField.BIRTHDAY, "19.3.1997");
+        ab.setValue(DataField.BIRTHDAY, oldDate);
         a3 = ab.build();
+
+        calendar.add(Calendar.DAY_OF_MONTH, 2);
+        final String newerDate = dateFormatter.format(calendar.getTime());
+
         ab.setValue(DataField.START_OF_TRAINING, "01.9.2012");
         ab.setValue(DataField.DURATION_OF_TRAINING, 42);
-        ab.setValue(DataField.BIRTHDAY, "1.7.1998");
+        ab.setValue(DataField.BIRTHDAY, newerDate);
         a4 = ab.build();
     }
 

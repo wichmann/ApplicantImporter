@@ -187,6 +187,11 @@ public final class PdfFormImporter {
      * Explicitly dispose the importer to exit VM correctly. The importer uses a executor service
      * from the concurrency library that produces non-daemon threads. These thread prevent the VM
      * from shutting down correctly if they are not explicitly closes.
+     *
+     * Alternatively the newFixedThreadPool() method of the executor service can take a
+     * ThreadFactory to produce daemon threads. (See
+     * http://stackoverflow.com/questions/7158587/daemon
+     * -threads-scheduled-on-an-executorservice-explain-why-this-is-bad-form)
      */
     public void disposeImporter() {
         logger.info("Closing thread for importer...");
@@ -535,7 +540,6 @@ public final class PdfFormImporter {
             } else {
                 // TODO Check whether to add a non-chosen gender type or to assign a best guess.
                 logger.warn("Invalid gender!");
-                assert false : "Invalid gender chosen!";
             }
         }
     }
