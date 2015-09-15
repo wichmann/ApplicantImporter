@@ -149,8 +149,10 @@ public final class PdfFormImporter {
      * Tx - TelEltern - TelEltern - 054611320
      * Tx - AnschriftEltern - AnschriftEltern - Uthof 3
      * Btn - Formular drucken - Formular drucken - null
+     * Btn - Formular speichern unter - Formular speichern unter - null
      * Btn - Senden - Senden - null
      * Ch - Konfession - Konfession - 3
+     * Ch - Studiengang - Studiengang - -1
      * Ch - DauerAusbildung - DauerAusbildung - 3,5
      * Btn - Umschueler - Umschueler - UmschuelerNein
      * Btn - Geschlecht - Geschlecht - m

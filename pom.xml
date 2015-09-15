@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.ichmann</groupId>
 	<artifactId>applicant-importer</artifactId>
-	<version>0.5</version>
+	<version>0.6</version>
 	<name>BewerberImport</name>
 	<description>Imports information about new students from PDF files and provides CSV files to be easily imported into BBSPlanung.</description>
 	<!--scm>
@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
-			<version>1.8.4</version>
+			<version>1.8.10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -123,11 +123,11 @@
                                 <maxHeapSize>512</maxHeapSize>
                             </jre>
                             <versionInfo>
-                                <fileVersion>0.5.0.0</fileVersion>
+                                <fileVersion>0.6.0.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>${project.description}</fileDescription>
                                 <copyright>Christian Wichmann</copyright>
-                                <productVersion>0.5.0.0</productVersion>
+                                <productVersion>0.6.0.0</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>${project.name}</productName>
                                 <internalName>${project.artifactId}</internalName>
