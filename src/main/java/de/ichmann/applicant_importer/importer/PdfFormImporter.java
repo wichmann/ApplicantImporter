@@ -83,6 +83,11 @@ public final class PdfFormImporter {
         private final int currentPdfFile;
 
         /**
+         * Initializes a new PDF Form Importer event with the number of PDf files and the number of
+         * files that have been already imported.
+         * <p>
+         * If both parameters are <code>-1</code>, it indicates an error while importing the PDF
+         * files!
          *
          * @param source
          *            source of the event
@@ -180,7 +185,13 @@ public final class PdfFormImporter {
         threadPool.submit(new Runnable() {
             @Override
             public void run() {
-                parseFiles(directory);
+                try {
+                    parseFiles(directory);
+                } catch (final Exception ex) {
+                    logger.error("Import could not be finished because an exception was thrown: "
+                            + ex.getMessage());
+                    fireImportEvent(new PdfFormImporterEvent(this, -1, -1));
+                }
             }
         });
     }

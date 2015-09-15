@@ -186,6 +186,14 @@ public final class ApplicantImporterMain extends JFrame {
             setString(String.format("%d von %d Dateien importiert...", progress, getMaximum()));
             setValue(progress);
         }
+
+        /**
+         * Clears the progress bar of all information.
+         */
+        public void clearProgressBar() {
+            setString("");
+            setValue(0);
+        }
     }
 
     /**
@@ -553,21 +561,36 @@ public final class ApplicantImporterMain extends JFrame {
             public void actionPerformed(final ActionEvent e) {
                 final PdfFormImporterEvent event = (PdfFormImporterEvent) e;
                 final int numberOfPdfFiles = event.getNumberOfPdfFiles();
-                statusBar.prepareProgressBar(0, numberOfPdfFiles);
                 final int currentPdfFiles = event.getCurrentPdfFile();
-                statusBar.fillProgressBar(currentPdfFiles);
-                if (numberOfPdfFiles == currentPdfFiles) {
-                    // show dialog and fill table only when all files have been imported
-                    final PdfFormImporter importer = (PdfFormImporter) e.getSource();
-                    listOfApplicants = importer.getListOfStudents();
-                    applicantInformationTable.setModel(new ApplicantInformationTableModel(
-                            listOfApplicants));
-                    final List<String> listOfInvalidPdfFiles = importer.getListOfInvalidPdfFiles();
-                    final String selectedImportDirectory = selectedFile.getName();
-                    showImportFinishedDialog(listOfInvalidPdfFiles, selectedImportDirectory);
-                    // explicitly dispose the importer (shuts down the executer service) to exit VM
-                    // correctly
-                    importer.disposeImporter();
+                if (numberOfPdfFiles == -1 && currentPdfFiles == -1) {
+                    statusBar.clearProgressBar();
+                    final StringBuilder informationText = new StringBuilder();
+                    informationText.append("<html>");
+                    informationText
+                            .append("Während des Imports der PDF-Dateien ist ein Fehler aufgetreten.");
+                    informationText.append("<br>");
+                    informationText.append("Bitte den Entwickler des Programms informieren.");
+                    informationText.append("</html>");
+                    JOptionPane.showMessageDialog(ApplicantImporterMain.this,
+                            informationText.toString(), "Fehler während Import",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    statusBar.prepareProgressBar(0, numberOfPdfFiles);
+                    statusBar.fillProgressBar(currentPdfFiles);
+                    if (numberOfPdfFiles == currentPdfFiles) {
+                        // show dialog and fill table only when all files have been imported
+                        final PdfFormImporter importer = (PdfFormImporter) e.getSource();
+                        listOfApplicants = importer.getListOfStudents();
+                        applicantInformationTable.setModel(new ApplicantInformationTableModel(
+                                listOfApplicants));
+                        final List<String> listOfInvalidPdfFiles = importer
+                                .getListOfInvalidPdfFiles();
+                        final String selectedImportDirectory = selectedFile.getName();
+                        showImportFinishedDialog(listOfInvalidPdfFiles, selectedImportDirectory);
+                        // explicitly dispose the importer (shuts down the executer service) to exit
+                        // VM correctly
+                        importer.disposeImporter();
+                    }
                 }
             }
         });
