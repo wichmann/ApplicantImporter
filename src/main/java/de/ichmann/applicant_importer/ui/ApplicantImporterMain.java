@@ -78,7 +78,7 @@ public final class ApplicantImporterMain extends JFrame {
     private JCheckBoxMenuItem highlightInvalidApplicantsMenuItem = null;
     private ProgressStatusBar statusBar = null;
 
-    private List<Applicant> listOfApplicants = new ArrayList<Applicant>();
+    private List<Applicant> listOfApplicants = new ArrayList<>();
 
     /**
      * Instantiate a instance of the main window.
@@ -404,8 +404,8 @@ public final class ApplicantImporterMain extends JFrame {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 listOfApplicants.clear();
-                applicantInformationTable.setModel(new ApplicantInformationTableModel(
-                        listOfApplicants));
+                applicantInformationTable
+                        .setModel(new ApplicantInformationTableModel(listOfApplicants));
             }
         });
 
@@ -414,7 +414,8 @@ public final class ApplicantImporterMain extends JFrame {
             public void mousePressed(final MouseEvent me) {
                 final JTable table = (JTable) me.getSource();
                 final Point p = me.getPoint();
-                final int row = table.rowAtPoint(p);
+                // TODO Check whether to convert row index here or in table model?
+                final int row = table.convertRowIndexToModel(table.rowAtPoint(p));
                 final ApplicantInformationTableModel model = (ApplicantInformationTableModel) (table
                         .getModel());
                 final Applicant applicant = model.getApplicantForRow(row);
@@ -566,8 +567,8 @@ public final class ApplicantImporterMain extends JFrame {
                     statusBar.clearProgressBar();
                     final StringBuilder informationText = new StringBuilder();
                     informationText.append("<html>");
-                    informationText
-                            .append("Während des Imports der PDF-Dateien ist ein Fehler aufgetreten.");
+                    informationText.append(
+                            "Während des Imports der PDF-Dateien ist ein Fehler aufgetreten.");
                     informationText.append("<br>");
                     informationText.append("Bitte den Entwickler des Programms informieren.");
                     informationText.append("</html>");
@@ -581,8 +582,8 @@ public final class ApplicantImporterMain extends JFrame {
                         // show dialog and fill table only when all files have been imported
                         final PdfFormImporter importer = (PdfFormImporter) e.getSource();
                         listOfApplicants = importer.getListOfStudents();
-                        applicantInformationTable.setModel(new ApplicantInformationTableModel(
-                                listOfApplicants));
+                        applicantInformationTable
+                                .setModel(new ApplicantInformationTableModel(listOfApplicants));
                         final List<String> listOfInvalidPdfFiles = importer
                                 .getListOfInvalidPdfFiles();
                         final String selectedImportDirectory = selectedFile.getName();
@@ -637,34 +638,35 @@ public final class ApplicantImporterMain extends JFrame {
 
         final int returnValue = chooser.showSaveDialog(ApplicantImporterMain.this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            final BbsPlanungExporter exporter = new BbsPlanungExporter(chooser.getSelectedFile()
-                    .toPath(), listOfApplicants, exportInvalidApplicantsMenuItem.isSelected());
+            final BbsPlanungExporter exporter = new BbsPlanungExporter(
+                    chooser.getSelectedFile().toPath(), listOfApplicants,
+                    exportInvalidApplicantsMenuItem.isSelected());
             final List<ExportError> listOfErrors = exporter.getListOfExportErrors();
             if (listOfErrors.isEmpty()) {
                 // show all-clear message when no errors occured
-                final String s = String
-                        .format("<html>%d Bewerber in die Datei <strong>%s</strong> exportiert.</html>",
-                                exporter.getNumberExportedApplicants(), chooser.getSelectedFile()
-                                        .getName());
+                final String s = String.format(
+                        "<html>%d Bewerber in die Datei <strong>%s</strong> exportiert.</html>",
+                        exporter.getNumberExportedApplicants(),
+                        chooser.getSelectedFile().getName());
                 JOptionPane.showMessageDialog(this, s, "Export erfolgreich",
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
                 // show message with notice concerning not exported applicants
                 final StringBuilder sb = new StringBuilder();
                 sb.append("<html>");
-                sb.append(String
-                        .format("%d Bewerber in die Datei <strong>%s</strong> exportiert.",
-                                exporter.getNumberExportedApplicants(), chooser.getSelectedFile()
-                                        .getName()));
+                sb.append(String.format("%d Bewerber in die Datei <strong>%s</strong> exportiert.",
+                        exporter.getNumberExportedApplicants(),
+                        chooser.getSelectedFile().getName()));
                 sb.append("<br><br>");
-                sb.append("Die folgenden Bewerber wurden auf Grund eines Fehlers nicht korrekt exportiert:");
+                sb.append(
+                        "Die folgenden Bewerber wurden auf Grund eines Fehlers nicht korrekt exportiert:");
                 for (final ExportError e : listOfErrors) {
                     sb.append("<br>");
                     sb.append(e.getApplicant().toString());
                 }
                 sb.append("</html>");
-                JOptionPane.showMessageDialog(this, sb.toString(),
-                        "Fehler beim Export aufgetreten", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, sb.toString(), "Fehler beim Export aufgetreten",
+                        JOptionPane.ERROR_MESSAGE);
             }
             // write opened directory path into Preferences store
             prefs.put(LAST_OPENED_DIRECTORY_EXPORT, chooser.getSelectedFile().getParent());
